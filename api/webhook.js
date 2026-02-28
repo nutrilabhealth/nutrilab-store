@@ -1,67 +1,76 @@
 export default async function handler(req, res) {
-  // Telegram шлёт POST
+  // Telegram шлёт апдейты POST-запросом
   if (req.method !== "POST") return res.status(200).send("OK");
 
   try {
     const token = process.env.TELEGRAM_BOT_TOKEN;
     if (!token) return res.status(500).json({ error: "No TELEGRAM_BOT_TOKEN in env" });
 
-    const update = req.body || {};
+    // Иногда body приходит строкой — подстрахуемся
+    const update = typeof req.body === "string" ? JSON.parse(req.body) : req.body;
 
-    // Поддержим разные типы апдейтов
-    const msg = update.message || update.edited_message;
-    const callback = update.callback_query;
+    const msg = update?.message || update?.edited_message;
+    if (!msg) return res.status(200).send("OK");
 
-    // 1) Команды / текстовые сообщения
-    if (msg) {
-      const chatId = msg.chat?.id;
-      const text = (msg.text || "").trim();
+    const chatId = msg.chat?.id;
+    const text = (msg.text || "").trim();
 
-      // Если нет chatId — просто ок
-      if (!chatId) return res.status(200).send("OK");
+    // Твоя WebApp
+    const webAppUrl = "https://nutrilab-store.vercel.app";
 
-      if (text.startsWith("/start")) {
-        const webAppUrl = "https://nutrilab-store.vercel.app";
-
-        await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            chat_id: chatId,
-            text: "Добро пожаловать в NutriLab Store 🚀\nНажмите кнопку ниже, чтобы открыть магазин.",
-            reply_markup: {
-              inline_keyboard: [[{ text: "🛍 Открыть магазин", web_app: { url: webAppUrl } }]],
-            },
-          }),
-        });
-      }
-
-      // Важно: всегда отвечаем Telegram 200
-      return res.status(200).send("OK");
-    }
-
-    // 2) Нажатия на inline-кнопки (callback_query)
-    if (callback) {
-      const callbackId = callback.id;
-
-      // Можно просто подтверждать, чтобы не было "loading"
-      if (callbackId) {
-        await fetch(`https://api.telegram.org/bot${token}/answerCallbackQuery`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ callback_query_id: callbackId }),
-        });
-      }
+    // ----- /start -----
+    if (text.startsWith("/start")) {
+      await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          chat_id: chatId,
+          text:
+            "Добро пожаловать в NutriLab Store 🚀\n\n" +
+            "Открывайте каталог и оформляйте заказ в 1–2 клика.",
+          reply_markup: {
+            inline_keyboard: [
+              [{ text: "🛍 Открыть магазин", web_app: { url: webAppUrl } }],
+            ],
+          },
+        }),
+      });
 
       return res.status(200).send("OK");
     }
 
-    // 3) Всё остальное игнорируем (но отвечаем 200!)
+    // ----- /help (опционально) -----
+    if (text.startsWith("/help")) {
+      await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          chat_id: chatId,
+          text: "Нажмите «🛍 Открыть магазин» в меню или отправьте /start 🙂",
+        }),
+      });
+
+      return res.status(200).send("OK");
+    }
+
+    // На любые другие сообщения — просто отправляем кнопку
+    await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        chat_id: chatId,
+        text: "Открыть каталог:",
+        reply_markup: {
+          inline_keyboard: [
+            [{ text: "🛍 Открыть магазин", web_app: { url: webAppUrl } }],
+          ],
+        },
+      }),
+    });
+
     return res.status(200).send("OK");
   } catch (err) {
-    // Чтобы Telegram не ретраил бесконечно — можно всё равно вернуть 200
-    // но для отладки оставим 200 + лог
-    console.error("Webhook error:", err);
+    // чтобы Telegram не долбил ретраями бесконечно, часто лучше всё равно вернуть 200
     return res.status(200).send("OK");
   }
 }
