@@ -1,88 +1,105 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>NutriLab Store</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NutriLab Health Store</title>
 
-<style>
-body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
-  background: #0f172a;
-  color: white;
-}
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #0f1b2d;
+      color: white;
+    }
 
-.header {
-  padding: 20px;
-  text-align: center;
-  font-size: 22px;
-  font-weight: 700;
-}
+    .header {
+      text-align: center;
+      font-size: 24px;
+      font-weight: bold;
+      padding: 20px;
+    }
 
-.container {
-  padding: 16px;
-}
+    .container {
+      max-width: 500px;
+      margin: 0 auto;
+      padding: 20px;
+    }
 
-.product {
-  background: #1e293b;
-  border-radius: 16px;
-  padding: 16px;
-  margin-bottom: 20px;
-}
+    .product {
+      background: #1b2a40;
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
 
-.product img {
-  width: 100%;
-  border-radius: 12px;
-}
+    .product img {
+      width: 100%;
+      border-radius: 12px;
+    }
 
-.product h2 {
-  margin: 12px 0 6px;
-}
+    .product h2 {
+      margin: 15px 0 5px;
+    }
 
-.price {
-  font-size: 18px;
-  font-weight: 600;
-  margin-bottom: 12px;
-}
+    .price {
+      font-size: 20px;
+      font-weight: bold;
+      margin-bottom: 15px;
+    }
 
-.btn {
-  display: block;
-  text-align: center;
-  background: #22c55e;
-  padding: 14px;
-  border-radius: 12px;
-  text-decoration: none;
-  color: black;
-  font-weight: 700;
-  transition: 0.2s;
-}
+    .btn {
+      display: block;
+      text-align: center;
+      background: #2ecc71;
+      padding: 14px;
+      border-radius: 12px;
+      text-decoration: none;
+      color: black;
+      font-weight: bold;
+      transition: 0.2s;
+    }
 
-.btn:active {
-  transform: scale(0.98);
-  opacity: 0.8;
-}
-</style>
+    .btn:hover {
+      opacity: 0.9;
+    }
+
+    .btn:active {
+      transform: scale(0.97);
+    }
+  </style>
 </head>
 
 <body>
 
-<div class="header">
-  🚀 NutriLab Health Store
-</div>
-
-<div class="container">
-
-  <div class="product">
-    <img src="./81240CBA-CD5A-4E5D-950A-BDE745990748.png">
-    <h2>Nordic Bork Omega-3</h2>
-    <div class="price">2 900 ₽</div>
-    <a class="btn" href="https://t.me/nutrilabhealth?text=Здравствуйте!%20Хочу%20заказать%20Nordic%20Bork%20Omega-3">
-      🛒 Заказать в Telegram
-    </a>
+  <div class="header">
+    🚀 NutriLab Health Store
   </div>
 
-</div>
+  <div class="container">
+
+    <div class="product" data-name="Nordic Bork Omega-3" data-price="2900">
+      <img src="./81240CBA-CD5A-4E5D-950A-BDE745990748.png" alt="Omega-3">
+      <h2>Nordic Bork Omega-3</h2>
+      <div class="price">2 900 ₽</div>
+      <a class="btn order" href="#">🛒 Заказать в Telegram</a>
+    </div>
+
+  </div>
+
+  <script>
+    const tgUsername = "nutrilabhealth"; // ← если нужно, поменяй тут
+
+    document.querySelectorAll(".product").forEach((card) => {
+      const name = card.dataset.name;
+      const price = card.dataset.price;
+
+      const message = `Здравствуйте! Хочу заказать ${name} за ${price} ₽.`;
+      const link = `https://t.me/${tgUsername}?text=${encodeURIComponent(message)}`;
+
+      card.querySelector(".order").href = link;
+    });
+  </script>
 
 </body>
 </html>
