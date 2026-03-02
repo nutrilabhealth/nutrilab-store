@@ -1,710 +1,546 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>NutriLab Health Store</title>
 
-  <!-- Telegram WebApp (не обязательно, но полезно) -->
+  <!-- Telegram WebApp SDK -->
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
-
-  <!-- Supabase JS v2 -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <style>
     :root{
-      --bg:#07161a;
-      --card:#0b2730;
-      --card2:#0a1f25;
-      --text:#e7f7f6;
-      --muted:#94b7b6;
-      --accent:#2fe6b7;
-      --accent2:#1fb08d;
-      --danger:#ff5a6a;
-      --shadow: 0 12px 30px rgba(0,0,0,.35);
-      --radius:18px;
+      --bg1:#051a1c;
+      --bg2:#082a2b;
+      --text:#e7fbff;
+      --muted:#a8c6cc;
+      --brand:#20d3b7;
+      --brand2:#12b59a;
+      --shadow: 0 20px 60px rgba(0,0,0,.35);
+      --radius: 22px;
     }
-    *{box-sizing:border-box}
+    *{ box-sizing:border-box; }
     body{
       margin:0;
-      font-family: -apple-system, system-ui, Segoe UI, Roboto, Arial, sans-serif;
-      background: radial-gradient(1200px 800px at 30% -20%, rgba(47,230,183,.22), transparent 55%),
-                  radial-gradient(900px 700px at 100% 0%, rgba(31,176,141,.20), transparent 55%),
-                  linear-gradient(180deg, #061318, #061216);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
       color:var(--text);
+      background: radial-gradient(1200px 600px at 20% 0%, #0e5d53 0%, transparent 60%),
+                  radial-gradient(900px 900px at 90% 20%, #0f4a4f 0%, transparent 60%),
+                  linear-gradient(180deg, var(--bg2), var(--bg1));
       min-height:100vh;
+      padding-bottom: 92px;
     }
-    .wrap{
-      max-width: 820px;
-      margin: 0 auto;
-      padding: 18px 16px 110px;
-    }
+    .container{ max-width: 980px; margin:0 auto; padding: 18px 14px; }
+
     .topbar{
-      display:flex;
-      gap:12px;
-      align-items:center;
-      justify-content:space-between;
-      margin-top: 8px;
-      margin-bottom: 14px;
-    }
-    .brand{
       display:flex; align-items:center; gap:12px;
-      min-width:0;
+      padding: 10px 10px; border-radius: 20px;
+      background: rgba(10,45,48,.65);
+      backdrop-filter: blur(14px);
+      box-shadow: var(--shadow);
+      border: 1px solid rgba(255,255,255,.06);
+      position: sticky; top: 10px; z-index: 20;
     }
     .logo{
-      width:44px; height:44px; border-radius:14px;
-      background: linear-gradient(135deg, rgba(47,230,183,.95), rgba(31,176,141,.55));
-      box-shadow: var(--shadow);
-      flex:0 0 auto;
+      width:44px;height:44px;border-radius: 14px;
+      background: linear-gradient(135deg, var(--brand), #2bffd8);
+      box-shadow: 0 12px 30px rgba(32,211,183,.25);
+      flex: 0 0 auto;
     }
-    .brandtxt{min-width:0}
-    .brandtxt .name{font-weight:800; letter-spacing:.2px; font-size:18px; line-height:1.05}
-    .brandtxt .sub{color:var(--muted); font-size:12px; margin-top:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+    .brand{ display:flex; flex-direction: column; gap:2px; min-width: 120px; }
+    .brand .t1{ font-weight: 800; letter-spacing:.2px; }
+    .brand .t2{ font-size: 12px; color: var(--muted); }
 
-    .actions{display:flex; gap:10px; align-items:center}
+    .searchWrap{
+      flex: 1 1 auto; display:flex; align-items:center; gap:10px;
+      padding: 10px 12px; border-radius: 16px;
+      background: rgba(0,0,0,.18);
+      border: 1px solid rgba(255,255,255,.06);
+    }
+    .searchWrap input{
+      width:100%; background: transparent; border:0; outline:0;
+      color: var(--text); font-size: 15px;
+    }
+    .searchWrap input::placeholder{ color: rgba(231,251,255,.55); }
+
     .btn{
-      border:none;
-      padding: 10px 12px;
-      border-radius: 14px;
-      background: rgba(255,255,255,.06);
-      color: var(--text);
-      font-weight:700;
-      display:flex; gap:8px; align-items:center;
+      border:0; padding: 10px 14px; border-radius: 16px;
+      background: linear-gradient(135deg, var(--brand), var(--brand2));
+      color: #032224; font-weight: 800; cursor:pointer;
+      box-shadow: 0 10px 25px rgba(32,211,183,.22);
+      display:flex; align-items:center; gap:8px; white-space: nowrap;
     }
-    .btn.accent{
-      background: linear-gradient(135deg, rgba(47,230,183,.95), rgba(31,176,141,.75));
-      color:#052016;
-    }
-    .btn:active{transform: translateY(1px)}
 
-    .searchRow{
-      display:flex; gap:10px; align-items:center;
-      margin: 12px 0 14px;
-    }
-    .search{
-      flex:1;
-      background: rgba(255,255,255,.06);
-      border: 1px solid rgba(255,255,255,.10);
-      border-radius: 16px;
-      padding: 12px 14px;
-      color: var(--text);
-      outline:none;
-      font-size: 15px;
-    }
-    .chipRow{
-      display:flex; gap:10px; flex-wrap:wrap;
-      margin-bottom: 14px;
-    }
+    .chips{ display:flex; gap:10px; margin-top: 14px; overflow:auto; padding-bottom: 4px; }
     .chip{
-      padding: 10px 12px;
-      border-radius: 14px;
-      background: rgba(255,255,255,.06);
-      border: 1px solid rgba(255,255,255,.10);
-      color: var(--text);
-      font-weight:800;
-      font-size: 13px;
+      padding: 10px 14px; border-radius: 18px;
+      background: rgba(0,0,0,.18);
+      border: 1px solid rgba(255,255,255,.06);
+      color: var(--text); cursor:pointer; flex: 0 0 auto;
+      font-weight: 700; opacity: .85;
     }
     .chip.active{
-      background: rgba(47,230,183,.18);
-      border-color: rgba(47,230,183,.35);
-      color: #cffff3;
+      background: linear-gradient(135deg, rgba(32,211,183,.35), rgba(18,181,154,.18));
+      border: 1px solid rgba(32,211,183,.35);
+      opacity: 1;
     }
+
+    .screen{ display:none; margin-top: 14px; }
+    .screen.active{ display:block; }
 
     .grid{
       display:grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 12px;
+      gap: 14px;
+      margin-top: 14px;
     }
-    @media (min-width: 720px){
-      .grid{grid-template-columns: repeat(3, minmax(0, 1fr));}
+    @media (min-width: 820px){
+      .grid{ grid-template-columns: repeat(3, minmax(0, 1fr)); }
     }
-
     .card{
+      border-radius: var(--radius);
       background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
-      border: 1px solid rgba(255,255,255,.10);
-      border-radius: var(--radius);
-      padding: 12px;
+      border: 1px solid rgba(255,255,255,.07);
       box-shadow: var(--shadow);
       overflow:hidden;
+      position: relative;
+      min-height: 290px;
     }
-    .img{
+    .card .img{
       width:100%;
-      aspect-ratio: 1 / 1;
-      border-radius: 16px;
-      background: rgba(0,0,0,.18);
+      aspect-ratio: 1/1;
+      background: rgba(0,0,0,.2);
+      display:flex; align-items:center; justify-content:center;
       overflow:hidden;
-      display:flex; align-items:center; justify-content:center;
-      border: 1px solid rgba(255,255,255,.08);
     }
-    .img img{
-      width:100%; height:100%;
-      object-fit: cover;
-      display:block;
-    }
-    .fav{
-      position:absolute;
-      top:10px; right:10px;
-      width:38px; height:38px;
-      border-radius: 14px;
-      border: 1px solid rgba(255,255,255,.12);
+    .card .img img{ width:100%; height:100%; object-fit: cover; display:block; transform: scale(1.02); }
+    .favBtn{
+      position:absolute; top: 12px; right: 12px;
+      width: 40px; height: 40px; border-radius: 14px;
+      border: 1px solid rgba(255,255,255,.10);
       background: rgba(0,0,0,.25);
-      color: white;
+      backdrop-filter: blur(10px);
       display:flex; align-items:center; justify-content:center;
-      font-size: 18px;
-      backdrop-filter: blur(8px);
+      cursor:pointer; user-select:none;
     }
-    .fav.on{ background: rgba(255,90,106,.18); border-color: rgba(255,90,106,.35); }
-    .meta{margin-top:10px}
-    .title{font-weight:900; font-size:14px; line-height:1.2; margin: 0 0 6px}
-    .desc{color:var(--muted); font-size:12px; line-height:1.25; min-height: 30px}
-    .row{display:flex; align-items:center; justify-content:space-between; margin-top:10px; gap:10px}
-    .price{font-weight:1000; font-size:18px; letter-spacing:.2px}
-    .small{color:var(--muted); font-size:12px}
-
-    .cardBtns{display:flex; gap:8px; margin-top:10px}
-    .cardBtns .btn2{
-      flex:1;
-      padding: 10px 10px;
-      border-radius: 14px;
-      border: none;
-      font-weight:900;
-      background: rgba(255,255,255,.06);
-      color: var(--text);
-      border: 1px solid rgba(255,255,255,.10);
+    .favBtn.active{
+      background: rgba(255, 60, 120, .18);
+      border-color: rgba(255, 60, 120, .35);
     }
-    .cardBtns .btn2.buy{
-      background: linear-gradient(135deg, rgba(47,230,183,.95), rgba(31,176,141,.75));
-      color:#052016;
-      border: none;
+    .cardBody{ padding: 12px 12px 14px; display:flex; flex-direction: column; gap: 8px; }
+    .title{ font-weight: 900; letter-spacing:.2px; font-size: 15px; line-height: 1.2; min-height: 36px; }
+    .desc{
+      font-size: 12px; color: var(--muted); line-height: 1.35;
+      min-height: 32px; overflow:hidden;
+      display:-webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
     }
-
-    .panel{
+    .row{ display:flex; align-items:center; justify-content: space-between; gap:10px; margin-top: 2px; }
+    .price{ font-size: 20px; font-weight: 900; }
+    .mini{ display:flex; gap:10px; margin-top: 6px; }
+    .btn2{
+      flex:1; border: 1px solid rgba(255,255,255,.10);
       background: rgba(0,0,0,.20);
-      border: 1px solid rgba(255,255,255,.10);
-      border-radius: var(--radius);
-      padding: 14px;
-      box-shadow: var(--shadow);
-    }
-    .panel h3{margin:0 0 8px; font-size: 16px}
-    .panel p{margin:6px 0; color: var(--muted); font-size: 13px; line-height:1.35}
-
-    .errorBox{
-      margin: 12px 0;
-      background: rgba(255,90,106,.12);
-      border: 1px solid rgba(255,90,106,.30);
-      color: #ffd7dc;
-      padding: 12px;
-      border-radius: 16px;
-      font-size: 13px;
-      white-space: pre-wrap;
-    }
-    .okBox{
-      margin: 12px 0;
-      background: rgba(47,230,183,.10);
-      border: 1px solid rgba(47,230,183,.28);
-      color: #d7fff4;
-      padding: 12px;
-      border-radius: 16px;
-      font-size: 13px;
-      white-space: pre-wrap;
-    }
-
-    .bottomNav{
-      position: fixed;
-      left:0; right:0; bottom:0;
-      padding: 10px 12px calc(10px + env(safe-area-inset-bottom));
-      background: rgba(6,18,22,.92);
-      border-top: 1px solid rgba(255,255,255,.10);
-      backdrop-filter: blur(12px);
-    }
-    .tabs{
-      max-width: 820px;
-      margin: 0 auto;
-      display:flex; gap:10px;
-    }
-    .tab{
-      flex:1;
-      padding: 12px 10px;
-      border-radius: 18px;
-      text-align:center;
-      font-weight:1000;
-      background: rgba(255,255,255,.06);
-      border: 1px solid rgba(255,255,255,.10);
       color: var(--text);
+      padding: 11px 12px;
+      border-radius: 18px;
+      font-weight: 900;
+      cursor:pointer;
+    }
+    .btn2.primary{
+      background: linear-gradient(135deg, var(--brand), var(--brand2));
+      color:#032224;
+      border:0;
+    }
+    .empty{
+      margin-top: 22px;
+      padding: 16px;
+      border-radius: 18px;
+      background: rgba(0,0,0,.18);
+      border: 1px dashed rgba(255,255,255,.15);
+      color: rgba(231,251,255,.85);
+      white-space: pre-wrap;
+    }
+
+    .tabs{
+      position: fixed; left:0; right:0; bottom:0;
+      padding: 12px 14px calc(12px + env(safe-area-inset-bottom));
+      background: rgba(8,26,28,.75);
+      border-top: 1px solid rgba(255,255,255,.06);
+      backdrop-filter: blur(16px);
+      z-index: 50;
+    }
+    .tabRow{ max-width: 980px; margin:0 auto; display:flex; gap: 12px; }
+    .tab{
+      flex:1; padding: 12px 10px; border-radius: 18px;
+      border: 1px solid rgba(255,255,255,.08);
+      background: rgba(0,0,0,.18);
+      color: rgba(231,251,255,.9);
+      font-weight: 900;
+      display:flex; align-items:center; justify-content:center; gap:8px;
+      cursor:pointer; user-select:none;
     }
     .tab.active{
-      background: linear-gradient(135deg, rgba(47,230,183,.95), rgba(31,176,141,.75));
-      color:#052016;
-      border:none;
+      background: linear-gradient(135deg, rgba(32,211,183,.45), rgba(18,181,154,.22));
+      border-color: rgba(32,211,183,.35);
+      color: var(--text);
+    }
+    .badge{
+      font-size: 12px; padding: 2px 8px; border-radius: 999px;
+      background: rgba(32,211,183,.20);
+      border: 1px solid rgba(32,211,183,.35);
     }
 
-    .hide{display:none !important}
+    /* DEBUG BOX */
+    .debugBox{
+      margin-top: 14px;
+      padding: 12px 14px;
+      border-radius: 16px;
+      background: rgba(0,0,0,.28);
+      border: 1px solid rgba(255,255,255,.12);
+      font-size: 12px;
+      line-height: 1.35;
+      white-space: pre-wrap;
+    }
+    .debugTitle{ font-weight: 900; margin-bottom: 6px; }
+    .ok{ color: #7dffcf; }
+    .bad{ color: #ff9a9a; }
   </style>
 </head>
 
 <body>
-  <div class="wrap">
+  <div class="container">
+
     <div class="topbar">
+      <div class="logo"></div>
       <div class="brand">
-        <div class="logo"></div>
-        <div class="brandtxt">
-          <div class="name">NutriLab Health</div>
-          <div class="sub">Premium Supplements</div>
-        </div>
+        <div class="t1">NutriLab Health</div>
+        <div class="t2">Premium Supplements</div>
       </div>
 
-      <div class="actions">
-        <button class="btn" id="sortBtn">⇅</button>
-        <button class="btn accent" id="orderBtn">✉️ Заказ</button>
+      <div class="searchWrap">
+        <span>🔎</span>
+        <input id="search" placeholder="Поиск товара..." />
       </div>
+
+      <button class="btn" id="orderBtn">✉️ Заказ</button>
     </div>
 
-    <div class="searchRow">
-      <input class="search" id="searchInput" placeholder="🔎  Поиск товара..." />
+    <!-- DEBUG -->
+    <div class="debugBox" id="debugBox">
+      <div class="debugTitle">Диагностика (версия 1.0-debug)</div>
+      <div id="dbg">Старт…</div>
     </div>
 
-    <div class="chipRow" id="chips"></div>
+    <div class="chips" id="chips"></div>
 
-    <div id="statusBox" class="hide"></div>
-
-    <!-- Screens -->
-    <div id="screenHome">
+    <div class="screen active" id="screenHome">
       <div class="grid" id="grid"></div>
+      <div class="empty" id="emptyHome" style="display:none;"></div>
     </div>
 
-    <div id="screenFav" class="hide">
-      <div class="panel">
-        <h3>❤️ Избранное</h3>
-        <p>Здесь будут товары, которые ты добавил(а) в избранное.</p>
-      </div>
-      <div style="height:12px"></div>
+    <div class="screen" id="screenFav">
       <div class="grid" id="gridFav"></div>
+      <div class="empty" id="emptyFav" style="display:none;"></div>
     </div>
 
-    <div id="screenCart" class="hide">
-      <div class="panel">
-        <h3>🛒 Корзина</h3>
-        <p id="cartSummary"></p>
-        <button class="btn accent" id="checkoutBtn">✅ Оформить</button>
+    <div class="screen" id="screenCart">
+      <div class="empty" id="emptyCart">Корзина пустая.</div>
+      <div class="empty" style="margin-top:12px;">
+        (В debug-версии корзину не усложняем — нам важно сначала увидеть, грузит ли Supabase.)
       </div>
-      <div style="height:12px"></div>
-      <div class="grid" id="gridCart"></div>
     </div>
 
-    <div id="screenProfile" class="hide">
-      <div class="panel">
-        <h3>👤 Профиль</h3>
-        <p id="profileText">Загрузка…</p>
-        <button class="btn" id="resetLocalBtn" style="margin-top:10px">Сбросить избранное/корзину</button>
-      </div>
+    <div class="screen" id="screenProfile">
+      <div class="empty" id="profileText">Профиль…</div>
+    </div>
+
+  </div>
+
+  <div class="tabs">
+    <div class="tabRow">
+      <div class="tab active" data-tab="home">🏠 Главная</div>
+      <div class="tab" data-tab="fav">❤️ Избранное <span class="badge" id="favBadge">0</span></div>
+      <div class="tab" data-tab="cart">🛒 Корзина <span class="badge" id="cartBadge">0</span></div>
+      <div class="tab" data-tab="profile">👤 Профиль</div>
     </div>
   </div>
 
-  <div class="bottomNav">
-    <div class="tabs">
-      <button class="tab active" data-tab="home">🏠 Главная</button>
-      <button class="tab" data-tab="fav">❤️ Избранное</button>
-      <button class="tab" data-tab="cart">🛒 Корзина</button>
-      <button class="tab" data-tab="profile">👤 Профиль</button>
-    </div>
-  </div>
+  <script>
+    /* ============ ТВОЙ SUPABASE ============ */
+    const SUPABASE_URL = "https://cthfqhxnplyibdsjzcrq.supabase.co";
+    const SUPABASE_KEY = "sb_publishable_AjGX1zKhV8kEyGMbvAKwQg_srda-oyI";
+    /* ====================================== */
 
-<script>
-  // ==== 1) Supabase config (твой проект) ====
-  const SUPABASE_URL = "https://cthfqhxnplyibdsjzcrq.supabase.co";
-  const SUPABASE_KEY = "sb_publishable_AjGX1zKhV8kEyGMbvAKwQg_srda-oyI";
-
-  const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
-  // ==== 2) Storage helpers ====
-  const LS_FAV = "nl_fav_ids";
-  const LS_CART = "nl_cart"; // {id: qty}
-
-  function loadFav(){
-    try { return new Set(JSON.parse(localStorage.getItem(LS_FAV) || "[]")); }
-    catch { return new Set(); }
-  }
-  function saveFav(set){
-    localStorage.setItem(LS_FAV, JSON.stringify([...set]));
-  }
-
-  function loadCart(){
-    try { return JSON.parse(localStorage.getItem(LS_CART) || "{}"); }
-    catch { return {}; }
-  }
-  function saveCart(obj){
-    localStorage.setItem(LS_CART, JSON.stringify(obj));
-  }
-
-  // ==== 3) State ====
-  let products = [];
-  let filtered = [];
-  let favSet = loadFav();
-  let cart = loadCart();
-  let activeCategory = "Все";
-  let sortMode = "default"; // default | priceAsc | priceDesc
-
-  const elGrid = document.getElementById("grid");
-  const elGridFav = document.getElementById("gridFav");
-  const elGridCart = document.getElementById("gridCart");
-  const elChips = document.getElementById("chips");
-  const elSearch = document.getElementById("searchInput");
-  const elStatus = document.getElementById("statusBox");
-  const elCartSummary = document.getElementById("cartSummary");
-
-  // ==== 4) UI helpers ====
-  function showStatus(type, text){
-    elStatus.className = "";
-    elStatus.classList.add(type === "error" ? "errorBox" : "okBox");
-    elStatus.textContent = text;
-  }
-  function hideStatus(){
-    elStatus.className = "hide";
-    elStatus.textContent = "";
-  }
-
-  function money(v){
-    if (v === null || v === undefined || v === "") return "";
-    const n = Number(v);
-    if (!Number.isFinite(n)) return String(v);
-    return n.toLocaleString("ru-RU") + " ₽";
-  }
-
-  function safeText(x){ return (x ?? "").toString(); }
-
-  function productCard(p){
-    const id = p.id;
-    const isFav = favSet.has(id);
-    const img = p.image_url ? safeText(p.image_url) : "https://via.placeholder.com/600x600?text=NutriLab";
-    const desc = safeText(p.description || "");
-    const price = p.price;
-
-    return `
-      <div class="card" data-id="${id}">
-        <div style="position:relative">
-          <div class="img">
-            <img src="${img}" alt="${safeText(p.name)}" onerror="this.src='https://via.placeholder.com/600x600?text=No+Image'">
-          </div>
-          <button class="fav ${isFav ? "on" : ""}" data-action="toggleFav" title="Избранное">${isFav ? "❤️" : "🤍"}</button>
-        </div>
-
-        <div class="meta">
-          <div class="title">${safeText(p.name)}</div>
-          <div class="desc">${desc ? desc : "<span class='small'>Описание не добавлено</span>"}</div>
-
-          <div class="row">
-            <div class="price">${money(price)}</div>
-            <div class="small">id: ${id}</div>
-          </div>
-
-          <div class="cardBtns">
-            <button class="btn2" data-action="addCart">🛒 В корзину</button>
-            <button class="btn2 buy" data-action="buyNow">✅ Купить</button>
-          </div>
-        </div>
-      </div>
-    `;
-  }
-
-  function renderGrid(){
-    elGrid.innerHTML = filtered.map(productCard).join("") || `
-      <div class="panel" style="grid-column:1/-1">
-        <h3>Пока пусто</h3>
-        <p>Не нашли товары по фильтру/поиску. Попробуй снять фильтр или добавить товары в Supabase.</p>
-      </div>
-    `;
-  }
-
-  function renderFav(){
-    const favProducts = products.filter(p => favSet.has(p.id));
-    elGridFav.innerHTML = favProducts.map(productCard).join("") || `
-      <div class="panel" style="grid-column:1/-1">
-        <h3>Пока пусто</h3>
-        <p>Нажми ❤️ на товаре, и он появится здесь.</p>
-      </div>
-    `;
-  }
-
-  function renderCart(){
-    const ids = Object.keys(cart).map(Number);
-    const cartProducts = products.filter(p => ids.includes(p.id));
-
-    let total = 0;
-    for (const p of cartProducts){
-      const qty = cart[p.id] || 0;
-      const price = Number(p.price) || 0;
-      total += price * qty;
+    const dbgEl = document.getElementById("dbg");
+    function dbg(msg, cls){
+      const line = document.createElement("div");
+      if (cls) line.className = cls;
+      line.textContent = msg;
+      dbgEl.appendChild(line);
+      console.log("[DBG]", msg);
     }
 
-    elCartSummary.textContent = ids.length
-      ? `Товаров: ${ids.length} • Сумма: ${money(total)}`
-      : "Корзина пустая. Добавь товары на главной.";
+    // чтобы было видно прямо в телефоне
+    window.addEventListener("error", (e)=>{
+      dbg("JS ERROR: " + (e.message || "unknown"), "bad");
+    });
+    window.addEventListener("unhandledrejection", (e)=>{
+      dbg("PROMISE ERROR: " + (e.reason?.message || String(e.reason)), "bad");
+    });
 
-    elGridCart.innerHTML = cartProducts.map(p => {
-      const qty = cart[p.id] || 1;
-      return `
-        <div class="card" data-id="${p.id}">
-          <div class="title">${safeText(p.name)}</div>
+    let tg = null;
+    let supabaseClient = null;
+    let allProducts = [];
+    let currentCategory = "Все";
+    let searchQuery = "";
+
+    const LS_FAV = "nutrilab_fav";
+    const getFav = () => new Set(JSON.parse(localStorage.getItem(LS_FAV) || "[]"));
+    const setFav = (set) => localStorage.setItem(LS_FAV, JSON.stringify([...set]));
+
+    function initTelegram(){
+      try{
+        tg = window.Telegram?.WebApp || null;
+        if (tg){
+          tg.ready();
+          tg.expand();
+          dbg("Telegram WebApp: OK", "ok");
+        } else {
+          dbg("Telegram WebApp: нет (браузер)", "ok");
+        }
+      }catch(e){
+        dbg("Telegram init error: " + e.message, "bad");
+      }
+    }
+
+    function renderProfile(){
+      const el = document.getElementById("profileText");
+      const u = tg?.initDataUnsafe?.user;
+      if (u){
+        el.textContent = `Имя: ${(u.first_name||"")} ${(u.last_name||"")}\nUsername: ${u.username?("@"+u.username):"-"}\nID: ${u.id}`;
+      } else {
+        el.textContent = "Открыто в браузере (не Telegram WebApp).";
+      }
+    }
+
+    function fmtPrice(v){
+      const n = Number(v || 0);
+      return n.toLocaleString("ru-RU") + " ₽";
+    }
+
+    function getCategories(products){
+      const set = new Set();
+      products.forEach(p => { if (p.category) set.add(String(p.category)); });
+      return ["Все", ...[...set].sort((a,b)=>a.localeCompare(b,'ru'))];
+    }
+
+    function filteredProducts(){
+      return allProducts.filter(p=>{
+        if (currentCategory !== "Все" && String(p.category||"") !== currentCategory) return false;
+        if (searchQuery){
+          const s = searchQuery.toLowerCase();
+          const t = `${p.name||""} ${p.description||""}`.toLowerCase();
+          if (!t.includes(s)) return false;
+        }
+        return true;
+      });
+    }
+
+    function renderCategories(){
+      const chips = document.getElementById("chips");
+      chips.innerHTML = "";
+      const cats = getCategories(allProducts);
+      cats.forEach(c=>{
+        const b = document.createElement("button");
+        b.className = "chip" + (c===currentCategory ? " active": "");
+        b.textContent = c;
+        b.onclick = ()=>{
+          currentCategory = c;
+          renderCategories();
+          renderHome();
+        };
+        chips.appendChild(b);
+      });
+    }
+
+    function updateBadges(){
+      const fav = getFav();
+      document.getElementById("favBadge").textContent = fav.size;
+      document.getElementById("cartBadge").textContent = "0";
+    }
+
+    function productCard(p){
+      const fav = getFav();
+      const inFav = fav.has(p.id);
+
+      const card = document.createElement("div");
+      card.className = "card";
+      const imgUrl = p.image_url || "https://via.placeholder.com/600x600?text=NutriLab";
+
+      card.innerHTML = `
+        <div class="img"><img src="${imgUrl}" alt=""></div>
+        <div class="favBtn ${inFav ? "active": ""}">${inFav ? "❤️" : "🤍"}</div>
+        <div class="cardBody">
+          <div class="title">${p.name || "Без названия"}</div>
+          <div class="desc">${p.description || ""}</div>
           <div class="row">
-            <div class="price">${money(p.price)}</div>
-            <div class="small">x ${qty}</div>
+            <div class="price">${fmtPrice(p.price)}</div>
+            <div style="color:var(--muted); font-size:12px;">${p.category ? p.category : ""}</div>
           </div>
-          <div class="cardBtns">
-            <button class="btn2" data-action="decQty">➖</button>
-            <button class="btn2" data-action="incQty">➕</button>
-            <button class="btn2" data-action="removeCart">🗑️</button>
+          <div class="mini">
+            <button class="btn2 primary" data-act="buy">Купить</button>
           </div>
         </div>
       `;
-    }).join("") || `
-      <div class="panel" style="grid-column:1/-1">
-        <h3>Корзина пустая</h3>
-        <p>Нажми “В корзину” на товаре.</p>
-      </div>
-    `;
-  }
 
-  function renderChips(){
-    // Категории берём из поля category, если его нет — только "Все"
-    const cats = new Set(["Все"]);
-    for (const p of products){
-      if (p.category) cats.add(String(p.category));
+      card.querySelector(".favBtn").onclick = ()=>{
+        const s = getFav();
+        if (s.has(p.id)) s.delete(p.id); else s.add(p.id);
+        setFav(s);
+        updateBadges();
+        renderFav();
+        renderHome();
+      };
+
+      card.querySelector('[data-act="buy"]').onclick = ()=>{
+        // в debug-версии просто проверяем клики
+        alert("Клик работает ✅");
+      };
+
+      return card;
     }
 
-    elChips.innerHTML = [...cats].map(c => `
-      <button class="chip ${c === activeCategory ? "active": ""}" data-action="setCategory" data-cat="${c}">
-        ${c}
-      </button>
-    `).join("");
-  }
+    function renderHome(){
+      const grid = document.getElementById("grid");
+      const empty = document.getElementById("emptyHome");
+      grid.innerHTML = "";
+      const arr = filteredProducts();
 
-  function applyFilters(){
-    const q = elSearch.value.trim().toLowerCase();
-
-    filtered = products.filter(p => {
-      const matchCat = (activeCategory === "Все") ? true : String(p.category || "") === activeCategory;
-      const text = (safeText(p.name) + " " + safeText(p.description)).toLowerCase();
-      const matchSearch = q ? text.includes(q) : true;
-      return matchCat && matchSearch;
-    });
-
-    if (sortMode === "priceAsc") filtered.sort((a,b) => (Number(a.price)||0) - (Number(b.price)||0));
-    if (sortMode === "priceDesc") filtered.sort((a,b) => (Number(b.price)||0) - (Number(a.price)||0));
-
-    renderGrid();
-  }
-
-  // ==== 5) Telegram init ====
-  function initTelegram(){
-    try{
-      const tg = window.Telegram?.WebApp;
-      if (tg){
-        tg.ready();
-        tg.expand();
+      if (!arr.length){
+        empty.style.display = "block";
+        empty.textContent =
+          "Товаров нет.\n\nЕсли в Supabase товары есть — значит SELECT не проходит.\n" +
+          "Чаще всего причина: RLS включён без policy.\n\n" +
+          "Открой Supabase → Table Editor → products → RLS:\n" +
+          "• либо временно Disable RLS\n" +
+          "• либо добавь policy на SELECT для anon.";
+        return;
       }
-    }catch(e){}
-  }
 
-  function renderProfile(){
-    const tg = window.Telegram?.WebApp;
-    if (tg?.initDataUnsafe?.user){
-      const u = tg.initDataUnsafe.user;
-      const name = `${u.first_name || ""} ${u.last_name || ""}`.trim();
-      document.getElementById("profileText").textContent =
-        `Открыто в Telegram WebApp\nИмя: ${name || "-"}\nUsername: ${u.username || "-"}\nID: ${u.id || "-"}`;
-    } else {
-      document.getElementById("profileText").textContent =
-        "Открыто в браузере (Safari/Chrome).\nTelegram user не найден — это нормально, если ты не внутри бота.";
+      empty.style.display = "none";
+      arr.forEach(p=>grid.appendChild(productCard(p)));
     }
-  }
 
-  // ==== 6) Supabase load ====
-  async function loadProducts(){
-    hideStatus();
+    function renderFav(){
+      const grid = document.getElementById("gridFav");
+      const empty = document.getElementById("emptyFav");
+      grid.innerHTML = "";
 
-    try{
-      const { data, error } = await supabase
+      const fav = getFav();
+      const arr = allProducts.filter(p=>fav.has(p.id));
+
+      if (!arr.length){
+        empty.style.display = "block";
+        empty.textContent = "Избранное пустое.";
+        return;
+      }
+      empty.style.display = "none";
+      arr.forEach(p=>grid.appendChild(productCard(p)));
+    }
+
+    function switchTab(tab){
+      document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));
+      document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));
+      document.querySelector(`.tab[data-tab="${tab}"]`)?.classList.add("active");
+
+      if (tab === "home") document.getElementById("screenHome").classList.add("active");
+      if (tab === "fav") document.getElementById("screenFav").classList.add("active");
+      if (tab === "cart") document.getElementById("screenCart").classList.add("active");
+      if (tab === "profile") document.getElementById("screenProfile").classList.add("active");
+
+      if (tab === "home") renderHome();
+      if (tab === "fav") renderFav();
+      if (tab === "profile") renderProfile();
+    }
+
+    // загрузка supabase библиотеки с fallback (если jsdelivr не доступен)
+    function loadSupabaseLib(){
+      return new Promise((resolve, reject)=>{
+        const tryLoad = (src, next)=>{
+          const s = document.createElement("script");
+          s.src = src;
+          s.onload = ()=> resolve();
+          s.onerror = ()=> next ? next() : reject(new Error("Не удалось загрузить supabase-js"));
+          document.head.appendChild(s);
+        };
+
+        dbg("Гружу supabase-js…");
+        tryLoad(
+          "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js",
+          ()=> tryLoad("https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.js")
+        );
+      });
+    }
+
+    async function loadProducts(){
+      dbg("Шаг: loadProducts()");
+
+      if (!window.supabase){
+        dbg("supabase-js НЕ загрузился (window.supabase пустой)", "bad");
+        return;
+      }
+
+      supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+      dbg("Supabase client: OK", "ok");
+
+      dbg("Запрос: select * from products …");
+      const { data, error } = await supabaseClient
         .from("products")
-        .select("id,name,price,description,image_url,category")
+        .select("*")
         .order("id", { ascending: true });
 
-      if (error) throw error;
-
-      products = (data || []).map(x => ({
-        id: x.id,
-        name: x.name,
-        price: x.price,
-        description: x.description,
-        image_url: x.image_url,
-        category: x.category
-      }));
-
-      if (!products.length){
-        showStatus("ok", "Товары из Supabase загрузились, но таблица пустая. Добавь строки в public.products.");
-      } else {
-        hideStatus();
+      if (error){
+        dbg("Supabase ERROR: " + error.message, "bad");
+        dbg("Подсказка: если RLS ON — сделай policy на SELECT или временно отключи RLS.", "bad");
+        return;
       }
 
-      renderChips();
-      applyFilters();
+      allProducts = Array.isArray(data) ? data : [];
+      dbg("Supabase OK. Товаров: " + allProducts.length, allProducts.length ? "ok" : "bad");
+
+      renderCategories();
+      renderHome();
       renderFav();
-      renderCart();
-
-    } catch (e){
-      // Очень важно: покажем ошибку прямо на экране
-      showStatus("error",
-`Не удалось загрузить товары из Supabase.
-
-Причина:
-${e?.message || e}
-
-ЧТО ДЕЛАТЬ:
-1) В Supabase открой Table Editor → products → (кнопка) Add RLS policy.
-2) Либо ВЫКЛЮЧИ RLS, либо добавь policy на SELECT для anon.
-
-Если хочешь — скинь скрин policy/RLS и я скажу что нажать.`);
-      products = [];
-      filtered = [];
-      renderChips();
-      renderGrid();
-      renderFav();
-      renderCart();
-    }
-  }
-
-  // ==== 7) Events (делегирование — чтобы кнопки всегда работали) ====
-  document.addEventListener("click", (e) => {
-    const btn = e.target.closest("[data-action]");
-    if (!btn) return;
-
-    const action = btn.dataset.action;
-    const card = btn.closest("[data-id]");
-    const id = card ? Number(card.dataset.id) : null;
-
-    if (action === "toggleFav" && id){
-      if (favSet.has(id)) favSet.delete(id); else favSet.add(id);
-      saveFav(favSet);
-      applyFilters();
-      renderFav();
-      return;
+      updateBadges();
     }
 
-    if (action === "addCart" && id){
-      cart[id] = (cart[id] || 0) + 1;
-      saveCart(cart);
-      renderCart();
-      return;
-    }
+    document.addEventListener("DOMContentLoaded", async ()=>{
+      dbg("DOM loaded ✅", "ok");
 
-    if (action === "buyNow" && id){
-      cart[id] = (cart[id] || 0) + 1;
-      saveCart(cart);
-      renderCart();
-      switchTab("cart");
+      initTelegram();
+      renderProfile();
 
-      const tg = window.Telegram?.WebApp;
-      tg?.HapticFeedback?.impactOccurred?.("medium");
-      return;
-    }
+      document.getElementById("search").addEventListener("input", (e)=>{
+        searchQuery = (e.target.value || "").trim();
+        renderHome();
+      });
 
-    if (action === "incQty" && id){
-      cart[id] = (cart[id] || 0) + 1;
-      saveCart(cart);
-      renderCart();
-      return;
-    }
-    if (action === "decQty" && id){
-      cart[id] = Math.max(1, (cart[id] || 1) - 1);
-      saveCart(cart);
-      renderCart();
-      return;
-    }
-    if (action === "removeCart" && id){
-      delete cart[id];
-      saveCart(cart);
-      renderCart();
-      return;
-    }
+      document.querySelectorAll(".tab").forEach(t=>{
+        t.addEventListener("click", ()=> switchTab(t.dataset.tab));
+      });
 
-    if (action === "setCategory"){
-      activeCategory = btn.dataset.cat || "Все";
-      renderChips();
-      applyFilters();
-      return;
-    }
-  });
+      document.getElementById("orderBtn").onclick = ()=> alert("Кнопка 'Заказ' кликается ✅");
 
-  elSearch.addEventListener("input", () => applyFilters());
+      updateBadges();
 
-  document.getElementById("sortBtn").addEventListener("click", () => {
-    // круговая смена режима сортировки
-    sortMode = (sortMode === "default") ? "priceAsc" : (sortMode === "priceAsc" ? "priceDesc" : "default");
-    const txt = sortMode === "default" ? "Сортировка: по умолчанию"
-              : sortMode === "priceAsc" ? "Сортировка: цена ↑"
-              : "Сортировка: цена ↓";
-    showStatus("ok", txt);
-    setTimeout(hideStatus, 1200);
-    applyFilters();
-  });
-
-  document.getElementById("orderBtn").addEventListener("click", () => {
-    switchTab("cart");
-  });
-
-  document.getElementById("checkoutBtn").addEventListener("click", () => {
-    const ids = Object.keys(cart);
-    if (!ids.length){
-      showStatus("error", "Корзина пустая — добавь товары и попробуй снова.");
-      return;
-    }
-
-    // Простая "заявка" — в Telegram можно отправлять данные боту через tg.sendData
-    const order = ids.map(id => ({ id: Number(id), qty: cart[id] }));
-    const payload = JSON.stringify({ order, ts: Date.now() });
-
-    const tg = window.Telegram?.WebApp;
-    if (tg?.sendData){
-      tg.sendData(payload);
-      showStatus("ok", "Заявка отправлена в бота ✅");
-    } else {
-      showStatus("ok", "Открыто не в Telegram. Вот данные заказа:\n" + payload);
-    }
-  });
-
-  document.getElementById("resetLocalBtn").addEventListener("click", () => {
-    localStorage.removeItem(LS_FAV);
-    localStorage.removeItem(LS_CART);
-    favSet = loadFav();
-    cart = loadCart();
-    applyFilters();
-    renderFav();
-    renderCart();
-    showStatus("ok", "Сброшено ✅");
-    setTimeout(hideStatus, 1200);
-  });
-
-  // Tabs
-  function switchTab(tab){
-    document.querySelectorAll(".tab").forEach(t => t.classList.toggle("active", t.dataset.tab === tab));
-    document.getElementById("screenHome").classList.toggle("hide", tab !== "home");
-    document.getElementById("screenFav").classList.toggle("hide", tab !== "fav");
-    document.getElementById("screenCart").classList.toggle("hide", tab !== "cart");
-    document.getElementById("screenProfile").classList.toggle("hide", tab !== "profile");
-
-    if (tab === "fav") renderFav();
-    if (tab === "cart") renderCart();
-    if (tab === "profile") renderProfile();
-  }
-  document.querySelectorAll(".tab").forEach(btn => {
-    btn.addEventListener("click", () => switchTab(btn.dataset.tab));
-  });
-
-  // ==== init ====
-  (async function init(){
-    initTelegram();
-    renderProfile();
-    await loadProducts();
-  })();
-</script>
+      try{
+        await loadSupabaseLib();
+        dbg("supabase-js загружен ✅", "ok");
+        await loadProducts();
+      }catch(e){
+        dbg("LOAD ERROR: " + e.message, "bad");
+      }
+    });
+  </script>
 </body>
 </html>
