@@ -1,830 +1,710 @@
 <!doctype html>
 <html lang="ru">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-  <title>NutriLab Store</title>
-
-  <!-- Supabase (ВАЖНО: правильный домен jsdelivr!) -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>NutriLab Health Store</title>
 
   <!-- Telegram WebApp (не обязательно, но полезно) -->
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
+  <!-- Supabase JS v2 -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
   <style>
     :root{
-      --bg1:#071018;
-      --bg2:#03151e;
-      --card:#0b2230;
-      --card2:#0d2a3a;
-      --text:#eaf6ff;
-      --muted:#9fc0d3;
-      --accent:#2ee59d;
-      --accent2:#1cc7ff;
-      --danger:#ff5d5d;
+      --bg:#07161a;
+      --card:#0b2730;
+      --card2:#0a1f25;
+      --text:#e7f7f6;
+      --muted:#94b7b6;
+      --accent:#2fe6b7;
+      --accent2:#1fb08d;
+      --danger:#ff5a6a;
       --shadow: 0 12px 30px rgba(0,0,0,.35);
       --radius:18px;
     }
     *{box-sizing:border-box}
     body{
       margin:0;
-      font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Inter,Arial,sans-serif;
+      font-family: -apple-system, system-ui, Segoe UI, Roboto, Arial, sans-serif;
+      background: radial-gradient(1200px 800px at 30% -20%, rgba(47,230,183,.22), transparent 55%),
+                  radial-gradient(900px 700px at 100% 0%, rgba(31,176,141,.20), transparent 55%),
+                  linear-gradient(180deg, #061318, #061216);
       color:var(--text);
-      background: radial-gradient(1200px 600px at 30% 0%, rgba(46,229,157,.12), transparent 60%),
-                  radial-gradient(900px 500px at 90% 10%, rgba(28,199,255,.10), transparent 55%),
-                  linear-gradient(180deg, var(--bg1), var(--bg2));
       min-height:100vh;
-      padding-bottom: 92px; /* место под нижнее меню */
     }
-
+    .wrap{
+      max-width: 820px;
+      margin: 0 auto;
+      padding: 18px 16px 110px;
+    }
     .topbar{
-      position: sticky;
-      top: 0;
-      z-index: 50;
-      padding: 14px 14px 12px 14px;
-      backdrop-filter: blur(10px);
-      background: rgba(2,12,18,.55);
-      border-bottom: 1px solid rgba(255,255,255,.08);
-    }
-    .brandRow{
       display:flex;
+      gap:12px;
       align-items:center;
-      gap:10px;
+      justify-content:space-between;
+      margin-top: 8px;
+      margin-bottom: 14px;
+    }
+    .brand{
+      display:flex; align-items:center; gap:12px;
+      min-width:0;
     }
     .logo{
-      width:42px;height:42px;border-radius:14px;
-      background: linear-gradient(135deg, rgba(46,229,157,.9), rgba(28,199,255,.75));
+      width:44px; height:44px; border-radius:14px;
+      background: linear-gradient(135deg, rgba(47,230,183,.95), rgba(31,176,141,.55));
       box-shadow: var(--shadow);
       flex:0 0 auto;
     }
-    .brandTitle{
-      line-height:1.05;
-      font-weight:800;
-      font-size:16px;
-      letter-spacing:.2px;
+    .brandtxt{min-width:0}
+    .brandtxt .name{font-weight:800; letter-spacing:.2px; font-size:18px; line-height:1.05}
+    .brandtxt .sub{color:var(--muted); font-size:12px; margin-top:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+
+    .actions{display:flex; gap:10px; align-items:center}
+    .btn{
+      border:none;
+      padding: 10px 12px;
+      border-radius: 14px;
+      background: rgba(255,255,255,.06);
+      color: var(--text);
+      font-weight:700;
+      display:flex; gap:8px; align-items:center;
     }
-    .brandSub{
-      margin-top:3px;
-      color:var(--muted);
-      font-size:12px;
-      font-weight:600;
-      opacity:.9;
+    .btn.accent{
+      background: linear-gradient(135deg, rgba(47,230,183,.95), rgba(31,176,141,.75));
+      color:#052016;
     }
-    .topActions{
-      margin-top:12px;
-      display:flex;
-      gap:10px;
-      align-items:center;
+    .btn:active{transform: translateY(1px)}
+
+    .searchRow{
+      display:flex; gap:10px; align-items:center;
+      margin: 12px 0 14px;
     }
     .search{
       flex:1;
-      display:flex;
-      align-items:center;
-      gap:8px;
-      padding: 10px 12px;
-      border-radius: 16px;
       background: rgba(255,255,255,.06);
       border: 1px solid rgba(255,255,255,.10);
-    }
-    .search input{
-      width:100%;
-      background:transparent;
-      border:0;
-      outline:none;
-      color:var(--text);
-      font-size:14px;
-    }
-    .pillBtn{
-      display:flex;
-      align-items:center;
-      gap:8px;
-      padding: 10px 12px;
       border-radius: 16px;
-      background: rgba(46,229,157,.12);
-      border: 1px solid rgba(46,229,157,.22);
+      padding: 12px 14px;
       color: var(--text);
-      font-weight:700;
-      cursor:pointer;
-      user-select:none;
-      white-space:nowrap;
+      outline:none;
+      font-size: 15px;
     }
-    .pillBtn:active{transform: translateY(1px)}
-    .tabs{
-      display:flex;
-      gap:8px;
-      margin-top:12px;
-      overflow:auto;
-      padding-bottom:2px;
-      scrollbar-width:none;
+    .chipRow{
+      display:flex; gap:10px; flex-wrap:wrap;
+      margin-bottom: 14px;
     }
-    .tabs::-webkit-scrollbar{display:none}
-    .tabChip{
-      padding: 8px 12px;
-      border-radius: 999px;
+    .chip{
+      padding: 10px 12px;
+      border-radius: 14px;
       background: rgba(255,255,255,.06);
       border: 1px solid rgba(255,255,255,.10);
-      color: var(--muted);
+      color: var(--text);
       font-weight:800;
-      font-size:13px;
-      cursor:pointer;
-      user-select:none;
-      white-space:nowrap;
+      font-size: 13px;
     }
-    .tabChip.active{
-      color:#052018;
-      background: linear-gradient(135deg, rgba(46,229,157,.95), rgba(28,199,255,.75));
-      border-color: transparent;
-    }
-
-    .container{
-      padding: 14px;
-      max-width: 980px;
-      margin: 0 auto;
+    .chip.active{
+      background: rgba(47,230,183,.18);
+      border-color: rgba(47,230,183,.35);
+      color: #cffff3;
     }
 
     .grid{
       display:grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 12px;
-      margin-top: 14px;
     }
     @media (min-width: 720px){
-      .grid{ grid-template-columns: repeat(3, minmax(0, 1fr)); }
+      .grid{grid-template-columns: repeat(3, minmax(0, 1fr));}
     }
 
     .card{
       background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
       border: 1px solid rgba(255,255,255,.10);
       border-radius: var(--radius);
+      padding: 12px;
       box-shadow: var(--shadow);
       overflow:hidden;
-      position:relative;
     }
-    .imgBox{
-      height: 150px;
-      background: rgba(0,0,0,.22);
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      position:relative;
-    }
-    .imgBox img{
+    .img{
       width:100%;
-      height:100%;
-      object-fit:cover;
+      aspect-ratio: 1 / 1;
+      border-radius: 16px;
+      background: rgba(0,0,0,.18);
+      overflow:hidden;
+      display:flex; align-items:center; justify-content:center;
+      border: 1px solid rgba(255,255,255,.08);
+    }
+    .img img{
+      width:100%; height:100%;
+      object-fit: cover;
       display:block;
     }
-    .favBtn{
+    .fav{
       position:absolute;
-      top:10px;
-      right:10px;
-      width:40px;height:40px;border-radius:14px;
-      border: 1px solid rgba(255,255,255,.18);
-      background: rgba(0,0,0,.35);
-      color:#fff;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      cursor:pointer;
-      user-select:none;
-      font-size:18px;
+      top:10px; right:10px;
+      width:38px; height:38px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.25);
+      color: white;
+      display:flex; align-items:center; justify-content:center;
+      font-size: 18px;
       backdrop-filter: blur(8px);
     }
-    .favBtn.active{
-      background: rgba(255,60,120,.22);
-      border-color: rgba(255,60,120,.35);
-    }
+    .fav.on{ background: rgba(255,90,106,.18); border-color: rgba(255,90,106,.35); }
+    .meta{margin-top:10px}
+    .title{font-weight:900; font-size:14px; line-height:1.2; margin: 0 0 6px}
+    .desc{color:var(--muted); font-size:12px; line-height:1.25; min-height: 30px}
+    .row{display:flex; align-items:center; justify-content:space-between; margin-top:10px; gap:10px}
+    .price{font-weight:1000; font-size:18px; letter-spacing:.2px}
+    .small{color:var(--muted); font-size:12px}
 
-    .cardBody{
-      padding: 12px 12px 12px 12px;
-    }
-    .title{
-      font-weight:900;
-      font-size:14px;
-      margin:0 0 6px 0;
-      letter-spacing:.2px;
-    }
-    .desc{
-      margin:0 0 10px 0;
-      color: var(--muted);
-      font-size:12px;
-      line-height:1.35;
-      min-height: 32px;
-      opacity:.95;
-    }
-    .row{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:10px;
-    }
-    .price{
-      font-weight:1000;
-      font-size:16px;
-      letter-spacing:.2px;
-      white-space:nowrap;
-    }
-    .btnRow{
-      display:flex;
-      gap:8px;
-      margin-top: 10px;
-    }
-    .btn{
+    .cardBtns{display:flex; gap:8px; margin-top:10px}
+    .cardBtns .btn2{
       flex:1;
       padding: 10px 10px;
       border-radius: 14px;
-      border: 1px solid rgba(255,255,255,.12);
+      border: none;
+      font-weight:900;
       background: rgba(255,255,255,.06);
       color: var(--text);
-      font-weight:900;
-      cursor:pointer;
-      user-select:none;
-      text-align:center;
-    }
-    .btn.primary{
-      background: rgba(46,229,157,.18);
-      border-color: rgba(46,229,157,.26);
-    }
-    .btn:active{transform: translateY(1px)}
-
-    .empty{
-      margin: 22px 0 0 0;
-      padding: 16px;
-      border-radius: var(--radius);
-      background: rgba(255,255,255,.05);
-      border: 1px solid rgba(255,255,255,.09);
-      color: var(--muted);
-    }
-
-    /* Нижняя навигация */
-    .bottomNav{
-      position: fixed;
-      left: 0; right: 0; bottom: 0;
-      padding: 10px 12px 14px 12px;
-      background: rgba(2,12,18,.72);
-      border-top: 1px solid rgba(255,255,255,.10);
-      backdrop-filter: blur(10px);
-      z-index: 60;
-    }
-    .navRow{
-      max-width: 980px;
-      margin: 0 auto;
-      display:grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 10px;
-    }
-    .navBtn{
-      padding: 12px 10px;
-      border-radius: 16px;
-      background: rgba(255,255,255,.06);
       border: 1px solid rgba(255,255,255,.10);
-      color: var(--muted);
-      font-weight: 900;
-      text-align:center;
-      cursor:pointer;
-      user-select:none;
     }
-    .navBtn.active{
-      color:#052018;
-      background: linear-gradient(135deg, rgba(46,229,157,.95), rgba(28,199,255,.75));
-      border-color: transparent;
+    .cardBtns .btn2.buy{
+      background: linear-gradient(135deg, rgba(47,230,183,.95), rgba(31,176,141,.75));
+      color:#052016;
+      border: none;
     }
 
-    /* Debug */
-    #__debug{
-      position: fixed;
-      left: 12px; right: 12px; bottom: 110px;
-      z-index: 999999;
-      display:none;
-      background: rgba(0,0,0,.85);
-      border: 1px solid rgba(255,255,255,.14);
-      color:#fff;
-      border-radius: 14px;
-      padding: 10px 12px;
-      font: 12px/1.35 -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Arial;
-      max-height: 40vh;
-      overflow:auto;
+    .panel{
+      background: rgba(0,0,0,.20);
+      border: 1px solid rgba(255,255,255,.10);
+      border-radius: var(--radius);
+      padding: 14px;
+      box-shadow: var(--shadow);
+    }
+    .panel h3{margin:0 0 8px; font-size: 16px}
+    .panel p{margin:6px 0; color: var(--muted); font-size: 13px; line-height:1.35}
+
+    .errorBox{
+      margin: 12px 0;
+      background: rgba(255,90,106,.12);
+      border: 1px solid rgba(255,90,106,.30);
+      color: #ffd7dc;
+      padding: 12px;
+      border-radius: 16px;
+      font-size: 13px;
       white-space: pre-wrap;
     }
-    #__debug b{display:block;margin-bottom:6px}
+    .okBox{
+      margin: 12px 0;
+      background: rgba(47,230,183,.10);
+      border: 1px solid rgba(47,230,183,.28);
+      color: #d7fff4;
+      padding: 12px;
+      border-radius: 16px;
+      font-size: 13px;
+      white-space: pre-wrap;
+    }
+
+    .bottomNav{
+      position: fixed;
+      left:0; right:0; bottom:0;
+      padding: 10px 12px calc(10px + env(safe-area-inset-bottom));
+      background: rgba(6,18,22,.92);
+      border-top: 1px solid rgba(255,255,255,.10);
+      backdrop-filter: blur(12px);
+    }
+    .tabs{
+      max-width: 820px;
+      margin: 0 auto;
+      display:flex; gap:10px;
+    }
+    .tab{
+      flex:1;
+      padding: 12px 10px;
+      border-radius: 18px;
+      text-align:center;
+      font-weight:1000;
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.10);
+      color: var(--text);
+    }
+    .tab.active{
+      background: linear-gradient(135deg, rgba(47,230,183,.95), rgba(31,176,141,.75));
+      color:#052016;
+      border:none;
+    }
+
+    .hide{display:none !important}
   </style>
 </head>
 
 <body>
-  <div class="topbar">
-    <div class="brandRow">
-      <div class="logo"></div>
-      <div>
-        <div class="brandTitle">NutriLab Health</div>
-        <div class="brandSub">Premium Supplements</div>
-      </div>
-    </div>
-
-    <div class="topActions">
-      <div class="search">
-        <span>🔎</span>
-        <input id="searchInput" placeholder="Поиск товара..." />
-      </div>
-      <div class="pillBtn" id="orderBtn">✉️ Заказ</div>
-    </div>
-
-    <div class="tabs" id="categoryTabs"></div>
-  </div>
-
-  <div class="container">
-    <div id="screen-home" class="screen">
-      <div id="productsGrid" class="grid"></div>
-      <div id="homeEmpty" class="empty" style="display:none;"></div>
-    </div>
-
-    <div id="screen-fav" class="screen" style="display:none;">
-      <h3 style="margin:10px 0 6px 0;">Избранное</h3>
-      <div id="favGrid" class="grid"></div>
-      <div id="favEmpty" class="empty" style="display:none;"></div>
-    </div>
-
-    <div id="screen-cart" class="screen" style="display:none;">
-      <h3 style="margin:10px 0 6px 0;">Корзина</h3>
-      <div id="cartList"></div>
-      <div id="cartEmpty" class="empty" style="display:none;"></div>
-
-      <div style="margin-top:12px;display:flex;gap:10px;align-items:center;">
-        <div style="flex:1;font-weight:1000;">Итого: <span id="cartTotal">0</span> ₽</div>
-        <div class="btn primary" id="checkoutBtn" style="flex:1;">✅ Оформить</div>
-      </div>
-    </div>
-
-    <div id="screen-profile" class="screen" style="display:none;">
-      <h3 style="margin:10px 0 6px 0;">Профиль</h3>
-      <div class="empty">
-        <div style="font-weight:900;margin-bottom:6px;">Данные пользователя</div>
-        <div id="profileText" style="color:var(--muted)"></div>
-      </div>
-
-      <div class="empty" style="margin-top:12px;">
-        <div style="display:flex;gap:10px;flex-wrap:wrap;">
-          <div class="btn" id="clearFavBtn">🧹 Очистить избранное</div>
-          <div class="btn" id="clearCartBtn">🧹 Очистить корзину</div>
-          <div class="btn" id="reloadBtn">🔄 Обновить товары</div>
+  <div class="wrap">
+    <div class="topbar">
+      <div class="brand">
+        <div class="logo"></div>
+        <div class="brandtxt">
+          <div class="name">NutriLab Health</div>
+          <div class="sub">Premium Supplements</div>
         </div>
+      </div>
+
+      <div class="actions">
+        <button class="btn" id="sortBtn">⇅</button>
+        <button class="btn accent" id="orderBtn">✉️ Заказ</button>
+      </div>
+    </div>
+
+    <div class="searchRow">
+      <input class="search" id="searchInput" placeholder="🔎  Поиск товара..." />
+    </div>
+
+    <div class="chipRow" id="chips"></div>
+
+    <div id="statusBox" class="hide"></div>
+
+    <!-- Screens -->
+    <div id="screenHome">
+      <div class="grid" id="grid"></div>
+    </div>
+
+    <div id="screenFav" class="hide">
+      <div class="panel">
+        <h3>❤️ Избранное</h3>
+        <p>Здесь будут товары, которые ты добавил(а) в избранное.</p>
+      </div>
+      <div style="height:12px"></div>
+      <div class="grid" id="gridFav"></div>
+    </div>
+
+    <div id="screenCart" class="hide">
+      <div class="panel">
+        <h3>🛒 Корзина</h3>
+        <p id="cartSummary"></p>
+        <button class="btn accent" id="checkoutBtn">✅ Оформить</button>
+      </div>
+      <div style="height:12px"></div>
+      <div class="grid" id="gridCart"></div>
+    </div>
+
+    <div id="screenProfile" class="hide">
+      <div class="panel">
+        <h3>👤 Профиль</h3>
+        <p id="profileText">Загрузка…</p>
+        <button class="btn" id="resetLocalBtn" style="margin-top:10px">Сбросить избранное/корзину</button>
       </div>
     </div>
   </div>
 
   <div class="bottomNav">
-    <div class="navRow">
-      <div class="navBtn active" data-screen="home">🏠 Главная</div>
-      <div class="navBtn" data-screen="fav">❤️ Избранное</div>
-      <div class="navBtn" data-screen="cart">🛒 Корзина</div>
-      <div class="navBtn" data-screen="profile">👤 Профиль</div>
+    <div class="tabs">
+      <button class="tab active" data-tab="home">🏠 Главная</button>
+      <button class="tab" data-tab="fav">❤️ Избранное</button>
+      <button class="tab" data-tab="cart">🛒 Корзина</button>
+      <button class="tab" data-tab="profile">👤 Профиль</button>
     </div>
   </div>
 
-  <div id="__debug"><b>DEBUG</b><div id="__debug_text"></div></div>
-
 <script>
-  /***********************
-   * 0) DEBUG (ошибки на экране)
-   ***********************/
-  function debug(msg){
-    const box = document.getElementById('__debug');
-    const text = document.getElementById('__debug_text');
-    box.style.display = 'block';
-    text.textContent += (text.textContent ? "\n\n" : "") + String(msg);
-  }
-  window.addEventListener('error', e => debug("JS error: " + (e.message || e.error)));
-  window.addEventListener('unhandledrejection', e => debug("Promise error: " + (e.reason?.message || e.reason)));
-
-  /***********************
-   * 1) SUPABASE CONFIG (твой URL и publishable key)
-   ***********************/
+  // ==== 1) Supabase config (твой проект) ====
   const SUPABASE_URL = "https://cthfqhxnplyibdsjzcrq.supabase.co";
   const SUPABASE_KEY = "sb_publishable_AjGX1zKhV8kEyGMbvAKwQg_srda-oyI";
 
-  let supabase;
-  try {
-    supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-  } catch (e) {
-    debug("Supabase не загрузился. Проверь, что скрипт jsdelivr правильный.\n" + e.message);
+  const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+  // ==== 2) Storage helpers ====
+  const LS_FAV = "nl_fav_ids";
+  const LS_CART = "nl_cart"; // {id: qty}
+
+  function loadFav(){
+    try { return new Set(JSON.parse(localStorage.getItem(LS_FAV) || "[]")); }
+    catch { return new Set(); }
+  }
+  function saveFav(set){
+    localStorage.setItem(LS_FAV, JSON.stringify([...set]));
   }
 
-  /***********************
-   * 2) STATE
-   ***********************/
-  const state = {
-    products: [],
-    filtered: [],
-    categories: ["Все"],
-    selectedCategory: "Все",
-    search: "",
-    fav: new Set(),
-    cart: new Map(), // id -> qty
-  };
-
-  const LS_FAV = "nutrilab_fav_v1";
-  const LS_CART = "nutrilab_cart_v1";
-
-  function rub(n){
-    const x = Number(n || 0);
-    return isFinite(x) ? Math.round(x).toLocaleString('ru-RU') : "0";
+  function loadCart(){
+    try { return JSON.parse(localStorage.getItem(LS_CART) || "{}"); }
+    catch { return {}; }
+  }
+  function saveCart(obj){
+    localStorage.setItem(LS_CART, JSON.stringify(obj));
   }
 
-  function safeText(v){
-    return (v === null || v === undefined) ? "" : String(v);
+  // ==== 3) State ====
+  let products = [];
+  let filtered = [];
+  let favSet = loadFav();
+  let cart = loadCart();
+  let activeCategory = "Все";
+  let sortMode = "default"; // default | priceAsc | priceDesc
+
+  const elGrid = document.getElementById("grid");
+  const elGridFav = document.getElementById("gridFav");
+  const elGridCart = document.getElementById("gridCart");
+  const elChips = document.getElementById("chips");
+  const elSearch = document.getElementById("searchInput");
+  const elStatus = document.getElementById("statusBox");
+  const elCartSummary = document.getElementById("cartSummary");
+
+  // ==== 4) UI helpers ====
+  function showStatus(type, text){
+    elStatus.className = "";
+    elStatus.classList.add(type === "error" ? "errorBox" : "okBox");
+    elStatus.textContent = text;
+  }
+  function hideStatus(){
+    elStatus.className = "hide";
+    elStatus.textContent = "";
   }
 
-  function loadStorage(){
-    try {
-      const favArr = JSON.parse(localStorage.getItem(LS_FAV) || "[]");
-      state.fav = new Set(favArr.map(Number));
-    } catch {}
-    try {
-      const cartObj = JSON.parse(localStorage.getItem(LS_CART) || "{}");
-      state.cart = new Map(Object.entries(cartObj).map(([k,v]) => [Number(k), Number(v)]));
-    } catch {}
+  function money(v){
+    if (v === null || v === undefined || v === "") return "";
+    const n = Number(v);
+    if (!Number.isFinite(n)) return String(v);
+    return n.toLocaleString("ru-RU") + " ₽";
   }
 
-  function saveStorage(){
-    localStorage.setItem(LS_FAV, JSON.stringify([...state.fav]));
-    const cartObj = {};
-    for (const [id, qty] of state.cart.entries()) cartObj[id] = qty;
-    localStorage.setItem(LS_CART, JSON.stringify(cartObj));
-  }
-
-  /***********************
-   * 3) TELEGRAM
-   ***********************/
-  const tg = window.Telegram?.WebApp;
-  function initTelegram(){
-    try{
-      if (!tg) return;
-      tg.ready();
-      tg.expand();
-      // Можно включить тему/цвета — пока не трогаем.
-    }catch(e){
-      debug("Telegram init error: " + e.message);
-    }
-  }
-
-  /***********************
-   * 4) LOAD PRODUCTS FROM SUPABASE
-   ***********************/
-  async function loadProducts(){
-    if (!supabase) return;
-    debug("Загрузка товаров из Supabase...");
-
-    // Пытаемся выбрать поля, даже если каких-то нет — Supabase вернет ошибку только если поля реально отсутствуют.
-    // Поэтому делаем select("*") и уже в JS вытаскиваем нужное.
-    const { data, error } = await supabase
-      .from("products")
-      .select("*")
-      .order("id", { ascending: true });
-
-    if (error){
-      debug("Ошибка Supabase:\n" + error.message + "\n\nЧастая причина: RLS без policy на SELECT.");
-      return;
-    }
-
-    state.products = Array.isArray(data) ? data : [];
-    debug("Товаров в базе: " + state.products.length);
-
-    // категории
-    const cats = new Set(["Все"]);
-    for (const p of state.products){
-      if (p.category) cats.add(String(p.category));
-    }
-    state.categories = [...cats];
-    state.selectedCategory = "Все";
-
-    applyFilters();
-    renderCategories();
-    renderHome();
-    renderFav();
-    renderCart();
-  }
-
-  function applyFilters(){
-    const q = state.search.trim().toLowerCase();
-    state.filtered = state.products.filter(p => {
-      const name = safeText(p.name).toLowerCase();
-      const desc = safeText(p.description).toLowerCase();
-      const cat = safeText(p.category);
-
-      const okCat = state.selectedCategory === "Все" ? true : (cat === state.selectedCategory);
-      const okSearch = !q ? true : (name.includes(q) || desc.includes(q));
-      return okCat && okSearch;
-    });
-  }
-
-  /***********************
-   * 5) UI RENDER
-   ***********************/
-  const elTabs = document.getElementById('categoryTabs');
-  const elSearch = document.getElementById('searchInput');
-
-  const elHomeGrid = document.getElementById('productsGrid');
-  const elHomeEmpty = document.getElementById('homeEmpty');
-
-  const elFavGrid = document.getElementById('favGrid');
-  const elFavEmpty = document.getElementById('favEmpty');
-
-  const elCartList = document.getElementById('cartList');
-  const elCartEmpty = document.getElementById('cartEmpty');
-  const elCartTotal = document.getElementById('cartTotal');
-
-  function renderCategories(){
-    elTabs.innerHTML = "";
-    for (const c of state.categories){
-      const chip = document.createElement('div');
-      chip.className = "tabChip" + (c === state.selectedCategory ? " active" : "");
-      chip.textContent = c;
-      chip.onclick = () => {
-        state.selectedCategory = c;
-        applyFilters();
-        renderCategories();
-        renderHome();
-      };
-      elTabs.appendChild(chip);
-    }
-  }
+  function safeText(x){ return (x ?? "").toString(); }
 
   function productCard(p){
-    const id = Number(p.id);
-    const name = safeText(p.name) || "Без названия";
-    const description = safeText(p.description) || "Описание скоро появится";
-    const price = p.price ?? 0;
+    const id = p.id;
+    const isFav = favSet.has(id);
+    const img = p.image_url ? safeText(p.image_url) : "https://via.placeholder.com/600x600?text=NutriLab";
+    const desc = safeText(p.description || "");
+    const price = p.price;
 
-    // Если image_url пустой — подставляем плейсхолдер
-    const img = safeText(p.image_url) || "https://via.placeholder.com/600x400?text=NutriLab";
+    return `
+      <div class="card" data-id="${id}">
+        <div style="position:relative">
+          <div class="img">
+            <img src="${img}" alt="${safeText(p.name)}" onerror="this.src='https://via.placeholder.com/600x600?text=No+Image'">
+          </div>
+          <button class="fav ${isFav ? "on" : ""}" data-action="toggleFav" title="Избранное">${isFav ? "❤️" : "🤍"}</button>
+        </div>
 
-    const card = document.createElement('div');
-    card.className = "card";
+        <div class="meta">
+          <div class="title">${safeText(p.name)}</div>
+          <div class="desc">${desc ? desc : "<span class='small'>Описание не добавлено</span>"}</div>
 
-    const imgBox = document.createElement('div');
-    imgBox.className = "imgBox";
-    imgBox.innerHTML = `<img src="${img}" alt="${name}" loading="lazy" onerror="this.src='https://via.placeholder.com/600x400?text=No+Image'">`;
+          <div class="row">
+            <div class="price">${money(price)}</div>
+            <div class="small">id: ${id}</div>
+          </div>
 
-    const favBtn = document.createElement('div');
-    favBtn.className = "favBtn" + (state.fav.has(id) ? " active" : "");
-    favBtn.textContent = state.fav.has(id) ? "❤️" : "🤍";
-    favBtn.onclick = (e) => {
-      e.stopPropagation();
-      toggleFav(id);
-      favBtn.className = "favBtn" + (state.fav.has(id) ? " active" : "");
-      favBtn.textContent = state.fav.has(id) ? "❤️" : "🤍";
-    };
-    imgBox.appendChild(favBtn);
-
-    const body = document.createElement('div');
-    body.className = "cardBody";
-    body.innerHTML = `
-      <div class="title">${name}</div>
-      <div class="desc">${description}</div>
-      <div class="row">
-        <div class="price">${rub(price)} ₽</div>
-        <div style="color:var(--muted);font-weight:800;font-size:12px">${safeText(p.category || "")}</div>
+          <div class="cardBtns">
+            <button class="btn2" data-action="addCart">🛒 В корзину</button>
+            <button class="btn2 buy" data-action="buyNow">✅ Купить</button>
+          </div>
+        </div>
       </div>
     `;
-
-    const btnRow = document.createElement('div');
-    btnRow.className = "btnRow";
-
-    const toCart = document.createElement('div');
-    toCart.className = "btn primary";
-    toCart.textContent = "🛒 В корзину";
-    toCart.onclick = () => addToCart(id, 1);
-
-    const buy = document.createElement('div');
-    buy.className = "btn";
-    buy.textContent = "✅ Купить";
-    buy.onclick = () => {
-      addToCart(id, 1);
-      switchScreen("cart");
-    };
-
-    btnRow.appendChild(toCart);
-    btnRow.appendChild(buy);
-    body.appendChild(btnRow);
-
-    card.appendChild(imgBox);
-    card.appendChild(body);
-    return card;
   }
 
-  function renderHome(){
-    elHomeGrid.innerHTML = "";
-    if (!state.filtered.length){
-      elHomeEmpty.style.display = "block";
-      elHomeEmpty.textContent = "Товары не найдены. Проверь поиск/категорию или добавь товары в Supabase.";
-      return;
-    }
-    elHomeEmpty.style.display = "none";
-    for (const p of state.filtered){
-      elHomeGrid.appendChild(productCard(p));
-    }
+  function renderGrid(){
+    elGrid.innerHTML = filtered.map(productCard).join("") || `
+      <div class="panel" style="grid-column:1/-1">
+        <h3>Пока пусто</h3>
+        <p>Не нашли товары по фильтру/поиску. Попробуй снять фильтр или добавить товары в Supabase.</p>
+      </div>
+    `;
   }
 
   function renderFav(){
-    const favProducts = state.products.filter(p => state.fav.has(Number(p.id)));
-    elFavGrid.innerHTML = "";
-    if (!favProducts.length){
-      elFavEmpty.style.display = "block";
-      elFavEmpty.textContent = "В избранном пока пусто. Нажми ❤️ на товаре.";
-      return;
-    }
-    elFavEmpty.style.display = "none";
-    for (const p of favProducts){
-      elFavGrid.appendChild(productCard(p));
-    }
+    const favProducts = products.filter(p => favSet.has(p.id));
+    elGridFav.innerHTML = favProducts.map(productCard).join("") || `
+      <div class="panel" style="grid-column:1/-1">
+        <h3>Пока пусто</h3>
+        <p>Нажми ❤️ на товаре, и он появится здесь.</p>
+      </div>
+    `;
   }
 
   function renderCart(){
-    const items = [];
-    for (const [id, qty] of state.cart.entries()){
-      const p = state.products.find(x => Number(x.id) === id);
-      if (p) items.push({ p, qty });
-    }
-
-    elCartList.innerHTML = "";
-    if (!items.length){
-      elCartEmpty.style.display = "block";
-      elCartEmpty.textContent = "Корзина пуста. Добавь товары на главной.";
-      elCartTotal.textContent = "0";
-      return;
-    }
-    elCartEmpty.style.display = "none";
+    const ids = Object.keys(cart).map(Number);
+    const cartProducts = products.filter(p => ids.includes(p.id));
 
     let total = 0;
-
-    for (const {p, qty} of items){
-      const id = Number(p.id);
-      const price = Number(p.price || 0);
+    for (const p of cartProducts){
+      const qty = cart[p.id] || 0;
+      const price = Number(p.price) || 0;
       total += price * qty;
+    }
 
-      const row = document.createElement('div');
-      row.className = "empty";
-      row.style.display = "flex";
-      row.style.alignItems = "center";
-      row.style.justifyContent = "space-between";
-      row.style.gap = "10px";
+    elCartSummary.textContent = ids.length
+      ? `Товаров: ${ids.length} • Сумма: ${money(total)}`
+      : "Корзина пустая. Добавь товары на главной.";
 
-      row.innerHTML = `
-        <div style="flex:1">
-          <div style="font-weight:1000">${safeText(p.name)}</div>
-          <div style="color:var(--muted);margin-top:2px">${rub(price)} ₽ × ${qty}</div>
-        </div>
-        <div style="display:flex;gap:8px;align-items:center;">
-          <div class="btn" style="padding:10px 12px" data-dec>−</div>
-          <div style="min-width:22px;text-align:center;font-weight:1000">${qty}</div>
-          <div class="btn primary" style="padding:10px 12px" data-inc>+</div>
-          <div class="btn" style="padding:10px 12px;border-color:rgba(255,93,93,.35);background:rgba(255,93,93,.10)" data-del>🗑</div>
+    elGridCart.innerHTML = cartProducts.map(p => {
+      const qty = cart[p.id] || 1;
+      return `
+        <div class="card" data-id="${p.id}">
+          <div class="title">${safeText(p.name)}</div>
+          <div class="row">
+            <div class="price">${money(p.price)}</div>
+            <div class="small">x ${qty}</div>
+          </div>
+          <div class="cardBtns">
+            <button class="btn2" data-action="decQty">➖</button>
+            <button class="btn2" data-action="incQty">➕</button>
+            <button class="btn2" data-action="removeCart">🗑️</button>
+          </div>
         </div>
       `;
+    }).join("") || `
+      <div class="panel" style="grid-column:1/-1">
+        <h3>Корзина пустая</h3>
+        <p>Нажми “В корзину” на товаре.</p>
+      </div>
+    `;
+  }
 
-      row.querySelector('[data-dec]').onclick = () => addToCart(id, -1);
-      row.querySelector('[data-inc]').onclick = () => addToCart(id, +1);
-      row.querySelector('[data-del]').onclick = () => removeFromCart(id);
-
-      elCartList.appendChild(row);
+  function renderChips(){
+    // Категории берём из поля category, если его нет — только "Все"
+    const cats = new Set(["Все"]);
+    for (const p of products){
+      if (p.category) cats.add(String(p.category));
     }
 
-    elCartTotal.textContent = rub(total);
+    elChips.innerHTML = [...cats].map(c => `
+      <button class="chip ${c === activeCategory ? "active": ""}" data-action="setCategory" data-cat="${c}">
+        ${c}
+      </button>
+    `).join("");
   }
 
-  /***********************
-   * 6) ACTIONS
-   ***********************/
-  function toggleFav(id){
-    if (state.fav.has(id)) state.fav.delete(id);
-    else state.fav.add(id);
-    saveStorage();
-    renderFav();
-  }
+  function applyFilters(){
+    const q = elSearch.value.trim().toLowerCase();
 
-  function addToCart(id, delta){
-    const cur = Number(state.cart.get(id) || 0);
-    const next = cur + delta;
-    if (next <= 0) state.cart.delete(id);
-    else state.cart.set(id, next);
-    saveStorage();
-    renderCart();
-  }
-
-  function removeFromCart(id){
-    state.cart.delete(id);
-    saveStorage();
-    renderCart();
-  }
-
-  /***********************
-   * 7) NAV + SCREEN SWITCH
-   ***********************/
-  const screens = {
-    home: document.getElementById('screen-home'),
-    fav: document.getElementById('screen-fav'),
-    cart: document.getElementById('screen-cart'),
-    profile: document.getElementById('screen-profile'),
-  };
-
-  function switchScreen(name){
-    for (const k of Object.keys(screens)){
-      screens[k].style.display = (k === name) ? "block" : "none";
-    }
-    document.querySelectorAll('.navBtn').forEach(btn => {
-      btn.classList.toggle('active', btn.dataset.screen === name);
+    filtered = products.filter(p => {
+      const matchCat = (activeCategory === "Все") ? true : String(p.category || "") === activeCategory;
+      const text = (safeText(p.name) + " " + safeText(p.description)).toLowerCase();
+      const matchSearch = q ? text.includes(q) : true;
+      return matchCat && matchSearch;
     });
-    if (name === "fav") renderFav();
-    if (name === "cart") renderCart();
+
+    if (sortMode === "priceAsc") filtered.sort((a,b) => (Number(a.price)||0) - (Number(b.price)||0));
+    if (sortMode === "priceDesc") filtered.sort((a,b) => (Number(b.price)||0) - (Number(a.price)||0));
+
+    renderGrid();
   }
 
-  document.querySelectorAll('.navBtn').forEach(btn => {
-    btn.onclick = () => switchScreen(btn.dataset.screen);
-  });
-
-  /***********************
-   * 8) PROFILE / BUTTONS
-   ***********************/
-  document.getElementById('clearFavBtn').onclick = () => {
-    state.fav.clear();
-    saveStorage();
-    renderFav();
-  };
-  document.getElementById('clearCartBtn').onclick = () => {
-    state.cart.clear();
-    saveStorage();
-    renderCart();
-  };
-  document.getElementById('reloadBtn').onclick = () => loadProducts();
-
-  document.getElementById('checkoutBtn').onclick = () => {
-    // Тут можно отправлять заказ в Telegram/бота — пока просто показываем состав
-    const lines = [];
-    let total = 0;
-
-    for (const [id, qty] of state.cart.entries()){
-      const p = state.products.find(x => Number(x.id) === id);
-      if (!p) continue;
-      const price = Number(p.price || 0);
-      total += price * qty;
-      lines.push(`${safeText(p.name)} × ${qty} = ${rub(price*qty)} ₽`);
-    }
-    lines.push(`Итого: ${rub(total)} ₽`);
-
-    const msg = "Заказ:\n" + lines.join("\n");
-
-    if (tg) {
-      // В Телеграме можно отправить данные боту через tg.sendData
-      tg.sendData(JSON.stringify({ type: "order", text: msg, total }));
-      tg.showAlert("Заказ отправлен в бота ✅");
-    } else {
-      alert(msg);
-    }
-  };
-
-  document.getElementById('orderBtn').onclick = () => switchScreen("cart");
-
-  /***********************
-   * 9) SEARCH
-   ***********************/
-  elSearch.addEventListener('input', () => {
-    state.search = elSearch.value || "";
-    applyFilters();
-    renderHome();
-  });
-
-  /***********************
-   * 10) INIT
-   ***********************/
-  function renderProfile(){
-    const info = [];
-    if (tg){
-      const u = tg.initDataUnsafe?.user;
-      if (u){
-        info.push(`Имя: ${u.first_name || ""} ${u.last_name || ""}`.trim());
-        if (u.username) info.push(`Username: @${u.username}`);
-        info.push(`ID: ${u.id}`);
-      } else {
-        info.push("Открыто в Telegram WebApp, но user-данных нет.");
+  // ==== 5) Telegram init ====
+  function initTelegram(){
+    try{
+      const tg = window.Telegram?.WebApp;
+      if (tg){
+        tg.ready();
+        tg.expand();
       }
-      info.push("Среда: Telegram");
-    } else {
-      info.push("Среда: Safari/Browser");
-    }
-    document.getElementById('profileText').textContent = info.join("\n");
+    }catch(e){}
   }
 
+  function renderProfile(){
+    const tg = window.Telegram?.WebApp;
+    if (tg?.initDataUnsafe?.user){
+      const u = tg.initDataUnsafe.user;
+      const name = `${u.first_name || ""} ${u.last_name || ""}`.trim();
+      document.getElementById("profileText").textContent =
+        `Открыто в Telegram WebApp\nИмя: ${name || "-"}\nUsername: ${u.username || "-"}\nID: ${u.id || "-"}`;
+    } else {
+      document.getElementById("profileText").textContent =
+        "Открыто в браузере (Safari/Chrome).\nTelegram user не найден — это нормально, если ты не внутри бота.";
+    }
+  }
+
+  // ==== 6) Supabase load ====
+  async function loadProducts(){
+    hideStatus();
+
+    try{
+      const { data, error } = await supabase
+        .from("products")
+        .select("id,name,price,description,image_url,category")
+        .order("id", { ascending: true });
+
+      if (error) throw error;
+
+      products = (data || []).map(x => ({
+        id: x.id,
+        name: x.name,
+        price: x.price,
+        description: x.description,
+        image_url: x.image_url,
+        category: x.category
+      }));
+
+      if (!products.length){
+        showStatus("ok", "Товары из Supabase загрузились, но таблица пустая. Добавь строки в public.products.");
+      } else {
+        hideStatus();
+      }
+
+      renderChips();
+      applyFilters();
+      renderFav();
+      renderCart();
+
+    } catch (e){
+      // Очень важно: покажем ошибку прямо на экране
+      showStatus("error",
+`Не удалось загрузить товары из Supabase.
+
+Причина:
+${e?.message || e}
+
+ЧТО ДЕЛАТЬ:
+1) В Supabase открой Table Editor → products → (кнопка) Add RLS policy.
+2) Либо ВЫКЛЮЧИ RLS, либо добавь policy на SELECT для anon.
+
+Если хочешь — скинь скрин policy/RLS и я скажу что нажать.`);
+      products = [];
+      filtered = [];
+      renderChips();
+      renderGrid();
+      renderFav();
+      renderCart();
+    }
+  }
+
+  // ==== 7) Events (делегирование — чтобы кнопки всегда работали) ====
+  document.addEventListener("click", (e) => {
+    const btn = e.target.closest("[data-action]");
+    if (!btn) return;
+
+    const action = btn.dataset.action;
+    const card = btn.closest("[data-id]");
+    const id = card ? Number(card.dataset.id) : null;
+
+    if (action === "toggleFav" && id){
+      if (favSet.has(id)) favSet.delete(id); else favSet.add(id);
+      saveFav(favSet);
+      applyFilters();
+      renderFav();
+      return;
+    }
+
+    if (action === "addCart" && id){
+      cart[id] = (cart[id] || 0) + 1;
+      saveCart(cart);
+      renderCart();
+      return;
+    }
+
+    if (action === "buyNow" && id){
+      cart[id] = (cart[id] || 0) + 1;
+      saveCart(cart);
+      renderCart();
+      switchTab("cart");
+
+      const tg = window.Telegram?.WebApp;
+      tg?.HapticFeedback?.impactOccurred?.("medium");
+      return;
+    }
+
+    if (action === "incQty" && id){
+      cart[id] = (cart[id] || 0) + 1;
+      saveCart(cart);
+      renderCart();
+      return;
+    }
+    if (action === "decQty" && id){
+      cart[id] = Math.max(1, (cart[id] || 1) - 1);
+      saveCart(cart);
+      renderCart();
+      return;
+    }
+    if (action === "removeCart" && id){
+      delete cart[id];
+      saveCart(cart);
+      renderCart();
+      return;
+    }
+
+    if (action === "setCategory"){
+      activeCategory = btn.dataset.cat || "Все";
+      renderChips();
+      applyFilters();
+      return;
+    }
+  });
+
+  elSearch.addEventListener("input", () => applyFilters());
+
+  document.getElementById("sortBtn").addEventListener("click", () => {
+    // круговая смена режима сортировки
+    sortMode = (sortMode === "default") ? "priceAsc" : (sortMode === "priceAsc" ? "priceDesc" : "default");
+    const txt = sortMode === "default" ? "Сортировка: по умолчанию"
+              : sortMode === "priceAsc" ? "Сортировка: цена ↑"
+              : "Сортировка: цена ↓";
+    showStatus("ok", txt);
+    setTimeout(hideStatus, 1200);
+    applyFilters();
+  });
+
+  document.getElementById("orderBtn").addEventListener("click", () => {
+    switchTab("cart");
+  });
+
+  document.getElementById("checkoutBtn").addEventListener("click", () => {
+    const ids = Object.keys(cart);
+    if (!ids.length){
+      showStatus("error", "Корзина пустая — добавь товары и попробуй снова.");
+      return;
+    }
+
+    // Простая "заявка" — в Telegram можно отправлять данные боту через tg.sendData
+    const order = ids.map(id => ({ id: Number(id), qty: cart[id] }));
+    const payload = JSON.stringify({ order, ts: Date.now() });
+
+    const tg = window.Telegram?.WebApp;
+    if (tg?.sendData){
+      tg.sendData(payload);
+      showStatus("ok", "Заявка отправлена в бота ✅");
+    } else {
+      showStatus("ok", "Открыто не в Telegram. Вот данные заказа:\n" + payload);
+    }
+  });
+
+  document.getElementById("resetLocalBtn").addEventListener("click", () => {
+    localStorage.removeItem(LS_FAV);
+    localStorage.removeItem(LS_CART);
+    favSet = loadFav();
+    cart = loadCart();
+    applyFilters();
+    renderFav();
+    renderCart();
+    showStatus("ok", "Сброшено ✅");
+    setTimeout(hideStatus, 1200);
+  });
+
+  // Tabs
+  function switchTab(tab){
+    document.querySelectorAll(".tab").forEach(t => t.classList.toggle("active", t.dataset.tab === tab));
+    document.getElementById("screenHome").classList.toggle("hide", tab !== "home");
+    document.getElementById("screenFav").classList.toggle("hide", tab !== "fav");
+    document.getElementById("screenCart").classList.toggle("hide", tab !== "cart");
+    document.getElementById("screenProfile").classList.toggle("hide", tab !== "profile");
+
+    if (tab === "fav") renderFav();
+    if (tab === "cart") renderCart();
+    if (tab === "profile") renderProfile();
+  }
+  document.querySelectorAll(".tab").forEach(btn => {
+    btn.addEventListener("click", () => switchTab(btn.dataset.tab));
+  });
+
+  // ==== init ====
   (async function init(){
     initTelegram();
-    loadStorage();
     renderProfile();
-    renderCategories();
-    applyFilters();
-    renderHome();
-    renderFav();
-    renderCart();
     await loadProducts();
   })();
 </script>
-
 </body>
 </html>
