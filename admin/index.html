@@ -1,1 +1,145 @@
-Admin panel
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <title>NutriLab Admin</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #0f172a;
+      color: white;
+    }
+
+    header {
+      padding: 20px;
+      font-size: 22px;
+      font-weight: bold;
+      background: #111827;
+    }
+
+    .container {
+      padding: 20px;
+    }
+
+    .card {
+      background: #1e293b;
+      padding: 20px;
+      border-radius: 12px;
+      margin-bottom: 15px;
+    }
+
+    input {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 10px;
+      border-radius: 8px;
+      border: none;
+    }
+
+    button {
+      padding: 10px 15px;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .add-btn {
+      background: #22c55e;
+      color: white;
+    }
+
+    .delete-btn {
+      background: #ef4444;
+      color: white;
+      float: right;
+    }
+
+    .product {
+      background: #1e293b;
+      padding: 15px;
+      border-radius: 10px;
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+<body>
+
+<header>NutriLab Admin Panel</header>
+
+<div class="container">
+
+  <div class="card">
+    <h3>Добавить товар</h3>
+    <input id="name" placeholder="Название" />
+    <input id="price" type="number" placeholder="Цена" />
+    <input id="description" placeholder="Описание" />
+    <input id="photo" placeholder="Telegram file_id фото" />
+    <button class="add-btn" onclick="addProduct()">Добавить</button>
+  </div>
+
+  <h3>Все товары</h3>
+  <div id="products"></div>
+
+</div>
+
+<script>
+  const supabaseUrl = "https://cthfqhxnplyibdsjzcrq.supabase.co";
+  const supabaseKey = "sb_publishable_AjGX1zKhV8kEyGMbvAKwQg_srda-oyI";
+
+  const { createClient } = supabase;
+  const client = createClient(supabaseUrl, supabaseKey);
+
+  async function loadProducts() {
+    const { data } = await client.from("products").select("*").order("id", { ascending: false });
+
+    const container = document.getElementById("products");
+    container.innerHTML = "";
+
+    data.forEach(p => {
+      container.innerHTML += `
+        <div class="product">
+          <strong>${p.name}</strong> — ${p.price} ₽
+          <button class="delete-btn" onclick="deleteProduct(${p.id})">Удалить</button>
+          <p>${p.description}</p>
+          <small>photo_id: ${p.photo}</small>
+        </div>
+      `;
+    });
+  }
+
+  async function addProduct() {
+    const name = document.getElementById("name").value;
+    const price = document.getElementById("price").value;
+    const description = document.getElementById("description").value;
+    const photo = document.getElementById("photo").value;
+
+    if (!name || !price) {
+      alert("Заполни название и цену");
+      return;
+    }
+
+    await client.from("products").insert([
+      { name, price, description, photo }
+    ]);
+
+    document.getElementById("name").value = "";
+    document.getElementById("price").value = "";
+    document.getElementById("description").value = "";
+    document.getElementById("photo").value = "";
+
+    loadProducts();
+  }
+
+  async function deleteProduct(id) {
+    await client.from("products").delete().eq("id", id);
+    loadProducts();
+  }
+
+  loadProducts();
+</script>
+
+</body>
+</html>
