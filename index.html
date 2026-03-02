@@ -5,1018 +5,825 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
   <title>NutriLab Store</title>
 
-  <!-- Supabase JS (CDN) -->
+  <!-- Supabase (ВАЖНО: правильный домен jsdelivr!) -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <!-- Telegram WebApp (не обязательно, но полезно) -->
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
   <style>
     :root{
-      --bg:#0B0F12;
-      --panel:#0F161B;
-      --panel2:#111B22;
-      --line:rgba(255,255,255,.08);
-      --text:rgba(255,255,255,.92);
-      --muted:rgba(255,255,255,.62);
-      --muted2:rgba(255,255,255,.45);
-      --accent:#18B38A;   /* сине-зелёный */
-      --accent2:#0D7E62;  /* тёмнее */
-      --danger:#E05252;
-      --ok:#2BD67B;
-      --shadow: 0 14px 40px rgba(0,0,0,.55);
+      --bg1:#071018;
+      --bg2:#03151e;
+      --card:#0b2230;
+      --card2:#0d2a3a;
+      --text:#eaf6ff;
+      --muted:#9fc0d3;
+      --accent:#2ee59d;
+      --accent2:#1cc7ff;
+      --danger:#ff5d5d;
+      --shadow: 0 12px 30px rgba(0,0,0,.35);
       --radius:18px;
-      --radius2:14px;
-      --tap: 44px;
-      --max: 980px;
-      --font: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,system-ui,sans-serif;
     }
     *{box-sizing:border-box}
-    html,body{height:100%}
     body{
       margin:0;
-      font-family:var(--font);
-      background: radial-gradient(1200px 900px at 20% -10%, rgba(24,179,138,.18), transparent 50%),
-                  radial-gradient(1000px 800px at 95% 10%, rgba(17,116,104,.16), transparent 55%),
-                  var(--bg);
+      font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Inter,Arial,sans-serif;
       color:var(--text);
-    }
-    a{color:inherit}
-    .wrap{
-      max-width:var(--max);
-      margin:0 auto;
-      padding: 18px 14px calc(92px + env(safe-area-inset-bottom));
+      background: radial-gradient(1200px 600px at 30% 0%, rgba(46,229,157,.12), transparent 60%),
+                  radial-gradient(900px 500px at 90% 10%, rgba(28,199,255,.10), transparent 55%),
+                  linear-gradient(180deg, var(--bg1), var(--bg2));
+      min-height:100vh;
+      padding-bottom: 92px; /* место под нижнее меню */
     }
 
-    /* Top bar */
-    .top{
-      position:sticky; top:0;
-      z-index:10;
+    .topbar{
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      padding: 14px 14px 12px 14px;
       backdrop-filter: blur(10px);
-      background: linear-gradient(to bottom, rgba(11,15,18,.92), rgba(11,15,18,.55));
-      border-bottom: 1px solid var(--line);
+      background: rgba(2,12,18,.55);
+      border-bottom: 1px solid rgba(255,255,255,.08);
     }
-    .top-inner{
-      max-width:var(--max);
-      margin:0 auto;
-      padding: 14px 14px 12px;
-      display:flex; gap:12px; align-items:center; justify-content:space-between;
+    .brandRow{
+      display:flex;
+      align-items:center;
+      gap:10px;
     }
-    .brand{
-      display:flex; align-items:center; gap:10px;
-      min-width: 160px;
+    .logo{
+      width:42px;height:42px;border-radius:14px;
+      background: linear-gradient(135deg, rgba(46,229,157,.9), rgba(28,199,255,.75));
+      box-shadow: var(--shadow);
+      flex:0 0 auto;
     }
-    .mark{
-      width:34px; height:34px; border-radius:12px;
-      background: radial-gradient(10px 10px at 30% 30%, rgba(255,255,255,.25), transparent 60%),
-                  linear-gradient(135deg, rgba(24,179,138,1), rgba(13,126,98,1));
-      box-shadow: 0 10px 25px rgba(24,179,138,.25);
+    .brandTitle{
+      line-height:1.05;
+      font-weight:800;
+      font-size:16px;
+      letter-spacing:.2px;
     }
-    .brand-txt{line-height:1.05}
-    .brand-txt b{display:block; font-size:14px; letter-spacing:.2px}
-    .brand-txt span{display:block; font-size:12px; color:var(--muted)}
-
+    .brandSub{
+      margin-top:3px;
+      color:var(--muted);
+      font-size:12px;
+      font-weight:600;
+      opacity:.9;
+    }
+    .topActions{
+      margin-top:12px;
+      display:flex;
+      gap:10px;
+      align-items:center;
+    }
     .search{
       flex:1;
-      display:flex; align-items:center; gap:10px;
-      background: rgba(255,255,255,.04);
-      border:1px solid var(--line);
-      border-radius: 999px;
+      display:flex;
+      align-items:center;
+      gap:8px;
       padding: 10px 12px;
-      min-height: var(--tap);
+      border-radius: 16px;
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.10);
     }
     .search input{
       width:100%;
-      background: transparent;
-      border:none; outline:none;
+      background:transparent;
+      border:0;
+      outline:none;
       color:var(--text);
       font-size:14px;
     }
-    .chip{
-      display:inline-flex; align-items:center; gap:6px;
+    .pillBtn{
+      display:flex;
+      align-items:center;
+      gap:8px;
       padding: 10px 12px;
-      border-radius: 999px;
-      background: rgba(24,179,138,.10);
-      border: 1px solid rgba(24,179,138,.25);
-      color: rgba(255,255,255,.86);
-      font-size: 13px;
-      min-height: var(--tap);
-      white-space:nowrap;
-    }
-
-    /* Sections */
-    .section{
-      margin-top:14px;
-      background: rgba(255,255,255,.03);
-      border:1px solid var(--line);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      overflow:hidden;
-    }
-    .section-h{
-      padding: 14px 14px 12px;
-      display:flex; align-items:center; justify-content:space-between; gap:10px;
-      background: linear-gradient(to bottom, rgba(255,255,255,.03), transparent);
-      border-bottom: 1px solid var(--line);
-    }
-    .section-h .title{
-      font-size:14px;
-      letter-spacing:.2px;
-    }
-    .section-h .sub{
-      font-size:12px;
-      color:var(--muted);
-    }
-
-    .cats{
-      padding: 12px 12px 10px;
-      display:flex; gap:10px; flex-wrap:wrap;
-    }
-    .cat{
-      padding: 10px 12px;
-      border-radius: 999px;
-      background: rgba(255,255,255,.04);
-      border:1px solid var(--line);
-      font-size:13px;
-      color:rgba(255,255,255,.86);
+      border-radius: 16px;
+      background: rgba(46,229,157,.12);
+      border: 1px solid rgba(46,229,157,.22);
+      color: var(--text);
+      font-weight:700;
       cursor:pointer;
       user-select:none;
+      white-space:nowrap;
     }
-    .cat.active{
-      background: rgba(24,179,138,.14);
-      border-color: rgba(24,179,138,.35);
+    .pillBtn:active{transform: translateY(1px)}
+    .tabs{
+      display:flex;
+      gap:8px;
+      margin-top:12px;
+      overflow:auto;
+      padding-bottom:2px;
+      scrollbar-width:none;
+    }
+    .tabs::-webkit-scrollbar{display:none}
+    .tabChip{
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.10);
+      color: var(--muted);
+      font-weight:800;
+      font-size:13px;
+      cursor:pointer;
+      user-select:none;
+      white-space:nowrap;
+    }
+    .tabChip.active{
+      color:#052018;
+      background: linear-gradient(135deg, rgba(46,229,157,.95), rgba(28,199,255,.75));
+      border-color: transparent;
     }
 
-    /* Grid */
+    .container{
+      padding: 14px;
+      max-width: 980px;
+      margin: 0 auto;
+    }
+
     .grid{
-      padding: 12px;
       display:grid;
-      grid-template-columns: repeat(2, minmax(0,1fr));
+      grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 12px;
+      margin-top: 14px;
     }
     @media (min-width: 720px){
-      .grid{ grid-template-columns: repeat(3, minmax(0,1fr)); }
-    }
-    @media (min-width: 980px){
-      .grid{ grid-template-columns: repeat(4, minmax(0,1fr)); }
+      .grid{ grid-template-columns: repeat(3, minmax(0, 1fr)); }
     }
 
     .card{
-      background: rgba(255,255,255,.03);
-      border: 1px solid var(--line);
-      border-radius: var(--radius2);
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      border: 1px solid rgba(255,255,255,.10);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
       overflow:hidden;
-      display:flex; flex-direction:column;
-      min-height: 230px;
-    }
-    .img{
       position:relative;
-      aspect-ratio: 1/1;
-      background: linear-gradient(135deg, rgba(24,179,138,.18), rgba(255,255,255,.02));
     }
-    .img img{
-      width:100%; height:100%;
-      object-fit: cover;
-      display:block;
-      filter: saturate(1.02);
-    }
-    .badge{
-      position:absolute; left:10px; top:10px;
-      padding: 6px 10px;
-      border-radius: 999px;
-      font-size: 11px;
-      background: rgba(0,0,0,.35);
-      border: 1px solid rgba(255,255,255,.12);
-      backdrop-filter: blur(8px);
-      color: rgba(255,255,255,.85);
-    }
-    .favbtn{
-      position:absolute; right:10px; top:10px;
-      width:36px; height:36px;
-      border-radius: 999px;
-      border:1px solid rgba(255,255,255,.12);
-      background: rgba(0,0,0,.35);
-      backdrop-filter: blur(8px);
-      display:grid; place-items:center;
-      cursor:pointer;
-    }
-    .favbtn.active{
-      border-color: rgba(24,179,138,.45);
-      background: rgba(24,179,138,.18);
-    }
-    .body{
-      padding: 10px 10px 12px;
-      display:flex; flex-direction:column; gap:8px;
-      flex:1;
-    }
-    .name{
-      font-size: 13.5px;
-      line-height: 1.2;
-      letter-spacing: .1px;
-    }
-    .desc{
-      font-size: 12px;
-      color: var(--muted);
-      line-height: 1.25;
-      min-height: 28px;
-    }
-    .row{
-      display:flex; align-items:center; justify-content:space-between; gap:10px;
-      margin-top:auto;
-    }
-    .price{
-      font-weight: 700;
-      font-size: 13.5px;
-      color: rgba(255,255,255,.92);
-    }
-    .btn{
-      display:inline-flex;
+    .imgBox{
+      height: 150px;
+      background: rgba(0,0,0,.22);
+      display:flex;
       align-items:center;
       justify-content:center;
-      gap:8px;
-      padding: 10px 12px;
-      min-height: var(--tap);
-      border-radius: 12px;
-      border: 1px solid rgba(24,179,138,.35);
-      background: linear-gradient(135deg, rgba(24,179,138,.22), rgba(13,126,98,.12));
-      color: rgba(255,255,255,.92);
-      font-size: 13px;
+      position:relative;
+    }
+    .imgBox img{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      display:block;
+    }
+    .favBtn{
+      position:absolute;
+      top:10px;
+      right:10px;
+      width:40px;height:40px;border-radius:14px;
+      border: 1px solid rgba(255,255,255,.18);
+      background: rgba(0,0,0,.35);
+      color:#fff;
+      display:flex;
+      align-items:center;
+      justify-content:center;
       cursor:pointer;
       user-select:none;
+      font-size:18px;
+      backdrop-filter: blur(8px);
+    }
+    .favBtn.active{
+      background: rgba(255,60,120,.22);
+      border-color: rgba(255,60,120,.35);
+    }
+
+    .cardBody{
+      padding: 12px 12px 12px 12px;
+    }
+    .title{
+      font-weight:900;
+      font-size:14px;
+      margin:0 0 6px 0;
+      letter-spacing:.2px;
+    }
+    .desc{
+      margin:0 0 10px 0;
+      color: var(--muted);
+      font-size:12px;
+      line-height:1.35;
+      min-height: 32px;
+      opacity:.95;
+    }
+    .row{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+    }
+    .price{
+      font-weight:1000;
+      font-size:16px;
+      letter-spacing:.2px;
       white-space:nowrap;
     }
-    .btn.secondary{
-      background: rgba(255,255,255,.04);
-      border-color: var(--line);
-      color: rgba(255,255,255,.86);
+    .btnRow{
+      display:flex;
+      gap:8px;
+      margin-top: 10px;
     }
-    .btn.danger{
-      background: rgba(224,82,82,.12);
-      border-color: rgba(224,82,82,.35);
-    }
-
-    /* Empty */
-    .empty{
-      padding: 22px 14px;
-      color: var(--muted);
-      font-size: 13px;
-      line-height: 1.35;
-    }
-
-    /* Cart list */
-    .list{ padding: 10px 12px 14px; display:flex; flex-direction:column; gap:10px; }
-    .item{
-      display:flex; gap:10px;
-      background: rgba(255,255,255,.03);
-      border:1px solid var(--line);
-      border-radius: 14px;
-      padding: 10px;
-    }
-    .thumb{
-      width:64px; height:64px; border-radius: 14px;
-      background: rgba(255,255,255,.04);
-      overflow:hidden; flex: 0 0 auto;
-    }
-    .thumb img{width:100%;height:100%;object-fit:cover;display:block;}
-    .it-b{ flex:1; min-width:0; display:flex; flex-direction:column; gap:6px; }
-    .it-t{ display:flex; justify-content:space-between; gap:10px; align-items:flex-start; }
-    .it-name{ font-size: 13.5px; line-height:1.2; }
-    .it-price{ font-weight: 700; font-size: 13.5px; white-space:nowrap; }
-    .qty{
-      display:flex; align-items:center; gap:8px;
-      margin-top:2px;
-    }
-    .qbtn{
-      width:36px; height:36px;
-      border-radius: 12px;
-      border: 1px solid var(--line);
-      background: rgba(255,255,255,.04);
-      display:grid; place-items:center;
-      cursor:pointer;
-      user-select:none;
-    }
-    .qnum{ min-width:22px; text-align:center; font-weight:700; }
-    .it-actions{ display:flex; gap:10px; margin-top:4px; }
-    .link{
-      color: rgba(255,255,255,.78);
-      font-size: 12.5px;
-      text-decoration: underline;
-      cursor:pointer;
-      user-select:none;
-    }
-
-    /* Summary */
-    .summary{
-      padding: 12px 12px 14px;
-      border-top: 1px solid var(--line);
-      display:flex; flex-direction:column; gap:10px;
-      background: linear-gradient(to bottom, transparent, rgba(255,255,255,.02));
-    }
-    .sumrow{ display:flex; justify-content:space-between; gap:10px; color: var(--muted); font-size: 13px; }
-    .sumrow b{ color: rgba(255,255,255,.92); font-weight: 800; }
-    .cta{ display:flex; gap:10px; flex-wrap:wrap; }
-
-    /* Bottom nav */
-    .nav{
-      position:fixed;
-      left:0; right:0; bottom:0;
-      padding-bottom: env(safe-area-inset-bottom);
-      background: rgba(11,15,18,.78);
-      backdrop-filter: blur(12px);
-      border-top: 1px solid var(--line);
-      z-index: 20;
-    }
-    .nav-inner{
-      max-width:var(--max);
-      margin:0 auto;
-      padding: 10px 10px;
-      display:flex; gap:8px;
-    }
-    .tab{
+    .btn{
       flex:1;
-      min-height: 52px;
+      padding: 10px 10px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.06);
+      color: var(--text);
+      font-weight:900;
+      cursor:pointer;
+      user-select:none;
+      text-align:center;
+    }
+    .btn.primary{
+      background: rgba(46,229,157,.18);
+      border-color: rgba(46,229,157,.26);
+    }
+    .btn:active{transform: translateY(1px)}
+
+    .empty{
+      margin: 22px 0 0 0;
+      padding: 16px;
+      border-radius: var(--radius);
+      background: rgba(255,255,255,.05);
+      border: 1px solid rgba(255,255,255,.09);
+      color: var(--muted);
+    }
+
+    /* Нижняя навигация */
+    .bottomNav{
+      position: fixed;
+      left: 0; right: 0; bottom: 0;
+      padding: 10px 12px 14px 12px;
+      background: rgba(2,12,18,.72);
+      border-top: 1px solid rgba(255,255,255,.10);
+      backdrop-filter: blur(10px);
+      z-index: 60;
+    }
+    .navRow{
+      max-width: 980px;
+      margin: 0 auto;
+      display:grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+    }
+    .navBtn{
+      padding: 12px 10px;
       border-radius: 16px;
-      border:1px solid var(--line);
-      background: rgba(255,255,255,.04);
-      display:flex; align-items:center; justify-content:center; gap:8px;
-      font-size: 13px;
-      color: rgba(255,255,255,.84);
-      position:relative;
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.10);
+      color: var(--muted);
+      font-weight: 900;
+      text-align:center;
       cursor:pointer;
       user-select:none;
     }
-    .tab.active{
-      border-color: rgba(24,179,138,.35);
-      background: rgba(24,179,138,.12);
-    }
-    .bcount{
-      position:absolute;
-      top:7px; right:10px;
-      min-width: 18px;
-      height: 18px;
-      padding: 0 6px;
-      border-radius: 999px;
-      background: rgba(24,179,138,.9);
-      color: #06110E;
-      font-weight: 800;
-      font-size: 11px;
-      display:flex; align-items:center; justify-content:center;
+    .navBtn.active{
+      color:#052018;
+      background: linear-gradient(135deg, rgba(46,229,157,.95), rgba(28,199,255,.75));
+      border-color: transparent;
     }
 
-    /* Toast */
-    .toast{
-      position:fixed;
-      left:50%; transform:translateX(-50%);
-      bottom: 90px;
-      background: rgba(0,0,0,.55);
-      border:1px solid rgba(255,255,255,.12);
-      backdrop-filter: blur(10px);
-      color: rgba(255,255,255,.9);
+    /* Debug */
+    #__debug{
+      position: fixed;
+      left: 12px; right: 12px; bottom: 110px;
+      z-index: 999999;
+      display:none;
+      background: rgba(0,0,0,.85);
+      border: 1px solid rgba(255,255,255,.14);
+      color:#fff;
+      border-radius: 14px;
       padding: 10px 12px;
-      border-radius: 999px;
-      font-size: 13px;
-      opacity:0;
-      pointer-events:none;
-      transition: opacity .2s ease, transform .2s ease;
-      z-index: 50;
+      font: 12px/1.35 -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Arial;
+      max-height: 40vh;
+      overflow:auto;
+      white-space: pre-wrap;
     }
-    .toast.show{
-      opacity:1;
-      transform:translateX(-50%) translateY(-6px);
-    }
-
-    /* Small text blocks */
-    .info{
-      padding: 12px 12px 14px;
-      color: var(--muted);
-      font-size: 13px;
-      line-height: 1.45;
-    }
-    .info b{ color: rgba(255,255,255,.9); }
-    .hr{ height:1px; background: var(--line); margin: 10px 0; }
-    .mono{ font-family: ui-monospace,SFMono-Regular,Menlo,Monaco,"Courier New",monospace; font-size:12px; color: rgba(255,255,255,.78); }
-
+    #__debug b{display:block;margin-bottom:6px}
   </style>
 </head>
 
 <body>
-
-<div class="top">
-  <div class="top-inner">
-    <div class="brand" onclick="setView('home')">
-      <div class="mark"></div>
-      <div class="brand-txt">
-        <b>NutriLab Health</b>
-        <span>Premium Supplements</span>
+  <div class="topbar">
+    <div class="brandRow">
+      <div class="logo"></div>
+      <div>
+        <div class="brandTitle">NutriLab Health</div>
+        <div class="brandSub">Premium Supplements</div>
       </div>
     </div>
 
-    <div class="search" title="Поиск">
-      <span style="opacity:.7">🔎</span>
-      <input id="q" type="text" placeholder="Поиск товара..." autocomplete="off" />
+    <div class="topActions">
+      <div class="search">
+        <span>🔎</span>
+        <input id="searchInput" placeholder="Поиск товара..." />
+      </div>
+      <div class="pillBtn" id="orderBtn">✉️ Заказ</div>
     </div>
 
-    <div class="chip" onclick="openOrdersChat()" title="Заказ в Telegram">
-      ✉️ <span>Заказ</span>
+    <div class="tabs" id="categoryTabs"></div>
+  </div>
+
+  <div class="container">
+    <div id="screen-home" class="screen">
+      <div id="productsGrid" class="grid"></div>
+      <div id="homeEmpty" class="empty" style="display:none;"></div>
+    </div>
+
+    <div id="screen-fav" class="screen" style="display:none;">
+      <h3 style="margin:10px 0 6px 0;">Избранное</h3>
+      <div id="favGrid" class="grid"></div>
+      <div id="favEmpty" class="empty" style="display:none;"></div>
+    </div>
+
+    <div id="screen-cart" class="screen" style="display:none;">
+      <h3 style="margin:10px 0 6px 0;">Корзина</h3>
+      <div id="cartList"></div>
+      <div id="cartEmpty" class="empty" style="display:none;"></div>
+
+      <div style="margin-top:12px;display:flex;gap:10px;align-items:center;">
+        <div style="flex:1;font-weight:1000;">Итого: <span id="cartTotal">0</span> ₽</div>
+        <div class="btn primary" id="checkoutBtn" style="flex:1;">✅ Оформить</div>
+      </div>
+    </div>
+
+    <div id="screen-profile" class="screen" style="display:none;">
+      <h3 style="margin:10px 0 6px 0;">Профиль</h3>
+      <div class="empty">
+        <div style="font-weight:900;margin-bottom:6px;">Данные пользователя</div>
+        <div id="profileText" style="color:var(--muted)"></div>
+      </div>
+
+      <div class="empty" style="margin-top:12px;">
+        <div style="display:flex;gap:10px;flex-wrap:wrap;">
+          <div class="btn" id="clearFavBtn">🧹 Очистить избранное</div>
+          <div class="btn" id="clearCartBtn">🧹 Очистить корзину</div>
+          <div class="btn" id="reloadBtn">🔄 Обновить товары</div>
+        </div>
+      </div>
     </div>
   </div>
-</div>
 
-<div class="wrap" id="app"></div>
-
-<div class="nav">
-  <div class="nav-inner">
-    <div class="tab" id="tab-home" onclick="setView('home')">🏠 Главная</div>
-    <div class="tab" id="tab-fav" onclick="setView('fav')">❤️ Избранное <span class="bcount" id="b-fav" style="display:none"></span></div>
-    <div class="tab" id="tab-cart" onclick="setView('cart')">🛒 Корзина <span class="bcount" id="b-cart" style="display:none"></span></div>
-    <div class="tab" id="tab-prof" onclick="setView('profile')">👤 Профиль</div>
+  <div class="bottomNav">
+    <div class="navRow">
+      <div class="navBtn active" data-screen="home">🏠 Главная</div>
+      <div class="navBtn" data-screen="fav">❤️ Избранное</div>
+      <div class="navBtn" data-screen="cart">🛒 Корзина</div>
+      <div class="navBtn" data-screen="profile">👤 Профиль</div>
+    </div>
   </div>
-</div>
 
-<div class="toast" id="toast"></div>
+  <div id="__debug"><b>DEBUG</b><div id="__debug_text"></div></div>
 
 <script>
-/** =========================
- *  НАСТРОЙКИ (твои)
- *  ========================= */
-const ORDER_USERNAME = "nutrilabhealth"; // куда уходят заказы
-const SUPABASE_URL = "https://cthfqhxnplyibdsjzcrq.supabase.co";
-const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_AjGX1zKhV8kEyGMbvAKwQg_srda-oyI";
+  /***********************
+   * 0) DEBUG (ошибки на экране)
+   ***********************/
+  function debug(msg){
+    const box = document.getElementById('__debug');
+    const text = document.getElementById('__debug_text');
+    box.style.display = 'block';
+    text.textContent += (text.textContent ? "\n\n" : "") + String(msg);
+  }
+  window.addEventListener('error', e => debug("JS error: " + (e.message || e.error)));
+  window.addEventListener('unhandledrejection', e => debug("Promise error: " + (e.reason?.message || e.reason)));
 
-/** =========================
- *  ИНИЦИАЛИЗАЦИЯ
- *  ========================= */
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
+  /***********************
+   * 1) SUPABASE CONFIG (твой URL и publishable key)
+   ***********************/
+  const SUPABASE_URL = "https://cthfqhxnplyibdsjzcrq.supabase.co";
+  const SUPABASE_KEY = "sb_publishable_AjGX1zKhV8kEyGMbvAKwQg_srda-oyI";
 
-const LS_KEY = "nutrilab_store_state_v2";
-const state = loadState() || {
-  view: "home",
-  q: "",
-  category: "Все",
-  fav: [],               // array of product IDs (string)
-  cart: {},              // { [id]: qty }
-  products: [],          // loaded from Supabase
-  loaded: false,
-  lastError: null
-};
-
-const app = document.getElementById("app");
-const qInput = document.getElementById("q");
-
-qInput.addEventListener("input", () => {
-  state.q = qInput.value.trim();
-  saveState();
-  if (state.view !== "home") setView("home");
-  else render();
-});
-
-tryInitTelegram();
-
-(async function init(){
-  await loadProducts();
-  render();
-  updateBadges();
-})();
-
-/** =========================
- *  SUPABASE: загрузка товаров
- *  ========================= */
-async function loadProducts(){
-  state.loaded = false;
-  state.lastError = null;
-  render(); // покажем загрузку
-
-  const { data, error } = await supabase
-    .from("products")
-    .select("id,name,price,description,image_url")
-    .order("id", { ascending: true });
-
-  if (error) {
-    state.lastError = error.message || String(error);
-    state.products = [];
-    state.loaded = true;
-    saveState();
-    return;
+  let supabase;
+  try {
+    supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+  } catch (e) {
+    debug("Supabase не загрузился. Проверь, что скрипт jsdelivr правильный.\n" + e.message);
   }
 
-  // Приводим типы и гарантируем поля
-  state.products = (data || []).map(p => ({
-    id: String(p.id),
-    name: (p.name ?? "").toString(),
-    price: Number(p.price ?? 0),
-    description: (p.description ?? "").toString(),
-    image_url: (p.image_url ?? "").toString(),
-    category: "БАДы"
-  }));
+  /***********************
+   * 2) STATE
+   ***********************/
+  const state = {
+    products: [],
+    filtered: [],
+    categories: ["Все"],
+    selectedCategory: "Все",
+    search: "",
+    fav: new Set(),
+    cart: new Map(), // id -> qty
+  };
 
-  state.loaded = true;
-  saveState();
-}
+  const LS_FAV = "nutrilab_fav_v1";
+  const LS_CART = "nutrilab_cart_v1";
 
-/** =========================
- *  VIEW
- *  ========================= */
-function setView(v){
-  state.view = v;
-  saveState();
-  render();
-  updateBadges();
-  setTabs();
-  // легкий UX
-  window.scrollTo({ top: 0, behavior: "smooth" });
-}
-
-function setTabs(){
-  ["home","fav","cart","profile"].forEach(x=>{
-    const el = document.getElementById("tab-"+(x==="profile"?"prof":x));
-    if (!el) return;
-    el.classList.toggle("active", state.view === x);
-  });
-}
-setTabs();
-
-function render(){
-  setTabs();
-  qInput.value = state.q || "";
-
-  if (!state.loaded) {
-    app.innerHTML = `
-      <div class="section">
-        <div class="section-h">
-          <div>
-            <div class="title">Загрузка каталога…</div>
-            <div class="sub">Подключаемся к базе товаров</div>
-          </div>
-          <div class="chip" onclick="loadProducts().then(()=>{render();updateBadges();})">🔄 Обновить</div>
-        </div>
-        <div class="empty">Если долго грузится — проверь RLS в Supabase (доступ на чтение таблицы <b>products</b>).</div>
-      </div>
-    `;
-    return;
+  function rub(n){
+    const x = Number(n || 0);
+    return isFinite(x) ? Math.round(x).toLocaleString('ru-RU') : "0";
   }
 
-  if (state.lastError) {
-    app.innerHTML = `
-      <div class="section">
-        <div class="section-h">
-          <div>
-            <div class="title">Ошибка загрузки из Supabase</div>
-            <div class="sub">Чаще всего это RLS / Policies</div>
-          </div>
-          <div class="chip" onclick="loadProducts().then(()=>{render();updateBadges();})">🔄 Повторить</div>
-        </div>
-        <div class="info">
-          <div><b>Текст:</b> ${escapeHtml(state.lastError)}</div>
-          <div class="hr"></div>
-          <div><b>Что сделать в Supabase:</b></div>
-          <div>Table Editor → <b>products</b> → RLS/Policies → добавить политику на <b>SELECT</b> для Public/Anon (условие <span class="mono">true</span>).</div>
-        </div>
-      </div>
-    `;
-    return;
+  function safeText(v){
+    return (v === null || v === undefined) ? "" : String(v);
   }
 
-  if (state.view === "home") return renderHome();
-  if (state.view === "fav") return renderFav();
-  if (state.view === "cart") return renderCart();
-  if (state.view === "profile") return renderProfile();
-}
-
-/** =========================
- *  HOME
- *  ========================= */
-function renderHome(){
-  const cats = ["Все", "БАДы"];
-  const filtered = getFilteredProducts();
-
-  app.innerHTML = `
-    <div class="section">
-      <div class="section-h">
-        <div>
-          <div class="title">Каталог</div>
-          <div class="sub">Оригинальные витамины и нутриенты • Заказ в Telegram</div>
-        </div>
-        <div class="chip" onclick="loadProducts().then(()=>{toast('Каталог обновлён');render();updateBadges();})">🔄 Обновить</div>
-      </div>
-
-      <div class="cats">
-        ${cats.map(c => `<div class="cat ${state.category===c?'active':''}" onclick="setCategory('${c}')">${c}</div>`).join("")}
-      </div>
-
-      ${filtered.length ? `
-        <div class="grid">
-          ${filtered.map(p => productCard(p)).join("")}
-        </div>
-      ` : `
-        <div class="empty">
-          Ничего не найдено по запросу <b>${escapeHtml(state.q || "—")}</b>.<br/>
-          Попробуй другое название или очисти поиск.
-        </div>
-      `}
-    </div>
-  `;
-}
-
-function setCategory(c){
-  state.category = c;
-  saveState();
-  render();
-}
-
-/** =========================
- *  FAVORITES
- *  ========================= */
-function renderFav(){
-  const favSet = new Set(state.fav || []);
-  const items = state.products.filter(p => favSet.has(p.id));
-
-  app.innerHTML = `
-    <div class="section">
-      <div class="section-h">
-        <div>
-          <div class="title">Избранное</div>
-          <div class="sub">Товары, которые ты отметил</div>
-        </div>
-        ${items.length ? `<div class="chip" onclick="clearFav()">🧹 Очистить</div>` : `<div class="chip" onclick="setView('home')">🛍 В каталог</div>`}
-      </div>
-
-      ${items.length ? `
-        <div class="grid">
-          ${items.map(p => productCard(p)).join("")}
-        </div>
-      ` : `
-        <div class="empty">
-          Пока пусто. Добавляй товары в избранное сердечком ❤️
-        </div>
-      `}
-    </div>
-  `;
-}
-
-/** =========================
- *  CART
- *  ========================= */
-function renderCart(){
-  const ids = Object.keys(state.cart || {});
-  const items = ids.map(id => {
-    const p = state.products.find(x => x.id === id);
-    if (!p) return null;
-    return { p, qty: Number(state.cart[id] || 0) };
-  }).filter(Boolean).filter(x => x.qty > 0);
-
-  const total = items.reduce((s, x) => s + x.p.price * x.qty, 0);
-
-  app.innerHTML = `
-    <div class="section">
-      <div class="section-h">
-        <div>
-          <div class="title">Корзина</div>
-          <div class="sub">Количество, итог, оформление</div>
-        </div>
-        ${items.length ? `<div class="chip" onclick="clearCart()">🧹 Очистить</div>` : `<div class="chip" onclick="setView('home')">🛍 В каталог</div>`}
-      </div>
-
-      ${items.length ? `
-        <div class="list">
-          ${items.map(({p,qty}) => cartItem(p, qty)).join("")}
-        </div>
-
-        <div class="summary">
-          <div class="sumrow"><span>Позиций</span><b>${items.length}</b></div>
-          <div class="sumrow"><span>Итого</span><b>${formatPrice(total)} ₽</b></div>
-
-          <div class="cta">
-            <div class="btn" onclick="checkout()">✉️ Оформить в Telegram</div>
-            <div class="btn secondary" onclick="setView('home')">➕ Добавить ещё</div>
-          </div>
-
-          <div class="info" style="padding:0;color:var(--muted2)">
-            Отправка в день подтверждения оплаты • Доставка по РФ (СДЭК / Почта / маркетплейсы при необходимости)
-          </div>
-        </div>
-      ` : `
-        <div class="empty">
-          Корзина пустая.<br/>
-          Выбери товар в каталоге и нажми <b>В корзину</b>.
-        </div>
-      `}
-    </div>
-  `;
-}
-
-/** =========================
- *  PROFILE
- *  ========================= */
-function renderProfile(){
-  app.innerHTML = `
-    <div class="section">
-      <div class="section-h">
-        <div>
-          <div class="title">Профиль</div>
-          <div class="sub">Контакты, доставка, оплата</div>
-        </div>
-        <div class="chip" onclick="openOrdersChat()">✉️ Написать</div>
-      </div>
-
-      <div class="info">
-        <b>NutriLab Health</b> — оригинальные витамины и нутриенты от международных брендов.<br/>
-        Работаем с проверенными поставщиками. Продукция оригинальная.
-
-        <div class="hr"></div>
-
-        <b>📦 Отправка:</b> в день подтверждения оплаты<br/>
-        <b>📍 Доставка:</b> по всей России (СДЭК / Почта России / по запросу WB/Ozon)<br/>
-        <b>💳 Оплата:</b> на карту / удобным способом по согласованию
-
-        <div class="hr"></div>
-
-        <div class="cta">
-          <div class="btn" onclick="openOrdersChat()">Открыть чат @${escapeHtml(ORDER_USERNAME)}</div>
-          <div class="btn secondary" onclick="loadProducts().then(()=>{toast('Каталог обновлён');render();updateBadges();})">🔄 Обновить каталог</div>
-        </div>
-
-        <div class="hr"></div>
-
-        <div style="display:flex;gap:10px;flex-wrap:wrap">
-          <div class="btn secondary" onclick="clearFav()">Очистить избранное</div>
-          <div class="btn danger" onclick="clearCart()">Очистить корзину</div>
-        </div>
-
-        <div style="margin-top:10px;color:var(--muted2)">
-          Если что-то не отображается — проверь в Supabase таблицу <b>products</b> и ссылки на картинки в <b>image_url</b>.
-        </div>
-      </div>
-    </div>
-  `;
-}
-
-/** =========================
- *  UI builders
- *  ========================= */
-function productCard(p){
-  const isFav = (state.fav || []).includes(p.id);
-  const inCart = Number(state.cart?.[p.id] || 0);
-
-  const img = p.image_url || "https://via.placeholder.com/600x600?text=NutriLab";
-  const badge = p.category || "БАДы";
-
-  return `
-    <div class="card">
-      <div class="img">
-        <img src="${escapeAttr(img)}" alt="${escapeAttr(p.name)}" onerror="this.src='https://via.placeholder.com/600x600?text=NutriLab';" />
-        <div class="badge">${escapeHtml(badge)}</div>
-        <div class="favbtn ${isFav?'active':''}" onclick="toggleFav('${escapeJs(p.id)}')">
-          ${isFav ? '❤️' : '🤍'}
-        </div>
-      </div>
-      <div class="body">
-        <div class="name">${escapeHtml(p.name)}</div>
-        <div class="desc">${escapeHtml(trimText(p.description, 70))}</div>
-        <div class="row">
-          <div class="price">${formatPrice(p.price)} ₽</div>
-          <div class="btn ${inCart>0?'secondary':''}" onclick="addToCart('${escapeJs(p.id)}')">
-            ${inCart>0 ? `🛒 +1 (${inCart})` : '🛒 В корзину'}
-          </div>
-        </div>
-      </div>
-    </div>
-  `;
-}
-
-function cartItem(p, qty){
-  const img = p.image_url || "https://via.placeholder.com/600x600?text=NutriLab";
-  return `
-    <div class="item">
-      <div class="thumb">
-        <img src="${escapeAttr(img)}" alt="${escapeAttr(p.name)}" onerror="this.src='https://via.placeholder.com/600x600?text=NutriLab';" />
-      </div>
-      <div class="it-b">
-        <div class="it-t">
-          <div class="it-name">${escapeHtml(p.name)}</div>
-          <div class="it-price">${formatPrice(p.price * qty)} ₽</div>
-        </div>
-        <div class="qty">
-          <div class="qbtn" onclick="decQty('${escapeJs(p.id)}')">−</div>
-          <div class="qnum">${qty}</div>
-          <div class="qbtn" onclick="incQty('${escapeJs(p.id)}')">+</div>
-          <div style="margin-left:auto;color:var(--muted);font-size:12px">${formatPrice(p.price)} ₽/шт</div>
-        </div>
-        <div class="it-actions">
-          <span class="link" onclick="toggleFav('${escapeJs(p.id)}')">${(state.fav||[]).includes(p.id) ? 'Убрать из избранного' : 'В избранное'}</span>
-          <span class="link" style="color:rgba(224,82,82,.9)" onclick="removeFromCart('${escapeJs(p.id)}')">Удалить</span>
-        </div>
-      </div>
-    </div>
-  `;
-}
-
-/** =========================
- *  Logic: filter, fav, cart
- *  ========================= */
-function getFilteredProducts(){
-  const q = (state.q || "").toLowerCase();
-  const cat = state.category || "Все";
-
-  return (state.products || []).filter(p => {
-    const okCat = (cat === "Все") ? true : (p.category === cat);
-    const okQ = !q ? true : (
-      (p.name || "").toLowerCase().includes(q) ||
-      (p.description || "").toLowerCase().includes(q)
-    );
-    return okCat && okQ;
-  });
-}
-
-function toggleFav(id){
-  const fav = new Set(state.fav || []);
-  if (fav.has(id)) {
-    fav.delete(id);
-    toast("Убрано из избранного");
-  } else {
-    fav.add(id);
-    toast("Добавлено в избранное");
-  }
-  state.fav = Array.from(fav);
-  saveState();
-  render();
-  updateBadges();
-}
-
-function clearFav(){
-  state.fav = [];
-  saveState();
-  toast("Избранное очищено");
-  render();
-  updateBadges();
-}
-
-function addToCart(id){
-  const cur = Number(state.cart?.[id] || 0);
-  state.cart = state.cart || {};
-  state.cart[id] = cur + 1;
-  saveState();
-  toast("Добавлено в корзину");
-  updateBadges();
-  render();
-}
-
-function incQty(id){
-  addToCart(id);
-}
-function decQty(id){
-  const cur = Number(state.cart?.[id] || 0);
-  if (cur <= 1) return removeFromCart(id);
-  state.cart[id] = cur - 1;
-  saveState();
-  updateBadges();
-  render();
-}
-function removeFromCart(id){
-  if (!state.cart) return;
-  delete state.cart[id];
-  saveState();
-  toast("Удалено из корзины");
-  updateBadges();
-  render();
-}
-function clearCart(){
-  state.cart = {};
-  saveState();
-  toast("Корзина очищена");
-  updateBadges();
-  render();
-}
-
-function updateBadges(){
-  const favCount = (state.fav || []).length;
-  const cartCount = Object.values(state.cart || {}).reduce((s,n)=>s+Number(n||0),0);
-
-  const bf = document.getElementById("b-fav");
-  const bc = document.getElementById("b-cart");
-
-  if (favCount > 0) { bf.style.display="flex"; bf.textContent = String(favCount); }
-  else { bf.style.display="none"; }
-
-  if (cartCount > 0) { bc.style.display="flex"; bc.textContent = String(cartCount); }
-  else { bc.style.display="none"; }
-}
-
-/** =========================
- *  Checkout -> Telegram
- *  ========================= */
-function checkout(){
-  const ids = Object.keys(state.cart || {});
-  const lines = [];
-  let total = 0;
-
-  ids.forEach(id=>{
-    const qty = Number(state.cart[id] || 0);
-    if (qty <= 0) return;
-    const p = state.products.find(x=>x.id===id);
-    if (!p) return;
-    const sum = p.price * qty;
-    total += sum;
-    lines.push(`• ${p.name} ×${qty} — ${formatPrice(sum)} ₽`);
-  });
-
-  if (!lines.length){
-    toast("Корзина пустая");
-    return;
+  function loadStorage(){
+    try {
+      const favArr = JSON.parse(localStorage.getItem(LS_FAV) || "[]");
+      state.fav = new Set(favArr.map(Number));
+    } catch {}
+    try {
+      const cartObj = JSON.parse(localStorage.getItem(LS_CART) || "{}");
+      state.cart = new Map(Object.entries(cartObj).map(([k,v]) => [Number(k), Number(v)]));
+    } catch {}
   }
 
-  const msg =
-`Здравствуйте! Хочу оформить заказ:
+  function saveStorage(){
+    localStorage.setItem(LS_FAV, JSON.stringify([...state.fav]));
+    const cartObj = {};
+    for (const [id, qty] of state.cart.entries()) cartObj[id] = qty;
+    localStorage.setItem(LS_CART, JSON.stringify(cartObj));
+  }
 
-${lines.join("\n")}
+  /***********************
+   * 3) TELEGRAM
+   ***********************/
+  const tg = window.Telegram?.WebApp;
+  function initTelegram(){
+    try{
+      if (!tg) return;
+      tg.ready();
+      tg.expand();
+      // Можно включить тему/цвета — пока не трогаем.
+    }catch(e){
+      debug("Telegram init error: " + e.message);
+    }
+  }
 
-Итого: ${formatPrice(total)} ₽
+  /***********************
+   * 4) LOAD PRODUCTS FROM SUPABASE
+   ***********************/
+  async function loadProducts(){
+    if (!supabase) return;
+    debug("Загрузка товаров из Supabase...");
 
-ФИО:
-Город:
-Способ доставки:`;
+    // Пытаемся выбрать поля, даже если каких-то нет — Supabase вернет ошибку только если поля реально отсутствуют.
+    // Поэтому делаем select("*") и уже в JS вытаскиваем нужное.
+    const { data, error } = await supabase
+      .from("products")
+      .select("*")
+      .order("id", { ascending: true });
 
-  openTelegramText(msg);
-}
+    if (error){
+      debug("Ошибка Supabase:\n" + error.message + "\n\nЧастая причина: RLS без policy на SELECT.");
+      return;
+    }
 
-function openOrdersChat(){
-  openTelegramText("Здравствуйте! Хочу оформить заказ.");
-}
+    state.products = Array.isArray(data) ? data : [];
+    debug("Товаров в базе: " + state.products.length);
 
-function openTelegramText(text){
-  const url = `https://t.me/${ORDER_USERNAME}?text=${encodeURIComponent(text)}`;
-  // Если это Telegram WebApp — можно закрыть после открытия
-  window.open(url, "_blank");
-}
+    // категории
+    const cats = new Set(["Все"]);
+    for (const p of state.products){
+      if (p.category) cats.add(String(p.category));
+    }
+    state.categories = [...cats];
+    state.selectedCategory = "Все";
 
-/** =========================
- *  Helpers
- *  ========================= */
-function toast(t){
-  const el = document.getElementById("toast");
-  el.textContent = t;
-  el.classList.add("show");
-  clearTimeout(toast._t);
-  toast._t = setTimeout(()=> el.classList.remove("show"), 1400);
-}
+    applyFilters();
+    renderCategories();
+    renderHome();
+    renderFav();
+    renderCart();
+  }
 
-function formatPrice(n){
-  const x = Number(n || 0);
-  return x.toLocaleString("ru-RU");
-}
+  function applyFilters(){
+    const q = state.search.trim().toLowerCase();
+    state.filtered = state.products.filter(p => {
+      const name = safeText(p.name).toLowerCase();
+      const desc = safeText(p.description).toLowerCase();
+      const cat = safeText(p.category);
 
-function trimText(s, n){
-  s = (s || "").toString().trim();
-  if (!s) return "";
-  return s.length > n ? s.slice(0, n-1) + "…" : s;
-}
+      const okCat = state.selectedCategory === "Все" ? true : (cat === state.selectedCategory);
+      const okSearch = !q ? true : (name.includes(q) || desc.includes(q));
+      return okCat && okSearch;
+    });
+  }
 
-function saveState(){
-  try{
-    const safe = {
-      view: state.view,
-      q: state.q,
-      category: state.category,
-      fav: state.fav,
-      cart: state.cart,
-      products: state.products, // можно хранить кэш, чтобы быстрее открывалось
-      loaded: state.loaded,
-      lastError: state.lastError
+  /***********************
+   * 5) UI RENDER
+   ***********************/
+  const elTabs = document.getElementById('categoryTabs');
+  const elSearch = document.getElementById('searchInput');
+
+  const elHomeGrid = document.getElementById('productsGrid');
+  const elHomeEmpty = document.getElementById('homeEmpty');
+
+  const elFavGrid = document.getElementById('favGrid');
+  const elFavEmpty = document.getElementById('favEmpty');
+
+  const elCartList = document.getElementById('cartList');
+  const elCartEmpty = document.getElementById('cartEmpty');
+  const elCartTotal = document.getElementById('cartTotal');
+
+  function renderCategories(){
+    elTabs.innerHTML = "";
+    for (const c of state.categories){
+      const chip = document.createElement('div');
+      chip.className = "tabChip" + (c === state.selectedCategory ? " active" : "");
+      chip.textContent = c;
+      chip.onclick = () => {
+        state.selectedCategory = c;
+        applyFilters();
+        renderCategories();
+        renderHome();
+      };
+      elTabs.appendChild(chip);
+    }
+  }
+
+  function productCard(p){
+    const id = Number(p.id);
+    const name = safeText(p.name) || "Без названия";
+    const description = safeText(p.description) || "Описание скоро появится";
+    const price = p.price ?? 0;
+
+    // Если image_url пустой — подставляем плейсхолдер
+    const img = safeText(p.image_url) || "https://via.placeholder.com/600x400?text=NutriLab";
+
+    const card = document.createElement('div');
+    card.className = "card";
+
+    const imgBox = document.createElement('div');
+    imgBox.className = "imgBox";
+    imgBox.innerHTML = `<img src="${img}" alt="${name}" loading="lazy" onerror="this.src='https://via.placeholder.com/600x400?text=No+Image'">`;
+
+    const favBtn = document.createElement('div');
+    favBtn.className = "favBtn" + (state.fav.has(id) ? " active" : "");
+    favBtn.textContent = state.fav.has(id) ? "❤️" : "🤍";
+    favBtn.onclick = (e) => {
+      e.stopPropagation();
+      toggleFav(id);
+      favBtn.className = "favBtn" + (state.fav.has(id) ? " active" : "");
+      favBtn.textContent = state.fav.has(id) ? "❤️" : "🤍";
     };
-    localStorage.setItem(LS_KEY, JSON.stringify(safe));
-  } catch(e){}
-}
+    imgBox.appendChild(favBtn);
 
-function loadState(){
-  try{
-    const raw = localStorage.getItem(LS_KEY);
-    if (!raw) return null;
-    return JSON.parse(raw);
-  } catch(e){
-    return null;
+    const body = document.createElement('div');
+    body.className = "cardBody";
+    body.innerHTML = `
+      <div class="title">${name}</div>
+      <div class="desc">${description}</div>
+      <div class="row">
+        <div class="price">${rub(price)} ₽</div>
+        <div style="color:var(--muted);font-weight:800;font-size:12px">${safeText(p.category || "")}</div>
+      </div>
+    `;
+
+    const btnRow = document.createElement('div');
+    btnRow.className = "btnRow";
+
+    const toCart = document.createElement('div');
+    toCart.className = "btn primary";
+    toCart.textContent = "🛒 В корзину";
+    toCart.onclick = () => addToCart(id, 1);
+
+    const buy = document.createElement('div');
+    buy.className = "btn";
+    buy.textContent = "✅ Купить";
+    buy.onclick = () => {
+      addToCart(id, 1);
+      switchScreen("cart");
+    };
+
+    btnRow.appendChild(toCart);
+    btnRow.appendChild(buy);
+    body.appendChild(btnRow);
+
+    card.appendChild(imgBox);
+    card.appendChild(body);
+    return card;
   }
-}
 
-function escapeHtml(str){
-  return (str ?? "").toString()
-    .replaceAll("&","&amp;")
-    .replaceAll("<","&lt;")
-    .replaceAll(">","&gt;")
-    .replaceAll('"',"&quot;")
-    .replaceAll("'","&#039;");
-}
-function escapeAttr(str){
-  return escapeHtml(str).replaceAll("\n"," ");
-}
-function escapeJs(str){
-  return (str ?? "").toString().replaceAll("\\","\\\\").replaceAll("'","\\'");
-}
+  function renderHome(){
+    elHomeGrid.innerHTML = "";
+    if (!state.filtered.length){
+      elHomeEmpty.style.display = "block";
+      elHomeEmpty.textContent = "Товары не найдены. Проверь поиск/категорию или добавь товары в Supabase.";
+      return;
+    }
+    elHomeEmpty.style.display = "none";
+    for (const p of state.filtered){
+      elHomeGrid.appendChild(productCard(p));
+    }
+  }
 
-/** Telegram WebApp */
-function tryInitTelegram(){
-  try{
-    const tg = window.Telegram?.WebApp;
-    if (!tg) return;
-    tg.ready();
-    tg.expand();
-  } catch(e){}
-}
+  function renderFav(){
+    const favProducts = state.products.filter(p => state.fav.has(Number(p.id)));
+    elFavGrid.innerHTML = "";
+    if (!favProducts.length){
+      elFavEmpty.style.display = "block";
+      elFavEmpty.textContent = "В избранном пока пусто. Нажми ❤️ на товаре.";
+      return;
+    }
+    elFavEmpty.style.display = "none";
+    for (const p of favProducts){
+      elFavGrid.appendChild(productCard(p));
+    }
+  }
+
+  function renderCart(){
+    const items = [];
+    for (const [id, qty] of state.cart.entries()){
+      const p = state.products.find(x => Number(x.id) === id);
+      if (p) items.push({ p, qty });
+    }
+
+    elCartList.innerHTML = "";
+    if (!items.length){
+      elCartEmpty.style.display = "block";
+      elCartEmpty.textContent = "Корзина пуста. Добавь товары на главной.";
+      elCartTotal.textContent = "0";
+      return;
+    }
+    elCartEmpty.style.display = "none";
+
+    let total = 0;
+
+    for (const {p, qty} of items){
+      const id = Number(p.id);
+      const price = Number(p.price || 0);
+      total += price * qty;
+
+      const row = document.createElement('div');
+      row.className = "empty";
+      row.style.display = "flex";
+      row.style.alignItems = "center";
+      row.style.justifyContent = "space-between";
+      row.style.gap = "10px";
+
+      row.innerHTML = `
+        <div style="flex:1">
+          <div style="font-weight:1000">${safeText(p.name)}</div>
+          <div style="color:var(--muted);margin-top:2px">${rub(price)} ₽ × ${qty}</div>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center;">
+          <div class="btn" style="padding:10px 12px" data-dec>−</div>
+          <div style="min-width:22px;text-align:center;font-weight:1000">${qty}</div>
+          <div class="btn primary" style="padding:10px 12px" data-inc>+</div>
+          <div class="btn" style="padding:10px 12px;border-color:rgba(255,93,93,.35);background:rgba(255,93,93,.10)" data-del>🗑</div>
+        </div>
+      `;
+
+      row.querySelector('[data-dec]').onclick = () => addToCart(id, -1);
+      row.querySelector('[data-inc]').onclick = () => addToCart(id, +1);
+      row.querySelector('[data-del]').onclick = () => removeFromCart(id);
+
+      elCartList.appendChild(row);
+    }
+
+    elCartTotal.textContent = rub(total);
+  }
+
+  /***********************
+   * 6) ACTIONS
+   ***********************/
+  function toggleFav(id){
+    if (state.fav.has(id)) state.fav.delete(id);
+    else state.fav.add(id);
+    saveStorage();
+    renderFav();
+  }
+
+  function addToCart(id, delta){
+    const cur = Number(state.cart.get(id) || 0);
+    const next = cur + delta;
+    if (next <= 0) state.cart.delete(id);
+    else state.cart.set(id, next);
+    saveStorage();
+    renderCart();
+  }
+
+  function removeFromCart(id){
+    state.cart.delete(id);
+    saveStorage();
+    renderCart();
+  }
+
+  /***********************
+   * 7) NAV + SCREEN SWITCH
+   ***********************/
+  const screens = {
+    home: document.getElementById('screen-home'),
+    fav: document.getElementById('screen-fav'),
+    cart: document.getElementById('screen-cart'),
+    profile: document.getElementById('screen-profile'),
+  };
+
+  function switchScreen(name){
+    for (const k of Object.keys(screens)){
+      screens[k].style.display = (k === name) ? "block" : "none";
+    }
+    document.querySelectorAll('.navBtn').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.screen === name);
+    });
+    if (name === "fav") renderFav();
+    if (name === "cart") renderCart();
+  }
+
+  document.querySelectorAll('.navBtn').forEach(btn => {
+    btn.onclick = () => switchScreen(btn.dataset.screen);
+  });
+
+  /***********************
+   * 8) PROFILE / BUTTONS
+   ***********************/
+  document.getElementById('clearFavBtn').onclick = () => {
+    state.fav.clear();
+    saveStorage();
+    renderFav();
+  };
+  document.getElementById('clearCartBtn').onclick = () => {
+    state.cart.clear();
+    saveStorage();
+    renderCart();
+  };
+  document.getElementById('reloadBtn').onclick = () => loadProducts();
+
+  document.getElementById('checkoutBtn').onclick = () => {
+    // Тут можно отправлять заказ в Telegram/бота — пока просто показываем состав
+    const lines = [];
+    let total = 0;
+
+    for (const [id, qty] of state.cart.entries()){
+      const p = state.products.find(x => Number(x.id) === id);
+      if (!p) continue;
+      const price = Number(p.price || 0);
+      total += price * qty;
+      lines.push(`${safeText(p.name)} × ${qty} = ${rub(price*qty)} ₽`);
+    }
+    lines.push(`Итого: ${rub(total)} ₽`);
+
+    const msg = "Заказ:\n" + lines.join("\n");
+
+    if (tg) {
+      // В Телеграме можно отправить данные боту через tg.sendData
+      tg.sendData(JSON.stringify({ type: "order", text: msg, total }));
+      tg.showAlert("Заказ отправлен в бота ✅");
+    } else {
+      alert(msg);
+    }
+  };
+
+  document.getElementById('orderBtn').onclick = () => switchScreen("cart");
+
+  /***********************
+   * 9) SEARCH
+   ***********************/
+  elSearch.addEventListener('input', () => {
+    state.search = elSearch.value || "";
+    applyFilters();
+    renderHome();
+  });
+
+  /***********************
+   * 10) INIT
+   ***********************/
+  function renderProfile(){
+    const info = [];
+    if (tg){
+      const u = tg.initDataUnsafe?.user;
+      if (u){
+        info.push(`Имя: ${u.first_name || ""} ${u.last_name || ""}`.trim());
+        if (u.username) info.push(`Username: @${u.username}`);
+        info.push(`ID: ${u.id}`);
+      } else {
+        info.push("Открыто в Telegram WebApp, но user-данных нет.");
+      }
+      info.push("Среда: Telegram");
+    } else {
+      info.push("Среда: Safari/Browser");
+    }
+    document.getElementById('profileText').textContent = info.join("\n");
+  }
+
+  (async function init(){
+    initTelegram();
+    loadStorage();
+    renderProfile();
+    renderCategories();
+    applyFilters();
+    renderHome();
+    renderFav();
+    renderCart();
+    await loadProducts();
+  })();
 </script>
 
 </body>
