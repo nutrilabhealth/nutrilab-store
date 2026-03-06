@@ -89,6 +89,29 @@
       font-size: 14px;
     }
 
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+
+    .stat-box {
+      background: #111b36;
+      border-radius: 16px;
+      padding: 18px;
+    }
+
+    .stat-label {
+      color: #c7d2fe;
+      font-size: 13px;
+      margin-bottom: 8px;
+    }
+
+    .stat-value {
+      font-size: 24px;
+      font-weight: 700;
+    }
+
     .product {
       background: #1f2a45;
       border-radius: 16px;
@@ -122,6 +145,22 @@
       padding: 10px 14px;
       font-size: 14px;
       background: #3b82f6;
+    }
+
+    .copy-btn {
+      width: auto;
+      padding: 8px 12px;
+      font-size: 13px;
+      background: #475569;
+      margin-top: 8px;
+    }
+
+    .mini-btn {
+      width: auto;
+      padding: 10px 12px;
+      font-size: 14px;
+      background: #3b82f6;
+      margin-bottom: 12px;
     }
 
     .product img,
@@ -168,6 +207,45 @@
     .secondary {
       background: #475569;
     }
+
+    .article-row {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .article-row input {
+      margin-bottom: 14px;
+    }
+
+    @media (max-width: 700px) {
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .row {
+        flex-direction: column;
+      }
+
+      .actions {
+        width: 100%;
+        min-width: 100%;
+      }
+
+      .edit-btn,
+      .delete-btn {
+        width: 100%;
+      }
+
+      .article-row {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .mini-btn {
+        width: 100%;
+      }
+    }
   </style>
 </head>
 <body>
@@ -185,10 +263,33 @@
     <h1>NutriLab Admin</h1>
 
     <div class="card">
+      <h2>Статистика</h2>
+      <div class="stats-grid">
+        <div class="stat-box">
+          <div class="stat-label">Товаров</div>
+          <div id="statTotal" class="stat-value">0</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-label">С фото</div>
+          <div id="statWithPhoto" class="stat-value">0</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-label">Средняя цена</div>
+          <div id="statAvgPrice" class="stat-value">0 ₽</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
       <h2>Добавить товар</h2>
 
       <input id="name" placeholder="Название товара" />
-      <input id="article" placeholder="Артикул товара" />
+
+      <div class="article-row">
+        <input id="article" placeholder="Артикул товара" />
+        <button id="generateArticleBtn" class="mini-btn" type="button">Сгенерировать</button>
+      </div>
+
       <input id="price" type="number" placeholder="Цена" />
       <textarea id="description" placeholder="Описание"></textarea>
       <input id="photo" type="file" accept="image/*" />
@@ -200,7 +301,7 @@
 
     <div class="card">
       <h2>Поиск по артикулу</h2>
-      <input id="searchArticle" placeholder="Введите артикул, например OMEGA-001" />
+      <input id="searchArticle" placeholder="Введите артикул, например NUTRI-48321" />
       <div id="searchStatus" class="status"></div>
     </div>
 
@@ -215,7 +316,12 @@
       <h3>Редактировать товар</h3>
 
       <input id="editName" placeholder="Название товара" />
-      <input id="editArticle" placeholder="Артикул товара" />
+
+      <div class="article-row">
+        <input id="editArticle" placeholder="Артикул товара" />
+        <button id="generateEditArticleBtn" class="mini-btn" type="button">Сгенерировать</button>
+      </div>
+
       <input id="editPrice" type="number" placeholder="Цена" />
       <textarea id="editDescription" placeholder="Описание"></textarea>
       <input id="editPhoto" type="file" accept="image/*" />
@@ -251,6 +357,13 @@
     var searchArticleInput = document.getElementById("searchArticle");
     var searchStatusEl = document.getElementById("searchStatus");
 
+    var generateArticleBtn = document.getElementById("generateArticleBtn");
+    var generateEditArticleBtn = document.getElementById("generateEditArticleBtn");
+
+    var statTotal = document.getElementById("statTotal");
+    var statWithPhoto = document.getElementById("statWithPhoto");
+    var statAvgPrice = document.getElementById("statAvgPrice");
+
     var editModal = document.getElementById("editModal");
     var editName = document.getElementById("editName");
     var editArticle = document.getElementById("editArticle");
@@ -277,6 +390,19 @@
       searchStatusEl.textContent = text;
     }
 
+    function showCopiedMessage(target, text) {
+      var old = target.textContent;
+      target.textContent = text;
+      setTimeout(function () {
+        target.textContent = old;
+      }, 1000);
+    }
+
+    function generateArticle(prefix) {
+      var randomPart = Math.floor(10000 + Math.random() * 90000);
+      return prefix + "-" + randomPart;
+    }
+
     function login() {
       var pass = passwordInput.value.trim();
 
@@ -294,6 +420,16 @@
     loginBtn.addEventListener("click", login);
     passwordInput.addEventListener("keydown", function (e) {
       if (e.key === "Enter") login();
+    });
+
+    generateArticleBtn.addEventListener("click", function () {
+      document.getElementById("article").value = generateArticle("NUTRI");
+      setStatus("✅ Артикул сгенерирован");
+    });
+
+    generateEditArticleBtn.addEventListener("click", function () {
+      editArticle.value = generateArticle("NUTRI");
+      setEditStatus("✅ Артикул сгенерирован");
     });
 
     photoInput.addEventListener("change", function () {
@@ -491,10 +627,44 @@
       }
     });
 
+    async function copyArticle(article, buttonElement) {
+      try {
+        await navigator.clipboard.writeText(article || "");
+        showCopiedMessage(buttonElement, "Скопировано");
+      } catch (e) {
+        alert("Не удалось скопировать");
+      }
+    }
+
+    function updateStats(products) {
+      var total = products.length;
+      var withPhoto = products.filter(function (p) {
+        return !!p.image_url;
+      }).length;
+
+      var totalPrice = products.reduce(function (sum, p) {
+        return sum + (Number(p.price) || 0);
+      }, 0);
+
+      var avg = total > 0 ? Math.round(totalPrice / total) : 0;
+
+      statTotal.textContent = total;
+      statWithPhoto.textContent = withPhoto;
+      statAvgPrice.textContent = avg + " ₽";
+    }
+
     window.deleteProduct = deleteProduct;
 
     async function loadProducts(articleQuery) {
       var container = document.getElementById("products");
+
+      var statsResult = await supabase
+        .from("products")
+        .select("*");
+
+      if (!statsResult.error && statsResult.data) {
+        updateStats(statsResult.data);
+      }
 
       var query = supabase
         .from("products")
@@ -535,6 +705,14 @@
           "<p>" + (p.description || "") + "</p>" +
           "<div class='muted'>Артикул: " + (p.article || "—") + "</div>" +
           "<div class='muted'>ID: " + p.id + "</div>";
+
+        var copyBtn = document.createElement("button");
+        copyBtn.className = "copy-btn";
+        copyBtn.textContent = "Копировать артикул";
+        copyBtn.onclick = function () {
+          copyArticle(p.article || "", copyBtn);
+        };
+        left.appendChild(copyBtn);
 
         var actions = document.createElement("div");
         actions.className = "actions";
