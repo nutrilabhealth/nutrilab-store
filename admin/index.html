@@ -1,253 +1,372 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>NutriLab Admin</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NutriLab Admin</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #0b1433;
+      color: white;
+    }
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    .center {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      box-sizing: border-box;
+    }
 
-<style>
+    .login-box,
+    .card {
+      width: 100%;
+      max-width: 760px;
+      background: #1f2a45;
+      border-radius: 20px;
+      padding: 24px;
+      box-sizing: border-box;
+    }
 
-body{
-margin:0;
-font-family:Arial;
-background:#0f172a;
-color:white;
-}
+    .login-box {
+      max-width: 360px;
+      text-align: center;
+    }
 
-.center{
-display:flex;
-align-items:center;
-justify-content:center;
-height:100vh;
-}
+    h1, h2 {
+      margin-top: 0;
+    }
 
-.login-box{
-background:#1e293b;
-padding:30px;
-border-radius:14px;
-width:300px;
-text-align:center;
-}
+    input, textarea {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 14px;
+      margin-top: 10px;
+      margin-bottom: 14px;
+      border: none;
+      border-radius: 14px;
+      background: #e5e7eb;
+      color: #111827;
+      font-size: 16px;
+    }
 
-input,textarea{
-width:100%;
-padding:12px;
-border:none;
-border-radius:10px;
-margin-top:10px;
-margin-bottom:10px;
-}
+    button {
+      width: 100%;
+      padding: 14px;
+      border: none;
+      border-radius: 14px;
+      background: #67c368;
+      color: white;
+      font-size: 18px;
+      font-weight: 700;
+      cursor: pointer;
+    }
 
-button{
-padding:12px;
-border:none;
-border-radius:10px;
-background:#22c55e;
-color:white;
-font-weight:bold;
-width:100%;
-cursor:pointer;
-}
+    .page {
+      display: none;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 20px;
+      box-sizing: border-box;
+    }
 
-.container{
-max-width:900px;
-margin:auto;
-padding:20px;
-}
+    .error {
+      margin-top: 10px;
+      min-height: 20px;
+      color: #ffb4b4;
+      font-size: 14px;
+    }
 
-.card{
-background:#1e293b;
-padding:20px;
-border-radius:14px;
-margin-bottom:20px;
-}
+    .status {
+      margin-top: 10px;
+      min-height: 20px;
+      color: #dbe4ff;
+      font-size: 14px;
+    }
 
-.product{
-background:#1e293b;
-padding:15px;
-border-radius:12px;
-margin-bottom:12px;
-}
+    .product {
+      background: #1f2a45;
+      border-radius: 16px;
+      padding: 14px;
+      margin-bottom: 14px;
+    }
 
-.product img{
-width:100px;
-border-radius:10px;
-margin-top:10px;
-}
+    .row {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: flex-start;
+    }
 
-.delete{
-background:#ef4444;
-margin-top:10px;
-}
+    .delete-btn {
+      width: auto;
+      padding: 10px 14px;
+      font-size: 14px;
+      background: #ef4444;
+    }
 
-</style>
+    .product img {
+      width: 110px;
+      height: 110px;
+      object-fit: cover;
+      border-radius: 12px;
+      margin-top: 10px;
+      background: #111827;
+    }
+
+    .preview {
+      display: none;
+      width: 120px;
+      height: 120px;
+      object-fit: cover;
+      border-radius: 12px;
+      margin: 6px 0 12px;
+      background: #111827;
+    }
+  </style>
 </head>
-
 <body>
 
-<div id="loginScreen" class="center">
-
-<div class="login-box">
-
-<h2>Admin Login</h2>
-
-<input type="password" id="password" placeholder="Введите пароль">
-
-<button onclick="login()">Войти</button>
-
-<p id="error" style="color:red"></p>
-
-</div>
-
-</div>
-
-
-<div id="adminPage" style="display:none">
-
-<div class="container">
-
-<h1>NutriLab Admin</h1>
-
-<div class="card">
-
-<h2>Добавить товар</h2>
-
-<input id="name" placeholder="Название товара">
-
-<input id="price" placeholder="Цена">
-
-<textarea id="description" placeholder="Описание"></textarea>
-
-<input id="photo" type="file">
-
-<button onclick="addProduct()">Добавить</button>
-
-</div>
-
-<div class="card">
-
-<h2>Все товары</h2>
-
-<div id="products"></div>
-
-</div>
-
-</div>
-
-</div>
-
-
-<script>
-
-function login(){
-
-const pass=document.getElementById("password").value.trim()
-
-if(pass==="abdul2008"){
-
-document.getElementById("loginScreen").style.display="none"
-document.getElementById("adminPage").style.display="block"
-
-loadProducts()
-
-}else{
-
-document.getElementById("error").innerText="Неверный пароль"
-
-}
-
-}
-
-const supabaseUrl="https://cthfqhxnplyibdsjzcrq.supabase.co"
-const supabaseKey="sb_publishable_AjGX1zKhV8kEyGMbvAKwQg_srda-oyI"
-
-const {createClient}=window.supabase
-
-const supabase=createClient(supabaseUrl,supabaseKey)
-
-async function uploadImage(file){
-
-const fileName=Date.now()+"_"+file.name
-
-await supabase.storage.from("product-images").upload(fileName,file)
-
-const {data}=supabase.storage.from("product-images").getPublicUrl(fileName)
-
-return data.publicUrl
-
-}
-
-async function addProduct(){
-
-const name=document.getElementById("name").value
-const price=document.getElementById("price").value
-const description=document.getElementById("description").value
-const file=document.getElementById("photo").files[0]
-
-let image_url=""
-
-if(file){
-
-image_url=await uploadImage(file)
-
-}
-
-await supabase.from("products").insert([
-{
-name,
-price,
-description,
-image_url
-}
-])
-
-loadProducts()
-
-}
-
-async function deleteProduct(id){
-
-await supabase.from("products").delete().eq("id",id)
-
-loadProducts()
-
-}
-
-async function loadProducts(){
-
-const {data}=await supabase.from("products").select("*").order("id",{ascending:false})
-
-const container=document.getElementById("products")
-
-container.innerHTML=""
-
-data.forEach(p=>{
-
-container.innerHTML+=`
-
-<div class="product">
-
-<b>${p.name}</b> — ${p.price} ₽
-
-<p>${p.description}</p>
-
-<img src="${p.image_url}">
-
-<br>
-
-<button class="delete" onclick="deleteProduct(${p.id})">Удалить</button>
-
-</div>
-
-`
-
-})
-
-}
-
-</script>
-
+  <div id="loginScreen" class="center">
+    <div class="login-box">
+      <h2>Admin Login</h2>
+      <input id="password" type="password" placeholder="Введите пароль" />
+      <button id="loginBtn" type="button">Войти</button>
+      <div id="loginError" class="error"></div>
+    </div>
+  </div>
+
+  <div id="adminPage" class="page">
+    <h1>NutriLab Admin</h1>
+
+    <div class="card">
+      <h2>Добавить товар</h2>
+
+      <input id="name" placeholder="Название товара" />
+      <input id="price" type="number" placeholder="Цена" />
+      <textarea id="description" placeholder="Описание"></textarea>
+      <input id="photo" type="file" accept="image/*" />
+      <img id="preview" class="preview" alt="preview" />
+
+      <button id="addBtn" type="button">Добавить</button>
+      <div id="status" class="status"></div>
+    </div>
+
+    <div class="card">
+      <h2>Все товары</h2>
+      <div id="products">Загрузка...</div>
+    </div>
+  </div>
+
+  <script>
+    var PASSWORD = "abdul2008";
+
+    var supabaseUrl = "https://cthfqhxnplyibdsjzcrq.supabase.co";
+    var supabaseKey = "sb_publishable_AjGX1zKhV8kEyGMbvAKwQg_srda-oyI";
+    var supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+    var loginScreen = document.getElementById("loginScreen");
+    var adminPage = document.getElementById("adminPage");
+    var loginBtn = document.getElementById("loginBtn");
+    var passwordInput = document.getElementById("password");
+    var loginError = document.getElementById("loginError");
+
+    var addBtn = document.getElementById("addBtn");
+    var photoInput = document.getElementById("photo");
+    var preview = document.getElementById("preview");
+    var statusEl = document.getElementById("status");
+
+    function setStatus(text) {
+      statusEl.textContent = text;
+    }
+
+    function login() {
+      var pass = passwordInput.value.trim();
+
+      if (pass === PASSWORD) {
+        loginError.textContent = "";
+        loginScreen.style.display = "none";
+        adminPage.style.display = "block";
+        loadProducts();
+      } else {
+        loginError.textContent = "Неверный пароль";
+        passwordInput.value = "";
+      }
+    }
+
+    loginBtn.addEventListener("click", login);
+    passwordInput.addEventListener("keydown", function (e) {
+      if (e.key === "Enter") {
+        login();
+      }
+    });
+
+    photoInput.addEventListener("change", function () {
+      var file = photoInput.files[0];
+      if (!file) {
+        preview.style.display = "none";
+        preview.src = "";
+        return;
+      }
+      preview.src = URL.createObjectURL(file);
+      preview.style.display = "block";
+    });
+
+    async function uploadImage(file) {
+      var ext = file.name.split(".").pop() || "jpg";
+      var fileName = Date.now() + "_" + Math.random().toString(36).slice(2) + "." + ext;
+
+      var uploadResult = await supabase
+        .storage
+        .from("product-images")
+        .upload(fileName, file, {
+          cacheControl: "3600",
+          upsert: false,
+          contentType: file.type || "image/jpeg"
+        });
+
+      if (uploadResult.error) {
+        throw new Error("Ошибка загрузки фото: " + uploadResult.error.message);
+      }
+
+      var publicResult = supabase
+        .storage
+        .from("product-images")
+        .getPublicUrl(fileName);
+
+      return publicResult.data.publicUrl;
+    }
+
+    async function addProduct() {
+      try {
+        var name = document.getElementById("name").value.trim();
+        var price = document.getElementById("price").value.trim();
+        var description = document.getElementById("description").value.trim();
+        var file = photoInput.files[0];
+
+        if (!name || !price) {
+          setStatus("Заполни название и цену.");
+          return;
+        }
+
+        addBtn.disabled = true;
+        setStatus("Загрузка...");
+
+        var image_url = "";
+
+        if (file) {
+          image_url = await uploadImage(file);
+        }
+
+        var insertResult = await supabase
+          .from("products")
+          .insert([
+            {
+              name: name,
+              price: Number(price),
+              description: description,
+              image_url: image_url
+            }
+          ]);
+
+        if (insertResult.error) {
+          throw new Error("Ошибка добавления: " + insertResult.error.message);
+        }
+
+        document.getElementById("name").value = "";
+        document.getElementById("price").value = "";
+        document.getElementById("description").value = "";
+        photoInput.value = "";
+        preview.src = "";
+        preview.style.display = "none";
+
+        setStatus("✅ Товар добавлен");
+        await loadProducts();
+      } catch (err) {
+        setStatus("❌ " + err.message);
+      } finally {
+        addBtn.disabled = false;
+      }
+    }
+
+    addBtn.addEventListener("click", addProduct);
+
+    async function deleteProduct(id) {
+      var ok = confirm("Удалить товар?");
+      if (!ok) return;
+
+      var delResult = await supabase
+        .from("products")
+        .delete()
+        .eq("id", id);
+
+      if (delResult.error) {
+        alert("Ошибка удаления: " + delResult.error.message);
+        return;
+      }
+
+      loadProducts();
+    }
+
+    window.deleteProduct = deleteProduct;
+
+    async function loadProducts() {
+      var container = document.getElementById("products");
+
+      var result = await supabase
+        .from("products")
+        .select("*")
+        .order("id", { ascending: false });
+
+      if (result.error) {
+        container.textContent = "Ошибка загрузки товаров: " + result.error.message;
+        return;
+      }
+
+      if (!result.data || result.data.length === 0) {
+        container.textContent = "Товаров пока нет.";
+        return;
+      }
+
+      container.innerHTML = "";
+
+      result.data.forEach(function (p) {
+        var card = document.createElement("div");
+        card.className = "product";
+
+        var row = document.createElement("div");
+        row.className = "row";
+
+        var left = document.createElement("div");
+        left.innerHTML =
+          "<b>" + (p.name || "Без названия") + "</b> — " + (p.price || 0) + " ₽" +
+          "<p>" + (p.description || "") + "</p>";
+
+        var delBtn = document.createElement("button");
+        delBtn.className = "delete-btn";
+        delBtn.textContent = "Удалить";
+        delBtn.onclick = function () {
+          deleteProduct(p.id);
+        };
+
+        row.appendChild(left);
+        row.appendChild(delBtn);
+        card.appendChild(row);
+
+        if (p.image_url) {
+          var img = document.createElement("img");
+          img.src = p.image_url;
+          img.alt = p.name || "product";
+          card.appendChild(img);
+        }
+
+        container.appendChild(card);
+      });
+    }
+  </script>
 </body>
 </html>
