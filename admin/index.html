@@ -23,7 +23,8 @@
     }
 
     .login-box,
-    .card {
+    .card,
+    .modal-box {
       width: 100%;
       max-width: 760px;
       background: #1f2a45;
@@ -37,7 +38,7 @@
       text-align: center;
     }
 
-    h1, h2 {
+    h1, h2, h3 {
       margin-top: 0;
     }
 
@@ -61,7 +62,7 @@
       border-radius: 14px;
       background: #67c368;
       color: white;
-      font-size: 18px;
+      font-size: 16px;
       font-weight: 700;
       cursor: pointer;
     }
@@ -102,14 +103,29 @@
       align-items: flex-start;
     }
 
+    .actions {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      min-width: 110px;
+    }
+
     .delete-btn {
-      width: auto;
+      width: 110px;
       padding: 10px 14px;
       font-size: 14px;
       background: #ef4444;
     }
 
-    .product img {
+    .edit-btn {
+      width: 110px;
+      padding: 10px 14px;
+      font-size: 14px;
+      background: #3b82f6;
+    }
+
+    .product img,
+    .preview {
       width: 110px;
       height: 110px;
       object-fit: cover;
@@ -120,12 +136,37 @@
 
     .preview {
       display: none;
-      width: 120px;
-      height: 120px;
-      object-fit: cover;
-      border-radius: 12px;
-      margin: 6px 0 12px;
-      background: #111827;
+      margin-bottom: 12px;
+    }
+
+    .muted {
+      color: #c7d2fe;
+      font-size: 13px;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.65);
+      padding: 20px;
+      box-sizing: border-box;
+      align-items: center;
+      justify-content: center;
+      z-index: 999;
+    }
+
+    .modal-box {
+      max-width: 520px;
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: 10px;
+    }
+
+    .secondary {
+      background: #475569;
     }
   </style>
 </head>
@@ -162,6 +203,25 @@
     </div>
   </div>
 
+  <div id="editModal" class="modal">
+    <div class="modal-box">
+      <h3>Редактировать товар</h3>
+
+      <input id="editName" placeholder="Название товара" />
+      <input id="editPrice" type="number" placeholder="Цена" />
+      <textarea id="editDescription" placeholder="Описание"></textarea>
+      <input id="editPhoto" type="file" accept="image/*" />
+      <img id="editPreview" class="preview" alt="edit-preview" style="display:block;" />
+
+      <div class="modal-actions">
+        <button id="saveEditBtn" type="button">Сохранить</button>
+        <button id="cancelEditBtn" type="button" class="secondary">Отмена</button>
+      </div>
+
+      <div id="editStatus" class="status"></div>
+    </div>
+  </div>
+
   <script>
     var PASSWORD = "abdul2008";
 
@@ -180,8 +240,25 @@
     var preview = document.getElementById("preview");
     var statusEl = document.getElementById("status");
 
+    var editModal = document.getElementById("editModal");
+    var editName = document.getElementById("editName");
+    var editPrice = document.getElementById("editPrice");
+    var editDescription = document.getElementById("editDescription");
+    var editPhoto = document.getElementById("editPhoto");
+    var editPreview = document.getElementById("editPreview");
+    var editStatus = document.getElementById("editStatus");
+    var saveEditBtn = document.getElementById("saveEditBtn");
+    var cancelEditBtn = document.getElementById("cancelEditBtn");
+
+    var currentEditId = null;
+    var currentEditImageUrl = "";
+
     function setStatus(text) {
       statusEl.textContent = text;
+    }
+
+    function setEditStatus(text) {
+      editStatus.textContent = text;
     }
 
     function login() {
@@ -200,9 +277,7 @@
 
     loginBtn.addEventListener("click", login);
     passwordInput.addEventListener("keydown", function (e) {
-      if (e.key === "Enter") {
-        login();
-      }
+      if (e.key === "Enter") login();
     });
 
     photoInput.addEventListener("change", function () {
@@ -214,6 +289,13 @@
       }
       preview.src = URL.createObjectURL(file);
       preview.style.display = "block";
+    });
+
+    editPhoto.addEventListener("change", function () {
+      var file = editPhoto.files[0];
+      if (!file) return;
+      editPreview.src = URL.createObjectURL(file);
+      editPreview.style.display = "block";
     });
 
     async function uploadImage(file) {
@@ -312,6 +394,77 @@
       loadProducts();
     }
 
+    function openEditModal(product) {
+      currentEditId = product.id;
+      currentEditImageUrl = product.image_url || "";
+
+      editName.value = product.name || "";
+      editPrice.value = product.price || "";
+      editDescription.value = product.description || "";
+      editPhoto.value = "";
+      editPreview.src = currentEditImageUrl || "";
+      editPreview.style.display = currentEditImageUrl ? "block" : "none";
+      setEditStatus("");
+
+      editModal.style.display = "flex";
+    }
+
+    function closeEditModal() {
+      editModal.style.display = "none";
+      currentEditId = null;
+      currentEditImageUrl = "";
+      editPhoto.value = "";
+      setEditStatus("");
+    }
+
+    cancelEditBtn.addEventListener("click", closeEditModal);
+
+    saveEditBtn.addEventListener("click", async function () {
+      try {
+        if (!currentEditId) return;
+
+        saveEditBtn.disabled = true;
+        setEditStatus("Сохранение...");
+
+        var newName = editName.value.trim();
+        var newPrice = editPrice.value.trim();
+        var newDescription = editDescription.value.trim();
+        var newFile = editPhoto.files[0];
+        var imageUrl = currentEditImageUrl;
+
+        if (!newName || !newPrice) {
+          setEditStatus("Заполни название и цену.");
+          return;
+        }
+
+        if (newFile) {
+          imageUrl = await uploadImage(newFile);
+        }
+
+        var updateResult = await supabase
+          .from("products")
+          .update({
+            name: newName,
+            price: Number(newPrice),
+            description: newDescription,
+            image_url: imageUrl
+          })
+          .eq("id", currentEditId);
+
+        if (updateResult.error) {
+          throw new Error("Ошибка обновления: " + updateResult.error.message);
+        }
+
+        setEditStatus("✅ Сохранено");
+        await loadProducts();
+        setTimeout(closeEditModal, 500);
+      } catch (err) {
+        setEditStatus("❌ " + err.message);
+      } finally {
+        saveEditBtn.disabled = false;
+      }
+    });
+
     window.deleteProduct = deleteProduct;
 
     async function loadProducts() {
@@ -344,7 +497,18 @@
         var left = document.createElement("div");
         left.innerHTML =
           "<b>" + (p.name || "Без названия") + "</b> — " + (p.price || 0) + " ₽" +
-          "<p>" + (p.description || "") + "</p>";
+          "<p>" + (p.description || "") + "</p>" +
+          "<div class='muted'>ID: " + p.id + "</div>";
+
+        var actions = document.createElement("div");
+        actions.className = "actions";
+
+        var editBtn = document.createElement("button");
+        editBtn.className = "edit-btn";
+        editBtn.textContent = "Редактировать";
+        editBtn.onclick = function () {
+          openEditModal(p);
+        };
 
         var delBtn = document.createElement("button");
         delBtn.className = "delete-btn";
@@ -353,8 +517,11 @@
           deleteProduct(p.id);
         };
 
+        actions.appendChild(editBtn);
+        actions.appendChild(delBtn);
+
         row.appendChild(left);
-        row.appendChild(delBtn);
+        row.appendChild(actions);
         card.appendChild(row);
 
         if (p.image_url) {
