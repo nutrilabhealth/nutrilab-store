@@ -188,6 +188,7 @@
       <h2>Добавить товар</h2>
 
       <input id="name" placeholder="Название товара" />
+      <input id="article" placeholder="Артикул товара" />
       <input id="price" type="number" placeholder="Цена" />
       <textarea id="description" placeholder="Описание"></textarea>
       <input id="photo" type="file" accept="image/*" />
@@ -195,6 +196,12 @@
 
       <button id="addBtn" type="button">Добавить</button>
       <div id="status" class="status"></div>
+    </div>
+
+    <div class="card">
+      <h2>Поиск по артикулу</h2>
+      <input id="searchArticle" placeholder="Введите артикул, например OMEGA-001" />
+      <div id="searchStatus" class="status"></div>
     </div>
 
     <div class="card">
@@ -208,6 +215,7 @@
       <h3>Редактировать товар</h3>
 
       <input id="editName" placeholder="Название товара" />
+      <input id="editArticle" placeholder="Артикул товара" />
       <input id="editPrice" type="number" placeholder="Цена" />
       <textarea id="editDescription" placeholder="Описание"></textarea>
       <input id="editPhoto" type="file" accept="image/*" />
@@ -240,8 +248,12 @@
     var preview = document.getElementById("preview");
     var statusEl = document.getElementById("status");
 
+    var searchArticleInput = document.getElementById("searchArticle");
+    var searchStatusEl = document.getElementById("searchStatus");
+
     var editModal = document.getElementById("editModal");
     var editName = document.getElementById("editName");
+    var editArticle = document.getElementById("editArticle");
     var editPrice = document.getElementById("editPrice");
     var editDescription = document.getElementById("editDescription");
     var editPhoto = document.getElementById("editPhoto");
@@ -259,6 +271,10 @@
 
     function setEditStatus(text) {
       editStatus.textContent = text;
+    }
+
+    function setSearchStatus(text) {
+      searchStatusEl.textContent = text;
     }
 
     function login() {
@@ -298,6 +314,10 @@
       editPreview.style.display = "block";
     });
 
+    searchArticleInput.addEventListener("input", function () {
+      loadProducts(searchArticleInput.value.trim());
+    });
+
     async function uploadImage(file) {
       var ext = file.name.split(".").pop() || "jpg";
       var fileName = Date.now() + "_" + Math.random().toString(36).slice(2) + "." + ext;
@@ -326,12 +346,13 @@
     async function addProduct() {
       try {
         var name = document.getElementById("name").value.trim();
+        var article = document.getElementById("article").value.trim();
         var price = document.getElementById("price").value.trim();
         var description = document.getElementById("description").value.trim();
         var file = photoInput.files[0];
 
-        if (!name || !price) {
-          setStatus("Заполни название и цену.");
+        if (!name || !article || !price) {
+          setStatus("Заполни название, артикул и цену.");
           return;
         }
 
@@ -349,6 +370,7 @@
           .insert([
             {
               name: name,
+              article: article,
               price: Number(price),
               description: description,
               image_url: image_url
@@ -360,6 +382,7 @@
         }
 
         document.getElementById("name").value = "";
+        document.getElementById("article").value = "";
         document.getElementById("price").value = "";
         document.getElementById("description").value = "";
         photoInput.value = "";
@@ -367,7 +390,7 @@
         preview.style.display = "none";
 
         setStatus("✅ Товар добавлен");
-        await loadProducts();
+        await loadProducts(searchArticleInput.value.trim());
       } catch (err) {
         setStatus("❌ " + err.message);
       } finally {
@@ -391,7 +414,7 @@
         return;
       }
 
-      loadProducts();
+      loadProducts(searchArticleInput.value.trim());
     }
 
     function openEditModal(product) {
@@ -399,6 +422,7 @@
       currentEditImageUrl = product.image_url || "";
 
       editName.value = product.name || "";
+      editArticle.value = product.article || "";
       editPrice.value = product.price || "";
       editDescription.value = product.description || "";
       editPhoto.value = "";
@@ -427,13 +451,14 @@
         setEditStatus("Сохранение...");
 
         var newName = editName.value.trim();
+        var newArticle = editArticle.value.trim();
         var newPrice = editPrice.value.trim();
         var newDescription = editDescription.value.trim();
         var newFile = editPhoto.files[0];
         var imageUrl = currentEditImageUrl;
 
-        if (!newName || !newPrice) {
-          setEditStatus("Заполни название и цену.");
+        if (!newName || !newArticle || !newPrice) {
+          setEditStatus("Заполни название, артикул и цену.");
           return;
         }
 
@@ -445,6 +470,7 @@
           .from("products")
           .update({
             name: newName,
+            article: newArticle,
             price: Number(newPrice),
             description: newDescription,
             image_url: imageUrl
@@ -456,7 +482,7 @@
         }
 
         setEditStatus("✅ Сохранено");
-        await loadProducts();
+        await loadProducts(searchArticleInput.value.trim());
         setTimeout(closeEditModal, 500);
       } catch (err) {
         setEditStatus("❌ " + err.message);
@@ -467,13 +493,22 @@
 
     window.deleteProduct = deleteProduct;
 
-    async function loadProducts() {
+    async function loadProducts(articleQuery) {
       var container = document.getElementById("products");
 
-      var result = await supabase
+      var query = supabase
         .from("products")
         .select("*")
         .order("id", { ascending: false });
+
+      if (articleQuery) {
+        query = query.ilike("article", "%" + articleQuery + "%");
+        setSearchStatus("Поиск по артикулу: " + articleQuery);
+      } else {
+        setSearchStatus("");
+      }
+
+      var result = await query;
 
       if (result.error) {
         container.textContent = "Ошибка загрузки товаров: " + result.error.message;
@@ -481,7 +516,7 @@
       }
 
       if (!result.data || result.data.length === 0) {
-        container.textContent = "Товаров пока нет.";
+        container.textContent = "Товаров не найдено.";
         return;
       }
 
@@ -498,6 +533,7 @@
         left.innerHTML =
           "<b>" + (p.name || "Без названия") + "</b> — " + (p.price || 0) + " ₽" +
           "<p>" + (p.description || "") + "</p>" +
+          "<div class='muted'>Артикул: " + (p.article || "—") + "</div>" +
           "<div class='muted'>ID: " + p.id + "</div>";
 
         var actions = document.createElement("div");
