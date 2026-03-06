@@ -1,365 +1,253 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>NutriLab Admin</title>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #0b1433;
-      color: white;
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NutriLab Admin</title>
 
-    .center {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      min-height: 100vh;
-      padding: 20px;
-      box-sizing: border-box;
-    }
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-    .login-box,
-    .card {
-      background: #1e2a45;
-      border-radius: 18px;
-      padding: 24px;
-      box-sizing: border-box;
-      width: 100%;
-      max-width: 760px;
-    }
+<style>
 
-    .login-box {
-      max-width: 360px;
-      text-align: center;
-    }
+body{
+margin:0;
+font-family:Arial;
+background:#0f172a;
+color:white;
+}
 
-    h1, h2 {
-      margin-top: 0;
-    }
+.center{
+display:flex;
+align-items:center;
+justify-content:center;
+height:100vh;
+}
 
-    input, textarea {
-      width: 100%;
-      box-sizing: border-box;
-      padding: 14px;
-      border: none;
-      border-radius: 14px;
-      margin-top: 10px;
-      margin-bottom: 14px;
-      font-size: 16px;
-      background: #e5e7eb;
-      color: #111827;
-    }
+.login-box{
+background:#1e293b;
+padding:30px;
+border-radius:14px;
+width:300px;
+text-align:center;
+}
 
-    button {
-      width: 100%;
-      border: none;
-      border-radius: 14px;
-      padding: 14px;
-      font-size: 18px;
-      font-weight: 700;
-      cursor: pointer;
-      background: #60c467;
-      color: white;
-    }
+input,textarea{
+width:100%;
+padding:12px;
+border:none;
+border-radius:10px;
+margin-top:10px;
+margin-bottom:10px;
+}
 
-    .error {
-      min-height: 22px;
-      margin-top: 10px;
-      color: #ffb4b4;
-      font-size: 14px;
-    }
+button{
+padding:12px;
+border:none;
+border-radius:10px;
+background:#22c55e;
+color:white;
+font-weight:bold;
+width:100%;
+cursor:pointer;
+}
 
-    .page {
-      display: none;
-      max-width: 900px;
-      margin: 0 auto;
-      padding: 20px;
-      box-sizing: border-box;
-    }
+.container{
+max-width:900px;
+margin:auto;
+padding:20px;
+}
 
-    .product {
-      background: #1e2a45;
-      border-radius: 16px;
-      padding: 14px;
-      margin-bottom: 14px;
-    }
+.card{
+background:#1e293b;
+padding:20px;
+border-radius:14px;
+margin-bottom:20px;
+}
 
-    .product img {
-      width: 110px;
-      height: 110px;
-      object-fit: cover;
-      border-radius: 12px;
-      margin-top: 10px;
-      background: #101827;
-    }
+.product{
+background:#1e293b;
+padding:15px;
+border-radius:12px;
+margin-bottom:12px;
+}
 
-    .row {
-      display: flex;
-      justify-content: space-between;
-      gap: 12px;
-      align-items: flex-start;
-    }
+.product img{
+width:100px;
+border-radius:10px;
+margin-top:10px;
+}
 
-    .delete-btn {
-      width: auto;
-      padding: 10px 14px;
-      font-size: 14px;
-      background: #ef4444;
-    }
+.delete{
+background:#ef4444;
+margin-top:10px;
+}
 
-    .status {
-      margin-top: 10px;
-      min-height: 22px;
-      color: #cbd5e1;
-      font-size: 14px;
-    }
-
-    .preview {
-      display: none;
-      width: 120px;
-      height: 120px;
-      object-fit: cover;
-      border-radius: 12px;
-      margin: 6px 0 12px;
-      background: #101827;
-    }
-  </style>
+</style>
 </head>
+
 <body>
 
-  <div id="loginScreen" class="center">
-    <div class="login-box">
-      <h2>Admin Login</h2>
+<div id="loginScreen" class="center">
 
-      <form id="loginForm">
-        <input
-          type="password"
-          id="password"
-          placeholder="Введите пароль"
-          autocomplete="current-password"
-        />
-        <button type="submit">Войти</button>
-      </form>
+<div class="login-box">
 
-      <div id="loginError" class="error"></div>
-    </div>
-  </div>
+<h2>Admin Login</h2>
 
-  <div id="adminPage" class="page">
-    <h1>NutriLab Admin</h1>
+<input type="password" id="password" placeholder="Введите пароль">
 
-    <div class="card">
-      <h2>Добавить товар</h2>
+<button onclick="login()">Войти</button>
 
-      <input id="name" placeholder="Название товара" />
-      <input id="price" type="number" placeholder="Цена" />
-      <textarea id="description" placeholder="Описание"></textarea>
-      <input id="photo" type="file" accept="image/*" />
-      <img id="preview" class="preview" alt="preview" />
+<p id="error" style="color:red"></p>
 
-      <button id="addBtn" type="button">Добавить</button>
-      <div id="status" class="status"></div>
-    </div>
+</div>
 
-    <div class="card">
-      <h2>Все товары</h2>
-      <div id="products">Загрузка...</div>
-    </div>
-  </div>
+</div>
 
-  <script>
-    const PASSWORD = "abdul2008";
 
-    const supabaseUrl = "https://cthfqhxnplyibdsjzcrq.supabase.co";
-    const supabaseKey = "sb_publishable_AjGX1zKhV8kEyGMbvAKwQg_srda-oyI";
+<div id="adminPage" style="display:none">
 
-    const { createClient } = window.supabase;
-    const supabase = createClient(supabaseUrl, supabaseKey);
+<div class="container">
 
-    const loginForm = document.getElementById("loginForm");
-    const passwordInput = document.getElementById("password");
-    const loginError = document.getElementById("loginError");
-    const loginScreen = document.getElementById("loginScreen");
-    const adminPage = document.getElementById("adminPage");
+<h1>NutriLab Admin</h1>
 
-    const photoInput = document.getElementById("photo");
-    const preview = document.getElementById("preview");
-    const addBtn = document.getElementById("addBtn");
-    const statusEl = document.getElementById("status");
+<div class="card">
 
-    function setStatus(text) {
-      statusEl.textContent = text;
-    }
+<h2>Добавить товар</h2>
 
-    photoInput.addEventListener("change", () => {
-      const file = photoInput.files[0];
-      if (!file) {
-        preview.style.display = "none";
-        preview.src = "";
-        return;
-      }
-      preview.src = URL.createObjectURL(file);
-      preview.style.display = "block";
-    });
+<input id="name" placeholder="Название товара">
 
-    loginForm.addEventListener("submit", async (e) => {
-      e.preventDefault();
+<input id="price" placeholder="Цена">
 
-      const pass = passwordInput.value.trim();
+<textarea id="description" placeholder="Описание"></textarea>
 
-      if (pass !== PASSWORD) {
-        loginError.textContent = "Неверный пароль";
-        passwordInput.value = "";
-        return;
-      }
+<input id="photo" type="file">
 
-      loginError.textContent = "";
-      loginScreen.style.display = "none";
-      adminPage.style.display = "block";
+<button onclick="addProduct()">Добавить</button>
 
-      await loadProducts();
-    });
+</div>
 
-    async function uploadImage(file) {
-      const ext = file.name.split(".").pop() || "jpg";
-      const fileName = `${Date.now()}_${Math.random().toString(36).slice(2)}.${ext}`;
+<div class="card">
 
-      const { error: uploadError } = await supabase
-        .storage
-        .from("product-images")
-        .upload(fileName, file, {
-          cacheControl: "3600",
-          upsert: false,
-          contentType: file.type || "image/jpeg"
-        });
+<h2>Все товары</h2>
 
-      if (uploadError) {
-        throw new Error("Ошибка загрузки фото: " + uploadError.message);
-      }
+<div id="products"></div>
 
-      const { data } = supabase
-        .storage
-        .from("product-images")
-        .getPublicUrl(fileName);
+</div>
 
-      return data.publicUrl;
-    }
+</div>
 
-    async function addProduct() {
-      try {
-        const name = document.getElementById("name").value.trim();
-        const price = document.getElementById("price").value.trim();
-        const description = document.getElementById("description").value.trim();
-        const file = photoInput.files[0];
+</div>
 
-        if (!name || !price) {
-          setStatus("Заполни название и цену.");
-          return;
-        }
 
-        addBtn.disabled = true;
-        setStatus("Загрузка...");
+<script>
 
-        let image_url = "";
+function login(){
 
-        if (file) {
-          image_url = await uploadImage(file);
-        }
+const pass=document.getElementById("password").value.trim()
 
-        const { error } = await supabase
-          .from("products")
-          .insert([
-            {
-              name,
-              price: Number(price),
-              description,
-              image_url
-            }
-          ]);
+if(pass==="abdul2008"){
 
-        if (error) {
-          throw new Error("Ошибка добавления: " + error.message);
-        }
+document.getElementById("loginScreen").style.display="none"
+document.getElementById("adminPage").style.display="block"
 
-        document.getElementById("name").value = "";
-        document.getElementById("price").value = "";
-        document.getElementById("description").value = "";
-        photoInput.value = "";
-        preview.src = "";
-        preview.style.display = "none";
+loadProducts()
 
-        setStatus("✅ Товар добавлен");
-        await loadProducts();
-      } catch (err) {
-        setStatus("❌ " + err.message);
-      } finally {
-        addBtn.disabled = false;
-      }
-    }
+}else{
 
-    async function deleteProduct(id) {
-      const ok = confirm("Удалить товар?");
-      if (!ok) return;
+document.getElementById("error").innerText="Неверный пароль"
 
-      const { error } = await supabase
-        .from("products")
-        .delete()
-        .eq("id", id);
+}
 
-      if (error) {
-        alert("Ошибка удаления: " + error.message);
-        return;
-      }
+}
 
-      await loadProducts();
-    }
+const supabaseUrl="https://cthfqhxnplyibdsjzcrq.supabase.co"
+const supabaseKey="sb_publishable_AjGX1zKhV8kEyGMbvAKwQg_srda-oyI"
 
-    async function loadProducts() {
-      const container = document.getElementById("products");
+const {createClient}=window.supabase
 
-      const { data, error } = await supabase
-        .from("products")
-        .select("*")
-        .order("id", { ascending: false });
+const supabase=createClient(supabaseUrl,supabaseKey)
 
-      if (error) {
-        container.innerHTML = "Ошибка загрузки товаров: " + error.message;
-        return;
-      }
+async function uploadImage(file){
 
-      if (!data || data.length === 0) {
-        container.innerHTML = "Товаров пока нет.";
-        return;
-      }
+const fileName=Date.now()+"_"+file.name
 
-      container.innerHTML = "";
+await supabase.storage.from("product-images").upload(fileName,file)
 
-      data.forEach((p) => {
-        const img = p.image_url
-          ? `<img src="${p.image_url}" alt="${p.name || "product"}">`
-          : "";
+const {data}=supabase.storage.from("product-images").getPublicUrl(fileName)
 
-        container.innerHTML += `
-          <div class="product">
-            <div class="row">
-              <div>
-                <b>${p.name || "Без названия"}</b> — ${p.price || 0} ₽
-                <p>${p.description || ""}</p>
-              </div>
-              <button class="delete-btn" onclick="deleteProduct(${p.id})">Удалить</button>
-            </div>
-            ${img}
-          </div>
-        `;
-      });
-    }
+return data.publicUrl
 
-    addBtn.addEventListener("click", addProduct);
-    window.deleteProduct = deleteProduct;
-  </script>
+}
+
+async function addProduct(){
+
+const name=document.getElementById("name").value
+const price=document.getElementById("price").value
+const description=document.getElementById("description").value
+const file=document.getElementById("photo").files[0]
+
+let image_url=""
+
+if(file){
+
+image_url=await uploadImage(file)
+
+}
+
+await supabase.from("products").insert([
+{
+name,
+price,
+description,
+image_url
+}
+])
+
+loadProducts()
+
+}
+
+async function deleteProduct(id){
+
+await supabase.from("products").delete().eq("id",id)
+
+loadProducts()
+
+}
+
+async function loadProducts(){
+
+const {data}=await supabase.from("products").select("*").order("id",{ascending:false})
+
+const container=document.getElementById("products")
+
+container.innerHTML=""
+
+data.forEach(p=>{
+
+container.innerHTML+=`
+
+<div class="product">
+
+<b>${p.name}</b> — ${p.price} ₽
+
+<p>${p.description}</p>
+
+<img src="${p.image_url}">
+
+<br>
+
+<button class="delete" onclick="deleteProduct(${p.id})">Удалить</button>
+
+</div>
+
+`
+
+})
+
+}
+
+</script>
+
 </body>
 </html>
