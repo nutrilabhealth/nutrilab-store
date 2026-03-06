@@ -2,134 +2,304 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>NutriLab Admin</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
-    body { margin:0; font-family: Arial, sans-serif; background:#0f172a; color:white; }
-    header { padding:20px; font-size:22px; font-weight:bold; background:#111827; }
-    .container { padding:20px; max-width:900px; margin:auto; }
-    .card { background:#1e293b; padding:20px; border-radius:12px; margin-bottom:20px; }
-    input, textarea { width:100%; padding:10px; margin-bottom:10px; border-radius:8px; border:none; }
-    button { padding:10px 15px; border-radius:8px; border:none; cursor:pointer; font-weight:bold; }
-    .add-btn { background:#22c55e; color:white; }
-    .delete-btn { background:#ef4444; color:white; float:right; }
-    .product { background:#1e293b; padding:15px; border-radius:10px; margin-bottom:10px; }
-    img { width:80px; border-radius:6px; margin-top:8px; }
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #0f172a;
+      color: white;
+    }
+
+    header {
+      padding: 20px;
+      font-size: 22px;
+      font-weight: bold;
+      background: #111827;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    .card {
+      background: #1e293b;
+      padding: 20px;
+      border-radius: 14px;
+      margin-bottom: 20px;
+    }
+
+    input, textarea {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 12px;
+      margin-bottom: 12px;
+      border-radius: 10px;
+      border: none;
+      background: #e5e7eb;
+      color: #111827;
+      font-size: 16px;
+    }
+
+    button {
+      padding: 12px 16px;
+      border-radius: 10px;
+      border: none;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 15px;
+    }
+
+    .add-btn {
+      background: #22c55e;
+      color: white;
+      width: 100%;
+    }
+
+    .delete-btn {
+      background: #ef4444;
+      color: white;
+    }
+
+    .status {
+      margin-top: 12px;
+      font-size: 14px;
+      color: #cbd5e1;
+    }
+
+    .product {
+      background: #1e293b;
+      padding: 15px;
+      border-radius: 12px;
+      margin-bottom: 12px;
+    }
+
+    .product-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: flex-start;
+    }
+
+    .product img {
+      width: 100px;
+      height: 100px;
+      object-fit: cover;
+      border-radius: 10px;
+      margin-top: 10px;
+      background: #0b1220;
+    }
+
+    .muted {
+      color: #94a3b8;
+      font-size: 14px;
+    }
+
+    .preview {
+      display: none;
+      width: 120px;
+      height: 120px;
+      object-fit: cover;
+      border-radius: 10px;
+      margin: 10px 0 12px;
+      background: #0b1220;
+    }
   </style>
 </head>
 <body>
+  <header>NutriLab Admin Panel</header>
 
-<header>NutriLab Admin Panel</header>
+  <div class="container">
+    <div class="card">
+      <h2>Добавить товар</h2>
 
-<div class="container">
+      <input id="name" placeholder="Название товара" />
+      <input id="price" type="number" placeholder="Цена" />
+      <textarea id="description" placeholder="Описание"></textarea>
 
-  <div class="card">
-    <h3>Добавить товар</h3>
-    <input id="name" placeholder="Название товара" />
-    <input id="price" type="number" placeholder="Цена" />
-    <textarea id="description" placeholder="Описание"></textarea>
+      <label for="photoFile">Фото товара</label>
+      <input id="photoFile" type="file" accept="image/*" />
+      <img id="preview" class="preview" alt="preview" />
 
-    <label>Фото товара</label>
-    <input id="photoFile" type="file" />
+      <button class="add-btn" id="addBtn" onclick="addProduct()">Добавить</button>
+      <div class="status" id="status"></div>
+    </div>
 
-    <button class="add-btn" onclick="addProduct()">Добавить</button>
+    <div class="card">
+      <h2>Все товары</h2>
+      <div id="products">Загрузка...</div>
+    </div>
   </div>
 
-  <h3>Все товары</h3>
-  <div id="products"></div>
+  <script>
+    const supabaseUrl = "https://cthfqhxnplyibdsjzcrq.supabase.co";
+    const supabaseKey = "sb_publishable_AjGX1zKhV8kEyGMbvAKwQg_srda-oyI";
 
-</div>
+    const { createClient } = window.supabase;
+    const client = createClient(supabaseUrl, supabaseKey);
 
-<script>
-const supabaseUrl = "https://cthfqhxnplyibdsjzcrq.supabase.co";
-const supabaseKey = "sb_publishable_AjGX1zKhV8kEyGMbvAKwQg_srda-oyI";
+    const statusEl = document.getElementById("status");
+    const previewEl = document.getElementById("preview");
+    const photoInput = document.getElementById("photoFile");
+    const addBtn = document.getElementById("addBtn");
 
-const { createClient } = supabase;
-const client = createClient(supabaseUrl, supabaseKey);
+    photoInput.addEventListener("change", () => {
+      const file = photoInput.files[0];
+      if (!file) {
+        previewEl.style.display = "none";
+        previewEl.src = "";
+        return;
+      }
+      const url = URL.createObjectURL(file);
+      previewEl.src = url;
+      previewEl.style.display = "block";
+    });
 
-async function loadProducts() {
-  const { data } = await client
-    .from("products")
-    .select("*")
-    .order("id", { ascending: false });
-
-  const container = document.getElementById("products");
-  container.innerHTML = "";
-
-  data.forEach(p => {
-    container.innerHTML += `
-      <div class="product">
-        <strong>${p.name}</strong> — ${p.price} ₽
-        <button class="delete-btn" onclick="deleteProduct(${p.id})">Удалить</button>
-        <p>${p.description}</p>
-        ${p.photo ? `<img src="${p.photo}">` : ""}
-      </div>
-    `;
-  });
-}
-
-async function uploadImage(file) {
-  const fileName = Date.now() + "_" + file.name;
-
-  const { error } = await client
-    .storage
-    .from("product-images")
-    .upload(fileName, file);
-
-  if (error) {
-    alert("Ошибка загрузки фото");
-    return null;
-  }
-
-  const { data } = client
-    .storage
-    .from("product-images")
-    .getPublicUrl(fileName);
-
-  return data.publicUrl;
-}
-
-async function addProduct() {
-  const name = document.getElementById("name").value;
-  const price = document.getElementById("price").value;
-  const description = document.getElementById("description").value;
-  const file = document.getElementById("photoFile").files[0];
-
-  if (!name || !price) {
-    alert("Заполни название и цену");
-    return;
-  }
-
-  let photoUrl = null;
-
-  if (file) {
-    photoUrl = await uploadImage(file);
-  }
-
-  await client.from("products").insert([
-    {
-      name,
-      price,
-      description,
-      photo: photoUrl
+    function setStatus(text) {
+      statusEl.textContent = text;
     }
-  ]);
 
-  document.getElementById("name").value = "";
-  document.getElementById("price").value = "";
-  document.getElementById("description").value = "";
-  document.getElementById("photoFile").value = "";
+    async function loadProducts() {
+      const container = document.getElementById("products");
 
-  loadProducts();
-}
+      const { data, error } = await client
+        .from("products")
+        .select("*")
+        .order("id", { ascending: false });
 
-async function deleteProduct(id) {
-  await client.from("products").delete().eq("id", id);
-  loadProducts();
-}
+      if (error) {
+        container.innerHTML = "Ошибка загрузки товаров: " + error.message;
+        return;
+      }
 
-loadProducts();
-</script>
+      if (!data || data.length === 0) {
+        container.innerHTML = "Товаров пока нет.";
+        return;
+      }
 
+      container.innerHTML = "";
+
+      data.forEach((p) => {
+        const image = p.image_url
+          ? `<img src="${p.image_url}" alt="${p.name || "product"}" />`
+          : "";
+
+        container.innerHTML += `
+          <div class="product">
+            <div class="product-top">
+              <div>
+                <strong>${p.name || "Без названия"}</strong> — ${p.price || 0} ₽
+                <p>${p.description || ""}</p>
+                <div class="muted">ID: ${p.id}</div>
+              </div>
+              <button class="delete-btn" onclick="deleteProduct(${p.id})">Удалить</button>
+            </div>
+            ${image}
+          </div>
+        `;
+      });
+    }
+
+    async function uploadImage(file) {
+      const ext = file.name.split(".").pop() || "jpg";
+      const fileName = `${Date.now()}_${Math.random().toString(36).slice(2)}.${ext}`;
+
+      const { error: uploadError } = await client
+        .storage
+        .from("product-images")
+        .upload(fileName, file, {
+          cacheControl: "3600",
+          upsert: false,
+          contentType: file.type || "image/jpeg"
+        });
+
+      if (uploadError) {
+        throw new Error("Ошибка загрузки фото: " + uploadError.message);
+      }
+
+      const { data } = client
+        .storage
+        .from("product-images")
+        .getPublicUrl(fileName);
+
+      return data.publicUrl;
+    }
+
+    async function addProduct() {
+      try {
+        const name = document.getElementById("name").value.trim();
+        const price = document.getElementById("price").value.trim();
+        const description = document.getElementById("description").value.trim();
+        const file = photoInput.files[0];
+
+        if (!name || !price) {
+          setStatus("Заполни название и цену.");
+          return;
+        }
+
+        addBtn.disabled = true;
+        setStatus("Загрузка...");
+
+        let imageUrl = "";
+
+        if (file) {
+          imageUrl = await uploadImage(file);
+        }
+
+        const { error: insertError } = await client
+          .from("products")
+          .insert([
+            {
+              name,
+              price: Number(price),
+              description,
+              image_url: imageUrl
+            }
+          ]);
+
+        if (insertError) {
+          throw new Error("Ошибка сохранения товара: " + insertError.message);
+        }
+
+        document.getElementById("name").value = "";
+        document.getElementById("price").value = "";
+        document.getElementById("description").value = "";
+        photoInput.value = "";
+        previewEl.src = "";
+        previewEl.style.display = "none";
+
+        setStatus("✅ Товар добавлен");
+        await loadProducts();
+      } catch (err) {
+        setStatus("❌ " + err.message);
+        alert(err.message);
+      } finally {
+        addBtn.disabled = false;
+      }
+    }
+
+    async function deleteProduct(id) {
+      const ok = confirm("Удалить товар?");
+      if (!ok) return;
+
+      const { error } = await client
+        .from("products")
+        .delete()
+        .eq("id", id);
+
+      if (error) {
+        alert("Ошибка удаления: " + error.message);
+        return;
+      }
+
+      loadProducts();
+    }
+
+    loadProducts();
+  </script>
 </body>
 </html>
