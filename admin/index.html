@@ -12,7 +12,6 @@
       background: #0b1433;
       color: white;
     }
-
     .center {
       min-height: 100vh;
       display: flex;
@@ -21,27 +20,21 @@
       padding: 20px;
       box-sizing: border-box;
     }
-
-    .login-box,
-    .card,
-    .modal-box {
+    .login-box, .card, .modal-box {
       width: 100%;
-      max-width: 760px;
+      max-width: 860px;
       background: #1f2a45;
       border-radius: 20px;
       padding: 24px;
       box-sizing: border-box;
     }
-
     .login-box {
       max-width: 360px;
       text-align: center;
     }
-
     h1, h2, h3 {
       margin-top: 0;
     }
-
     input, textarea, select {
       width: 100%;
       box-sizing: border-box;
@@ -54,7 +47,6 @@
       color: #111827;
       font-size: 16px;
     }
-
     button {
       width: 100%;
       padding: 14px;
@@ -66,87 +58,74 @@
       font-weight: 700;
       cursor: pointer;
     }
-
     .page {
       display: none;
-      max-width: 900px;
+      max-width: 980px;
       margin: 0 auto;
       padding: 20px;
       box-sizing: border-box;
     }
-
     .error {
       margin-top: 10px;
       min-height: 20px;
       color: #ffb4b4;
       font-size: 14px;
     }
-
     .status {
       margin-top: 10px;
       min-height: 20px;
       color: #dbe4ff;
       font-size: 14px;
     }
-
     .stats-grid {
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
+      grid-template-columns: repeat(5, 1fr);
       gap: 12px;
     }
-
     .stat-box {
       background: #111b36;
       border-radius: 16px;
       padding: 18px;
     }
-
     .stat-label {
       color: #c7d2fe;
       font-size: 13px;
       margin-bottom: 8px;
     }
-
     .stat-value {
       font-size: 24px;
       font-weight: 700;
     }
-
-    .product {
+    .product, .order {
       background: #1f2a45;
       border-radius: 16px;
       padding: 14px;
       margin-bottom: 14px;
     }
-
     .row {
       display: flex;
       justify-content: space-between;
       gap: 12px;
       align-items: flex-start;
     }
-
     .actions {
       display: flex;
       flex-direction: column;
       gap: 8px;
-      min-width: 110px;
+      min-width: 120px;
     }
-
     .delete-btn {
-      width: 110px;
+      width: 120px;
       padding: 10px 14px;
       font-size: 14px;
       background: #ef4444;
     }
-
     .edit-btn {
-      width: 110px;
+      width: 120px;
       padding: 10px 14px;
       font-size: 14px;
       background: #3b82f6;
     }
-
     .copy-btn {
       width: auto;
       padding: 8px 12px;
@@ -154,7 +133,6 @@
       background: #475569;
       margin-top: 8px;
     }
-
     .mini-btn {
       width: auto;
       padding: 10px 12px;
@@ -162,7 +140,6 @@
       background: #3b82f6;
       margin-bottom: 12px;
     }
-
     .stock-box {
       display: flex;
       align-items: center;
@@ -170,7 +147,6 @@
       margin-top: 10px;
       flex-wrap: wrap;
     }
-
     .stock-btn {
       width: 42px;
       padding: 10px 0;
@@ -178,7 +154,6 @@
       background: #475569;
       border-radius: 12px;
     }
-
     .stock-value {
       min-width: 48px;
       text-align: center;
@@ -186,7 +161,6 @@
       font-size: 18px;
       color: white;
     }
-
     .badge {
       display: inline-block;
       padding: 6px 10px;
@@ -195,24 +169,16 @@
       font-weight: 700;
       margin-top: 8px;
     }
+    .badge-in-stock { background: #166534; color: #dcfce7; }
+    .badge-out-of-stock { background: #7f1d1d; color: #fee2e2; }
+    .badge-coming-soon { background: #78350f; color: #fef3c7; }
+    .badge-new { background: #1d4ed8; color: #dbeafe; }
+    .badge-accepted { background: #7c3aed; color: #ede9fe; }
+    .badge-shipped { background: #92400e; color: #fef3c7; }
+    .badge-closed { background: #166534; color: #dcfce7; }
+    .badge-cancelled { background: #7f1d1d; color: #fee2e2; }
 
-    .badge-in-stock {
-      background: #166534;
-      color: #dcfce7;
-    }
-
-    .badge-out-of-stock {
-      background: #7f1d1d;
-      color: #fee2e2;
-    }
-
-    .badge-coming-soon {
-      background: #78350f;
-      color: #fef3c7;
-    }
-
-    .product img,
-    .preview {
+    .product img, .preview {
       width: 110px;
       height: 110px;
       object-fit: cover;
@@ -220,17 +186,14 @@
       margin-top: 10px;
       background: #111827;
     }
-
     .preview {
       display: none;
       margin-bottom: 12px;
     }
-
     .muted {
       color: #c7d2fe;
       font-size: 13px;
     }
-
     .modal {
       display: none;
       position: fixed;
@@ -242,54 +205,49 @@
       justify-content: center;
       z-index: 999;
     }
-
     .modal-box {
-      max-width: 520px;
+      max-width: 560px;
     }
-
     .modal-actions {
       display: flex;
       gap: 10px;
     }
-
     .secondary {
       background: #475569;
     }
-
     .article-row {
       display: flex;
       gap: 10px;
       align-items: center;
     }
-
     .article-row input {
       margin-bottom: 14px;
+    }
+    .order-select {
+      margin-top: 8px;
+      margin-bottom: 8px;
+      background: #e5e7eb;
+      color: #111827;
     }
 
     @media (max-width: 700px) {
       .stats-grid {
         grid-template-columns: 1fr 1fr;
       }
-
       .row {
         flex-direction: column;
       }
-
       .actions {
         width: 100%;
         min-width: 100%;
       }
-
-      .edit-btn,
-      .delete-btn {
+      .edit-btn, .delete-btn {
         width: 100%;
       }
-
       .article-row {
         flex-direction: column;
         align-items: stretch;
       }
-
       .mini-btn {
         width: 100%;
       }
@@ -329,6 +287,10 @@
           <div class="stat-label">Всего остатков</div>
           <div id="statTotalStock" class="stat-value">0</div>
         </div>
+        <div class="stat-box">
+          <div class="stat-label">Заказов</div>
+          <div id="statOrders" class="stat-value">0</div>
+        </div>
       </div>
     </div>
 
@@ -342,6 +304,7 @@
         <button id="generateArticleBtn" class="mini-btn" type="button">Сгенерировать</button>
       </div>
 
+      <input id="category" placeholder="Категория (например: Омега, Витамины, Протеин)" />
       <input id="price" type="number" placeholder="Цена" />
       <textarea id="description" placeholder="Описание"></textarea>
 
@@ -370,6 +333,12 @@
       <h2>Все товары</h2>
       <div id="products">Загрузка...</div>
     </div>
+
+    <div class="card">
+      <h2>Заказы</h2>
+      <div id="orders">Загрузка...</div>
+      <div class="status" id="ordersStatus">Заказы появятся здесь, когда подключим оформление в витрине.</div>
+    </div>
   </div>
 
   <div id="editModal" class="modal">
@@ -383,6 +352,7 @@
         <button id="generateEditArticleBtn" class="mini-btn" type="button">Сгенерировать</button>
       </div>
 
+      <input id="editCategory" placeholder="Категория" />
       <input id="editPrice" type="number" placeholder="Цена" />
       <textarea id="editDescription" placeholder="Описание"></textarea>
 
@@ -434,10 +404,14 @@
     var statWithPhoto = document.getElementById("statWithPhoto");
     var statAvgPrice = document.getElementById("statAvgPrice");
     var statTotalStock = document.getElementById("statTotalStock");
+    var statOrders = document.getElementById("statOrders");
+
+    var ordersContainer = document.getElementById("orders");
 
     var editModal = document.getElementById("editModal");
     var editName = document.getElementById("editName");
     var editArticle = document.getElementById("editArticle");
+    var editCategory = document.getElementById("editCategory");
     var editPrice = document.getElementById("editPrice");
     var editDescription = document.getElementById("editDescription");
     var editStatusSelect = document.getElementById("editStatusSelect");
@@ -461,6 +435,11 @@
       if (status === "in_stock") return "В наличии";
       if (status === "out_of_stock") return "Нет в наличии";
       if (status === "coming_soon") return "Скоро";
+      if (status === "new") return "Новый";
+      if (status === "accepted") return "Принят";
+      if (status === "shipped") return "Отправлен";
+      if (status === "closed") return "Закрыт";
+      if (status === "cancelled") return "Отменён";
       return status || "—";
     }
 
@@ -468,6 +447,11 @@
       if (status === "in_stock") return "badge badge-in-stock";
       if (status === "out_of_stock") return "badge badge-out-of-stock";
       if (status === "coming_soon") return "badge badge-coming-soon";
+      if (status === "new") return "badge badge-new";
+      if (status === "accepted") return "badge badge-accepted";
+      if (status === "shipped") return "badge badge-shipped";
+      if (status === "closed") return "badge badge-closed";
+      if (status === "cancelled") return "badge badge-cancelled";
       return "badge";
     }
 
@@ -504,6 +488,7 @@
         loginScreen.style.display = "none";
         adminPage.style.display = "block";
         loadProducts();
+        loadOrders();
       } else {
         loginError.textContent = "Неверный пароль";
         passwordInput.value = "";
@@ -576,6 +561,7 @@
       try {
         var name = document.getElementById("name").value.trim();
         var article = document.getElementById("article").value.trim();
+        var category = document.getElementById("category").value.trim();
         var price = document.getElementById("price").value.trim();
         var description = document.getElementById("description").value.trim();
         var statusValue = document.getElementById("statusSelect").value;
@@ -604,6 +590,7 @@
             {
               name: name,
               article: article,
+              category: category,
               price: Number(price),
               description: description,
               status: finalStatus,
@@ -618,6 +605,7 @@
 
         document.getElementById("name").value = "";
         document.getElementById("article").value = "";
+        document.getElementById("category").value = "";
         document.getElementById("price").value = "";
         document.getElementById("description").value = "";
         document.getElementById("stock").value = "";
@@ -660,6 +648,7 @@
 
       editName.value = product.name || "";
       editArticle.value = product.article || "";
+      editCategory.value = product.category || "";
       editPrice.value = product.price || "";
       editDescription.value = product.description || "";
       editStatusSelect.value = product.status || "in_stock";
@@ -691,6 +680,7 @@
 
         var newName = editName.value.trim();
         var newArticle = editArticle.value.trim();
+        var newCategory = editCategory.value.trim();
         var newPrice = editPrice.value.trim();
         var newDescription = editDescription.value.trim();
         var newStatus = editStatusSelect.value;
@@ -714,6 +704,7 @@
           .update({
             name: newName,
             article: newArticle,
+            category: newCategory,
             price: Number(newPrice),
             description: newDescription,
             status: finalStatus,
@@ -769,26 +760,93 @@
       }
     }
 
-    function updateStats(products) {
+    async function updateOrderStatus(orderId, newStatus) {
+      var result = await supabase
+        .from("orders")
+        .update({ status: newStatus })
+        .eq("id", orderId);
+
+      if (result.error) {
+        alert("Ошибка обновления заказа: " + result.error.message);
+        return;
+      }
+
+      loadOrders();
+      loadProducts(searchArticleInput.value.trim());
+    }
+
+    function updateStats(products, orders) {
       var total = products.length;
-      var withPhoto = products.filter(function (p) {
-        return !!p.image_url;
-      }).length;
-
-      var totalPrice = products.reduce(function (sum, p) {
-        return sum + (Number(p.price) || 0);
-      }, 0);
-
+      var withPhoto = products.filter(function (p) { return !!p.image_url; }).length;
+      var totalPrice = products.reduce(function (sum, p) { return sum + (Number(p.price) || 0); }, 0);
       var avg = total > 0 ? Math.round(totalPrice / total) : 0;
-
-      var totalStock = products.reduce(function (sum, p) {
-        return sum + (Number(p.stock) || 0);
-      }, 0);
+      var totalStock = products.reduce(function (sum, p) { return sum + (Number(p.stock) || 0); }, 0);
 
       statTotal.textContent = total;
       statWithPhoto.textContent = withPhoto;
       statAvgPrice.textContent = avg + " ₽";
       statTotalStock.textContent = totalStock;
+      statOrders.textContent = orders.length;
+    }
+
+    async function loadOrders() {
+      var result = await supabase
+        .from("orders")
+        .select("*")
+        .order("id", { ascending: false });
+
+      if (result.error) {
+        ordersContainer.textContent = "Ошибка загрузки заказов: " + result.error.message;
+        return [];
+      }
+
+      if (!result.data || result.data.length === 0) {
+        ordersContainer.textContent = "Пока заказов нет.";
+        return [];
+      }
+
+      ordersContainer.innerHTML = "";
+
+      result.data.forEach(function (o) {
+        var card = document.createElement("div");
+        card.className = "order";
+
+        var badge = "<div class='" + getStatusBadgeClass(o.status) + "'>" + getStatusLabel(o.status) + "</div>";
+
+        var html = ""
+          + "<b>Заказ #" + o.id + "</b>"
+          + "<p>Товар: " + (o.product_name || "—") + "</p>"
+          + "<div class='muted'>Артикул: " + (o.article || "—") + "</div>"
+          + "<div class='muted'>Количество: " + (o.qty || 1) + "</div>"
+          + "<div class='muted'>Цена: " + (o.price || 0) + " ₽</div>"
+          + "<div class='muted'>Клиент: " + ((o.customer_name || "") + " " + (o.customer_username ? "(@" + o.customer_username + ")" : "")).trim() + "</div>"
+          + badge;
+
+        card.innerHTML = html;
+
+        var select = document.createElement("select");
+        select.className = "order-select";
+        select.innerHTML = ""
+          + "<option value='new'>Новый</option>"
+          + "<option value='accepted'>Принят</option>"
+          + "<option value='shipped'>Отправлен</option>"
+          + "<option value='closed'>Закрыт</option>"
+          + "<option value='cancelled'>Отменён</option>";
+        select.value = o.status || "new";
+
+        var saveBtn = document.createElement("button");
+        saveBtn.className = "mini-btn";
+        saveBtn.textContent = "Сохранить статус";
+        saveBtn.onclick = function () {
+          updateOrderStatus(o.id, select.value);
+        };
+
+        card.appendChild(select);
+        card.appendChild(saveBtn);
+        ordersContainer.appendChild(card);
+      });
+
+      return result.data;
     }
 
     window.deleteProduct = deleteProduct;
@@ -796,12 +854,11 @@
     async function loadProducts(articleQuery) {
       var container = document.getElementById("products");
 
-      var statsResult = await supabase
-        .from("products")
-        .select("*");
+      var statsProducts = await supabase.from("products").select("*");
+      var statsOrders = await supabase.from("orders").select("*");
 
-      if (!statsResult.error && statsResult.data) {
-        updateStats(statsResult.data);
+      if (!statsProducts.error && statsProducts.data && !statsOrders.error && statsOrders.data) {
+        updateStats(statsProducts.data, statsOrders.data);
       }
 
       var query = supabase
@@ -842,6 +899,7 @@
           "<b>" + (p.name || "Без названия") + "</b> — " + (p.price || 0) + " ₽" +
           "<p>" + (p.description || "") + "</p>" +
           "<div class='muted'>Артикул: " + (p.article || "—") + "</div>" +
+          "<div class='muted'>Категория: " + (p.category || "—") + "</div>" +
           "<div class='muted'>ID: " + p.id + "</div>" +
           "<div class='muted'>Остаток: " + (Number(p.stock) || 0) + "</div>" +
           "<div class='" + getStatusBadgeClass(p.status) + "'>" + getStatusLabel(p.status) + "</div>";
