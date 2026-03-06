@@ -42,7 +42,7 @@
       margin-top: 0;
     }
 
-    input, textarea {
+    input, textarea, select {
       width: 100%;
       box-sizing: border-box;
       padding: 14px;
@@ -91,7 +91,7 @@
 
     .stats-grid {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(4, 1fr);
       gap: 12px;
     }
 
@@ -163,6 +163,54 @@
       margin-bottom: 12px;
     }
 
+    .stock-box {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 10px;
+      flex-wrap: wrap;
+    }
+
+    .stock-btn {
+      width: 42px;
+      padding: 10px 0;
+      font-size: 20px;
+      background: #475569;
+      border-radius: 12px;
+    }
+
+    .stock-value {
+      min-width: 48px;
+      text-align: center;
+      font-weight: 700;
+      font-size: 18px;
+      color: white;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      margin-top: 8px;
+    }
+
+    .badge-in-stock {
+      background: #166534;
+      color: #dcfce7;
+    }
+
+    .badge-out-of-stock {
+      background: #7f1d1d;
+      color: #fee2e2;
+    }
+
+    .badge-coming-soon {
+      background: #78350f;
+      color: #fef3c7;
+    }
+
     .product img,
     .preview {
       width: 110px;
@@ -220,7 +268,7 @@
 
     @media (max-width: 700px) {
       .stats-grid {
-        grid-template-columns: 1fr;
+        grid-template-columns: 1fr 1fr;
       }
 
       .row {
@@ -277,6 +325,10 @@
           <div class="stat-label">Средняя цена</div>
           <div id="statAvgPrice" class="stat-value">0 ₽</div>
         </div>
+        <div class="stat-box">
+          <div class="stat-label">Всего остатков</div>
+          <div id="statTotalStock" class="stat-value">0</div>
+        </div>
       </div>
     </div>
 
@@ -292,6 +344,15 @@
 
       <input id="price" type="number" placeholder="Цена" />
       <textarea id="description" placeholder="Описание"></textarea>
+
+      <select id="statusSelect">
+        <option value="in_stock">В наличии</option>
+        <option value="out_of_stock">Нет в наличии</option>
+        <option value="coming_soon">Скоро</option>
+      </select>
+
+      <input id="stock" type="number" placeholder="Количество в наличии" />
+
       <input id="photo" type="file" accept="image/*" />
       <img id="preview" class="preview" alt="preview" />
 
@@ -324,6 +385,15 @@
 
       <input id="editPrice" type="number" placeholder="Цена" />
       <textarea id="editDescription" placeholder="Описание"></textarea>
+
+      <select id="editStatusSelect">
+        <option value="in_stock">В наличии</option>
+        <option value="out_of_stock">Нет в наличии</option>
+        <option value="coming_soon">Скоро</option>
+      </select>
+
+      <input id="editStock" type="number" placeholder="Количество в наличии" />
+
       <input id="editPhoto" type="file" accept="image/*" />
       <img id="editPreview" class="preview" alt="edit-preview" style="display:block;" />
 
@@ -363,12 +433,15 @@
     var statTotal = document.getElementById("statTotal");
     var statWithPhoto = document.getElementById("statWithPhoto");
     var statAvgPrice = document.getElementById("statAvgPrice");
+    var statTotalStock = document.getElementById("statTotalStock");
 
     var editModal = document.getElementById("editModal");
     var editName = document.getElementById("editName");
     var editArticle = document.getElementById("editArticle");
     var editPrice = document.getElementById("editPrice");
     var editDescription = document.getElementById("editDescription");
+    var editStatusSelect = document.getElementById("editStatusSelect");
+    var editStock = document.getElementById("editStock");
     var editPhoto = document.getElementById("editPhoto");
     var editPreview = document.getElementById("editPreview");
     var editStatus = document.getElementById("editStatus");
@@ -377,6 +450,26 @@
 
     var currentEditId = null;
     var currentEditImageUrl = "";
+
+    function normalizeStatus(status, stock) {
+      var num = Number(stock) || 0;
+      if (num <= 0) return "out_of_stock";
+      return status || "in_stock";
+    }
+
+    function getStatusLabel(status) {
+      if (status === "in_stock") return "В наличии";
+      if (status === "out_of_stock") return "Нет в наличии";
+      if (status === "coming_soon") return "Скоро";
+      return status || "—";
+    }
+
+    function getStatusBadgeClass(status) {
+      if (status === "in_stock") return "badge badge-in-stock";
+      if (status === "out_of_stock") return "badge badge-out-of-stock";
+      if (status === "coming_soon") return "badge badge-coming-soon";
+      return "badge";
+    }
 
     function setStatus(text) {
       statusEl.textContent = text;
@@ -485,6 +578,8 @@
         var article = document.getElementById("article").value.trim();
         var price = document.getElementById("price").value.trim();
         var description = document.getElementById("description").value.trim();
+        var statusValue = document.getElementById("statusSelect").value;
+        var stockValue = document.getElementById("stock").value.trim();
         var file = photoInput.files[0];
 
         if (!name || !article || !price) {
@@ -495,6 +590,8 @@
         addBtn.disabled = true;
         setStatus("Загрузка...");
 
+        var stockNumber = Math.max(0, Number(stockValue) || 0);
+        var finalStatus = normalizeStatus(statusValue, stockNumber);
         var image_url = "";
 
         if (file) {
@@ -509,6 +606,8 @@
               article: article,
               price: Number(price),
               description: description,
+              status: finalStatus,
+              stock: stockNumber,
               image_url: image_url
             }
           ]);
@@ -521,6 +620,8 @@
         document.getElementById("article").value = "";
         document.getElementById("price").value = "";
         document.getElementById("description").value = "";
+        document.getElementById("stock").value = "";
+        document.getElementById("statusSelect").value = "in_stock";
         photoInput.value = "";
         preview.src = "";
         preview.style.display = "none";
@@ -561,6 +662,8 @@
       editArticle.value = product.article || "";
       editPrice.value = product.price || "";
       editDescription.value = product.description || "";
+      editStatusSelect.value = product.status || "in_stock";
+      editStock.value = product.stock || 0;
       editPhoto.value = "";
       editPreview.src = currentEditImageUrl || "";
       editPreview.style.display = currentEditImageUrl ? "block" : "none";
@@ -590,6 +693,8 @@
         var newArticle = editArticle.value.trim();
         var newPrice = editPrice.value.trim();
         var newDescription = editDescription.value.trim();
+        var newStatus = editStatusSelect.value;
+        var newStock = Math.max(0, Number(editStock.value) || 0);
         var newFile = editPhoto.files[0];
         var imageUrl = currentEditImageUrl;
 
@@ -602,6 +707,8 @@
           imageUrl = await uploadImage(newFile);
         }
 
+        var finalStatus = normalizeStatus(newStatus, newStock);
+
         var updateResult = await supabase
           .from("products")
           .update({
@@ -609,6 +716,8 @@
             article: newArticle,
             price: Number(newPrice),
             description: newDescription,
+            status: finalStatus,
+            stock: newStock,
             image_url: imageUrl
           })
           .eq("id", currentEditId);
@@ -636,6 +745,30 @@
       }
     }
 
+    async function changeStock(product, delta) {
+      try {
+        var newStock = Math.max(0, (Number(product.stock) || 0) + delta);
+        var newStatus = normalizeStatus(product.status, newStock);
+
+        var result = await supabase
+          .from("products")
+          .update({
+            stock: newStock,
+            status: newStatus
+          })
+          .eq("id", product.id);
+
+        if (result.error) {
+          alert("Ошибка изменения остатка: " + result.error.message);
+          return;
+        }
+
+        loadProducts(searchArticleInput.value.trim());
+      } catch (e) {
+        alert("Ошибка изменения остатка");
+      }
+    }
+
     function updateStats(products) {
       var total = products.length;
       var withPhoto = products.filter(function (p) {
@@ -648,9 +781,14 @@
 
       var avg = total > 0 ? Math.round(totalPrice / total) : 0;
 
+      var totalStock = products.reduce(function (sum, p) {
+        return sum + (Number(p.stock) || 0);
+      }, 0);
+
       statTotal.textContent = total;
       statWithPhoto.textContent = withPhoto;
       statAvgPrice.textContent = avg + " ₽";
+      statTotalStock.textContent = totalStock;
     }
 
     window.deleteProduct = deleteProduct;
@@ -704,7 +842,9 @@
           "<b>" + (p.name || "Без названия") + "</b> — " + (p.price || 0) + " ₽" +
           "<p>" + (p.description || "") + "</p>" +
           "<div class='muted'>Артикул: " + (p.article || "—") + "</div>" +
-          "<div class='muted'>ID: " + p.id + "</div>";
+          "<div class='muted'>ID: " + p.id + "</div>" +
+          "<div class='muted'>Остаток: " + (Number(p.stock) || 0) + "</div>" +
+          "<div class='" + getStatusBadgeClass(p.status) + "'>" + getStatusLabel(p.status) + "</div>";
 
         var copyBtn = document.createElement("button");
         copyBtn.className = "copy-btn";
@@ -713,6 +853,33 @@
           copyArticle(p.article || "", copyBtn);
         };
         left.appendChild(copyBtn);
+
+        var stockBox = document.createElement("div");
+        stockBox.className = "stock-box";
+
+        var minusBtn = document.createElement("button");
+        minusBtn.className = "stock-btn";
+        minusBtn.textContent = "−";
+        minusBtn.onclick = function () {
+          changeStock(p, -1);
+        };
+
+        var stockValue = document.createElement("div");
+        stockValue.className = "stock-value";
+        stockValue.textContent = Number(p.stock) || 0;
+
+        var plusBtn = document.createElement("button");
+        plusBtn.className = "stock-btn";
+        plusBtn.textContent = "+";
+        plusBtn.onclick = function () {
+          changeStock(p, 1);
+        };
+
+        stockBox.appendChild(minusBtn);
+        stockBox.appendChild(stockValue);
+        stockBox.appendChild(plusBtn);
+
+        left.appendChild(stockBox);
 
         var actions = document.createElement("div");
         actions.className = "actions";
