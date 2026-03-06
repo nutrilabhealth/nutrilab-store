@@ -9,20 +9,21 @@
     :root{
       --bg:#07122d;
       --bg2:#0c1b42;
-      --card:#12224c;
-      --muted:#b9c6ee;
-      --text:#f5f8ff;
+      --card:#13244d;
+      --card2:#183062;
       --line:rgba(255,255,255,.08);
-      --green:#42c46d;
-      --green2:#1f8f46;
+      --text:#f5f8ff;
+      --muted:#b8c5ea;
+      --green:#2fd29b;
+      --green2:#1fa06f;
       --red:#ef4444;
-      --blue:#3b82f6;
+      --blue:#4f8df7;
       --yellow:#f59e0b;
-      --gray:#64748b;
-      --shadow:0 10px 30px rgba(0,0,0,.25);
+      --shadow:0 12px 30px rgba(0,0,0,.25);
     }
 
     *{box-sizing:border-box}
+
     body{
       margin:0;
       font-family:Arial,sans-serif;
@@ -30,7 +31,7 @@
       background:
         radial-gradient(circle at top left, rgba(72,255,207,.14), transparent 22%),
         radial-gradient(circle at top right, rgba(59,130,246,.16), transparent 18%),
-        linear-gradient(180deg, #07122d 0%, #09173a 100%);
+        linear-gradient(180deg,#07122d 0%,#09173a 100%);
       min-height:100vh;
     }
 
@@ -43,12 +44,12 @@
     }
 
     .login-box,
-    .modal-box,
-    .panel{
-      background:linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
-      backdrop-filter:blur(8px);
+    .panel,
+    .modal-box{
+      background:linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,.02));
       border:1px solid var(--line);
       box-shadow:var(--shadow);
+      backdrop-filter:blur(8px);
       border-radius:24px;
     }
 
@@ -60,12 +61,12 @@
     }
 
     .login-logo{
-      width:70px;
-      height:70px;
+      width:72px;
+      height:72px;
       margin:0 auto 16px;
-      border-radius:20px;
+      border-radius:22px;
       background:linear-gradient(135deg,#42ffd0,#2cd69b);
-      box-shadow:0 10px 25px rgba(66,255,208,.25);
+      box-shadow:0 10px 24px rgba(66,255,208,.25);
     }
 
     .login-title{
@@ -84,15 +85,15 @@
       display:none;
       max-width:1180px;
       margin:0 auto;
-      padding:22px 16px 28px;
+      padding:20px 16px 90px;
     }
 
     .topbar{
       display:flex;
-      flex-wrap:wrap;
       justify-content:space-between;
       align-items:center;
       gap:14px;
+      flex-wrap:wrap;
       margin-bottom:18px;
     }
 
@@ -122,49 +123,6 @@
       color:var(--muted);
     }
 
-    .topbar-actions{
-      display:flex;
-      gap:10px;
-      flex-wrap:wrap;
-    }
-
-    .ghost-btn,
-    .primary-btn,
-    .danger-btn,
-    .small-btn{
-      border:none;
-      border-radius:14px;
-      cursor:pointer;
-      font-weight:700;
-      color:white;
-    }
-
-    .ghost-btn{
-      background:rgba(255,255,255,.08);
-      border:1px solid var(--line);
-      padding:12px 14px;
-    }
-
-    .primary-btn{
-      background:linear-gradient(180deg,var(--green),var(--green2));
-      padding:14px 18px;
-      width:100%;
-    }
-
-    .danger-btn{
-      background:linear-gradient(180deg,#fb5d5d,#d93636);
-      padding:12px 14px;
-      width:100%;
-    }
-
-    .small-btn{
-      background:rgba(255,255,255,.1);
-      border:1px solid var(--line);
-      padding:10px 12px;
-      width:auto;
-      font-size:13px;
-    }
-
     .tabs{
       display:flex;
       gap:10px;
@@ -175,28 +133,20 @@
     .tab-btn{
       border:none;
       padding:12px 16px;
-      border-radius:14px;
+      border-radius:16px;
       background:rgba(255,255,255,.07);
       color:white;
       font-weight:700;
-      border:1px solid transparent;
       cursor:pointer;
     }
 
     .tab-btn.active{
       background:linear-gradient(180deg,#1dd6b4,#119d7f);
-      border-color:rgba(255,255,255,.14);
       box-shadow:0 8px 24px rgba(17,157,127,.24);
     }
 
     .tab-panel{display:none}
     .tab-panel.active{display:block}
-
-    .grid{
-      display:grid;
-      grid-template-columns:1.1fr .9fr;
-      gap:16px;
-    }
 
     .panel{
       padding:18px;
@@ -206,14 +156,14 @@
     .panel-title{
       font-size:22px;
       font-weight:800;
-      margin:0 0 14px;
+      margin:0 0 12px;
     }
 
     .panel-sub{
       color:var(--muted);
       font-size:13px;
-      margin-top:-6px;
-      margin-bottom:14px;
+      margin-top:-4px;
+      margin-bottom:12px;
     }
 
     input, textarea, select{
@@ -246,22 +196,135 @@
       align-items:start;
     }
 
-    .preview{
-      display:none;
-      width:120px;
-      height:120px;
-      object-fit:cover;
+    .btn,
+    .icon-btn,
+    .ghost-btn,
+    .danger-btn{
+      border:none;
       border-radius:16px;
-      background:#0b1228;
-      margin-bottom:12px;
-      border:1px solid var(--line);
+      cursor:pointer;
+      font-weight:700;
+      color:white;
     }
 
-    .status-text{
-      min-height:20px;
-      font-size:14px;
-      color:#dbe4ff;
+    .btn{
+      width:100%;
+      padding:14px 18px;
+      background:linear-gradient(180deg,var(--green),var(--green2));
     }
+
+    .ghost-btn{
+      background:rgba(255,255,255,.08);
+      border:1px solid var(--line);
+      padding:12px 14px;
+    }
+
+    .danger-btn{
+      background:linear-gradient(180deg,#fb5d5d,#d93636);
+      padding:14px 18px;
+      width:100%;
+    }
+
+    .small-btn{
+      width:auto;
+      padding:12px 14px;
+      background:rgba(255,255,255,.1);
+      border:1px solid var(--line);
+      color:white;
+      border-radius:16px;
+      font-weight:700;
+      cursor:pointer;
+    }
+
+    .search-wrap{
+      max-width:520px;
+    }
+
+    .products-grid{
+      display:grid;
+      grid-template-columns:repeat(4,1fr);
+      gap:14px;
+    }
+
+    .product-card{
+      background:linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,.025));
+      border:1px solid var(--line);
+      border-radius:22px;
+      overflow:hidden;
+      box-shadow:var(--shadow);
+      position:relative;
+    }
+
+    .product-image-wrap{
+      position:relative;
+      aspect-ratio:1/1;
+      background:#0b1228;
+    }
+
+    .product-image{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      display:block;
+    }
+
+    .product-edit{
+      position:absolute;
+      top:10px;
+      right:10px;
+      width:42px;
+      height:42px;
+      border:none;
+      border-radius:14px;
+      background:rgba(12,20,45,.72);
+      backdrop-filter:blur(6px);
+      color:white;
+      font-size:18px;
+      cursor:pointer;
+    }
+
+    .product-body{
+      padding:14px;
+    }
+
+    .product-name{
+      font-size:22px;
+      font-weight:800;
+      line-height:1.2;
+      margin-bottom:8px;
+    }
+
+    .product-price{
+      font-size:20px;
+      font-weight:800;
+      margin-bottom:8px;
+    }
+
+    .product-meta{
+      font-size:13px;
+      color:var(--muted);
+      line-height:1.5;
+      margin-bottom:10px;
+    }
+
+    .badge{
+      display:inline-block;
+      padding:7px 11px;
+      border-radius:999px;
+      font-size:12px;
+      font-weight:800;
+      margin-top:4px;
+      margin-right:6px;
+    }
+
+    .badge-in-stock{background:#14532d;color:#dcfce7}
+    .badge-out-of-stock{background:#7f1d1d;color:#fee2e2}
+    .badge-coming-soon{background:#78350f;color:#fef3c7}
+    .badge-new{background:#1d4ed8;color:#dbeafe}
+    .badge-accepted{background:#6d28d9;color:#ede9fe}
+    .badge-shipped{background:#92400e;color:#fef3c7}
+    .badge-closed{background:#166534;color:#dcfce7}
+    .badge-cancelled{background:#7f1d1d;color:#fee2e2}
 
     .stats-grid{
       display:grid;
@@ -292,7 +355,6 @@
       gap:14px;
     }
 
-    .product-card,
     .order-card{
       background:linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,.025));
       border:1px solid var(--line);
@@ -301,7 +363,6 @@
       box-shadow:var(--shadow);
     }
 
-    .product-head,
     .order-head{
       display:flex;
       justify-content:space-between;
@@ -309,61 +370,49 @@
       align-items:flex-start;
     }
 
-    .product-main-title,
     .order-main-title{
       font-size:22px;
       font-weight:800;
       margin:0 0 8px;
     }
 
-    .product-meta,
     .order-meta{
       color:var(--muted);
       font-size:13px;
       line-height:1.6;
     }
 
-    .badge{
-      display:inline-block;
-      padding:7px 11px;
-      border-radius:999px;
-      font-size:12px;
-      font-weight:800;
-      margin-top:8px;
-      margin-right:6px;
-    }
-
-    .badge-in-stock{background:#14532d;color:#dcfce7}
-    .badge-out-of-stock{background:#7f1d1d;color:#fee2e2}
-    .badge-coming-soon{background:#78350f;color:#fef3c7}
-    .badge-new{background:#1d4ed8;color:#dbeafe}
-    .badge-accepted{background:#6d28d9;color:#ede9fe}
-    .badge-shipped{background:#92400e;color:#fef3c7}
-    .badge-closed{background:#166534;color:#dcfce7}
-    .badge-cancelled{background:#7f1d1d;color:#fee2e2}
-
-    .product-image{
-      width:120px;
-      height:120px;
-      object-fit:cover;
-      border-radius:18px;
-      margin-top:14px;
-      border:1px solid var(--line);
-      background:#0b1228;
-    }
-
-    .product-footer{
+    .actions{
       display:flex;
-      justify-content:space-between;
-      gap:14px;
-      margin-top:14px;
+      gap:8px;
       flex-wrap:wrap;
+      align-items:flex-start;
     }
 
-    .stock-wrap{
+    .action-btn{
+      border:none;
+      color:white;
+      border-radius:14px;
+      padding:11px 14px;
+      cursor:pointer;
+      font-weight:700;
+      min-width:120px;
+    }
+
+    .edit-btn{
+      background:linear-gradient(180deg,#4f8df7,#2563eb);
+    }
+
+    .copy-btn{
+      background:rgba(255,255,255,.09);
+      border:1px solid var(--line);
+    }
+
+    .stock-inline{
       display:flex;
       align-items:center;
       gap:8px;
+      margin-top:12px;
       flex-wrap:wrap;
     }
 
@@ -385,32 +434,6 @@
       font-weight:800;
     }
 
-    .actions{
-      display:flex;
-      gap:8px;
-      flex-wrap:wrap;
-      align-items:flex-start;
-    }
-
-    .edit-btn{
-      background:linear-gradient(180deg,#4f8df7,#2563eb);
-    }
-
-    .copy-btn{
-      background:rgba(255,255,255,.09);
-      border:1px solid var(--line);
-    }
-
-    .action-btn{
-      border:none;
-      color:white;
-      border-radius:14px;
-      padding:11px 14px;
-      cursor:pointer;
-      font-weight:700;
-      min-width:130px;
-    }
-
     .modal{
       display:none;
       position:fixed;
@@ -423,6 +446,7 @@
     }
 
     .modal-box{
+      width:100%;
       max-width:560px;
       padding:22px;
     }
@@ -432,15 +456,44 @@
       gap:10px;
     }
 
-    .secondary-btn{
-      background:rgba(255,255,255,.1);
+    .preview{
+      display:none;
+      width:120px;
+      height:120px;
+      object-fit:cover;
+      border-radius:16px;
+      background:#0b1228;
+      margin-bottom:12px;
       border:1px solid var(--line);
+    }
+
+    .status-text{
+      min-height:20px;
+      font-size:14px;
+      color:#dbe4ff;
+    }
+
+    .fab{
+      position:fixed;
+      right:18px;
+      bottom:18px;
+      width:64px;
+      height:64px;
+      border-radius:20px;
+      border:none;
+      background:linear-gradient(180deg,#1dd6b4,#119d7f);
+      color:white;
+      font-size:34px;
+      font-weight:700;
+      box-shadow:0 16px 34px rgba(17,157,127,.28);
+      cursor:pointer;
+      z-index:1000;
     }
 
     .toast-wrap{
       position:fixed;
       right:16px;
-      bottom:16px;
+      bottom:92px;
       display:flex;
       flex-direction:column;
       gap:10px;
@@ -456,30 +509,30 @@
       font-weight:700;
       box-shadow:var(--shadow);
       border:1px solid rgba(255,255,255,.08);
-      animation:slideIn .18s ease;
     }
 
     .toast-success{background:#14532d}
     .toast-error{background:#7f1d1d}
     .toast-info{background:#1d4ed8}
 
-    @keyframes slideIn{
-      from{transform:translateY(10px);opacity:0}
-      to{transform:translateY(0);opacity:1}
+    @media (max-width:1100px){
+      .products-grid{grid-template-columns:repeat(3,1fr)}
+      .stats-grid{grid-template-columns:repeat(3,1fr)}
     }
 
-    @media (max-width:900px){
-      .grid{grid-template-columns:1fr}
-      .stats-grid{grid-template-columns:1fr 1fr}
+    @media (max-width:820px){
+      .products-grid{grid-template-columns:repeat(2,1fr)}
+      .stats-grid{grid-template-columns:repeat(2,1fr)}
+      .order-head{flex-direction:column}
     }
 
-    @media (max-width:640px){
+    @media (max-width:560px){
+      .products-grid{grid-template-columns:repeat(2,1fr)}
       .stats-grid{grid-template-columns:1fr}
-      .product-head,.order-head{flex-direction:column}
-      .product-footer{flex-direction:column}
-      .modal-actions{flex-direction:column}
-      .row2,.row3{grid-template-columns:1fr}
+      .row2,.row3,.modal-actions{grid-template-columns:1fr;display:grid}
       .brand-title{font-size:24px}
+      .product-name{font-size:18px}
+      .product-price{font-size:18px}
     }
   </style>
 </head>
@@ -491,8 +544,8 @@
       <h1 class="login-title">NutriLab Admin</h1>
       <div class="login-sub">Панель управления магазином</div>
       <input id="password" type="password" placeholder="Введите пароль" />
-      <button id="loginBtn" class="primary-btn" type="button">Войти</button>
-      <div id="loginError" class="error"></div>
+      <button id="loginBtn" class="btn" type="button">Войти</button>
+      <div id="loginError" class="status-text" style="color:#ffb4b4"></div>
     </div>
   </div>
 
@@ -502,12 +555,10 @@
         <div class="brand-logo"></div>
         <div>
           <div class="brand-title">NutriLab Admin</div>
-          <div class="brand-sub">Товары, склад, заказы, статистика</div>
+          <div class="brand-sub">Товары, заказы, статистика</div>
         </div>
       </div>
-      <div class="topbar-actions">
-        <button class="ghost-btn" id="refreshBtn">Обновить</button>
-      </div>
+      <button class="ghost-btn" id="refreshBtn">Обновить</button>
     </div>
 
     <div class="tabs">
@@ -517,90 +568,15 @@
     </div>
 
     <div class="tab-panel active" id="productsTab">
-      <div class="grid">
-        <div>
-          <div class="panel">
-            <div class="panel-title">Добавить товар</div>
-            <div class="panel-sub">Заполни поля ниже и создай новый товар</div>
-
-            <input id="name" placeholder="Название товара" />
-
-            <div class="row3">
-              <input id="article" placeholder="Артикул товара" />
-              <button id="generateArticleBtn" class="small-btn" type="button">Сгенерировать</button>
-            </div>
-
-            <input id="category" placeholder="Категория (например: Омега, Витамины, Протеин)" />
-
-            <div class="row2">
-              <input id="price" type="number" placeholder="Цена" />
-              <input id="stock" type="number" placeholder="Количество в наличии" />
-            </div>
-
-            <textarea id="description" placeholder="Описание"></textarea>
-
-            <div class="row2">
-              <select id="statusSelect">
-                <option value="in_stock">В наличии</option>
-                <option value="out_of_stock">Нет в наличии</option>
-                <option value="coming_soon">Скоро</option>
-              </select>
-              <input id="photo" type="file" accept="image/*" />
-            </div>
-
-            <img id="preview" class="preview" alt="preview" />
-
-            <button id="addBtn" class="primary-btn" type="button">Добавить товар</button>
-            <div id="status" class="status-text"></div>
-          </div>
-
-          <div class="panel">
-            <div class="panel-title">Поиск по артикулу</div>
-            <input id="searchArticle" placeholder="Введите артикул, например NUTRI-48321" />
-            <div id="searchStatus" class="status-text"></div>
-          </div>
-        </div>
-
-        <div>
-          <div class="panel">
-            <div class="panel-title">Быстрая статистика</div>
-            <div class="stats-grid">
-              <div class="stat-card">
-                <div class="stat-label">Товаров</div>
-                <div id="statTotal" class="stat-value">0</div>
-              </div>
-              <div class="stat-card">
-                <div class="stat-label">С фото</div>
-                <div id="statWithPhoto" class="stat-value">0</div>
-              </div>
-              <div class="stat-card">
-                <div class="stat-label">Средняя цена</div>
-                <div id="statAvgPrice" class="stat-value">0 ₽</div>
-              </div>
-              <div class="stat-card">
-                <div class="stat-label">Всего остатков</div>
-                <div id="statTotalStock" class="stat-value">0</div>
-              </div>
-              <div class="stat-card">
-                <div class="stat-label">Заказов</div>
-                <div id="statOrders" class="stat-value">0</div>
-              </div>
-            </div>
-          </div>
-
-          <div class="panel">
-            <div class="panel-title">Подсказка</div>
-            <div class="panel-sub">
-              Если остаток товара станет <b>0</b>, статус автоматически переключится на <b>Нет в наличии</b>.
-            </div>
-          </div>
-        </div>
-      </div>
-
       <div class="panel">
-        <div class="panel-title">Все товары</div>
-        <div id="products" class="cards-list">Загрузка...</div>
+        <div class="panel-title">Товары</div>
+        <div class="search-wrap">
+          <input id="searchArticle" placeholder="Поиск по артикулу" />
+          <div id="searchStatus" class="status-text"></div>
+        </div>
       </div>
+
+      <div id="products" class="products-grid">Загрузка...</div>
     </div>
 
     <div class="tab-panel" id="ordersTab">
@@ -614,36 +590,78 @@
 
     <div class="tab-panel" id="statsTab">
       <div class="panel">
-        <div class="panel-title">Сводка по магазину</div>
+        <div class="panel-title">Статистика</div>
         <div class="stats-grid">
           <div class="stat-card">
             <div class="stat-label">Товаров</div>
-            <div id="statTotal2" class="stat-value">0</div>
+            <div id="statTotal" class="stat-value">0</div>
           </div>
           <div class="stat-card">
             <div class="stat-label">С фото</div>
-            <div id="statWithPhoto2" class="stat-value">0</div>
+            <div id="statWithPhoto" class="stat-value">0</div>
           </div>
           <div class="stat-card">
             <div class="stat-label">Средняя цена</div>
-            <div id="statAvgPrice2" class="stat-value">0 ₽</div>
+            <div id="statAvgPrice" class="stat-value">0 ₽</div>
           </div>
           <div class="stat-card">
             <div class="stat-label">Всего остатков</div>
-            <div id="statTotalStock2" class="stat-value">0</div>
+            <div id="statTotalStock" class="stat-value">0</div>
           </div>
           <div class="stat-card">
             <div class="stat-label">Заказов</div>
-            <div id="statOrders2" class="stat-value">0</div>
+            <div id="statOrders" class="stat-value">0</div>
           </div>
         </div>
       </div>
     </div>
   </div>
 
+  <button id="openAddModalBtn" class="fab">+</button>
+
+  <div id="addModal" class="modal">
+    <div class="modal-box panel">
+      <h3 style="margin-top:0">Добавить товар</h3>
+
+      <input id="name" placeholder="Название товара" />
+
+      <div class="row3">
+        <input id="article" placeholder="Артикул товара" />
+        <button id="generateArticleBtn" class="small-btn" type="button">Сгенерировать</button>
+      </div>
+
+      <input id="category" placeholder="Категория" />
+
+      <div class="row2">
+        <input id="price" type="number" placeholder="Цена" />
+        <input id="stock" type="number" placeholder="Количество в наличии" />
+      </div>
+
+      <textarea id="description" placeholder="Описание"></textarea>
+
+      <div class="row2">
+        <select id="statusSelect">
+          <option value="in_stock">В наличии</option>
+          <option value="out_of_stock">Нет в наличии</option>
+          <option value="coming_soon">Скоро</option>
+        </select>
+        <input id="photo" type="file" accept="image/*" />
+      </div>
+
+      <img id="preview" class="preview" alt="preview" />
+
+      <div class="modal-actions">
+        <button id="addBtn" class="btn" type="button">Добавить товар</button>
+        <button id="closeAddModalBtn" class="ghost-btn" type="button">Отмена</button>
+      </div>
+
+      <div id="status" class="status-text"></div>
+    </div>
+  </div>
+
   <div id="editModal" class="modal">
-    <div class="modal-box">
-      <h3>Редактировать товар</h3>
+    <div class="modal-box panel">
+      <h3 style="margin-top:0">Редактировать товар</h3>
 
       <input id="editName" placeholder="Название товара" />
 
@@ -672,12 +690,24 @@
 
       <img id="editPreview" class="preview" alt="edit-preview" style="display:block;" />
 
-      <div class="modal-actions">
-        <button id="saveEditBtn" class="primary-btn" type="button">Сохранить</button>
-        <button id="cancelEditBtn" class="ghost-btn secondary-btn" type="button">Отмена</button>
+      <div class="stock-inline">
+        <button class="stock-btn" id="editMinusBtn">−</button>
+        <div class="stock-value" id="editStockValue">0</div>
+        <button class="stock-btn" id="editPlusBtn">+</button>
+      </div>
+
+      <div class="modal-actions" style="margin-top:14px">
+        <button id="saveEditBtn" class="btn" type="button">Сохранить</button>
+        <button id="deleteInsideEditBtn" class="danger-btn" type="button">Удалить</button>
+        <button id="cancelEditBtn" class="ghost-btn" type="button">Закрыть</button>
       </div>
 
       <div id="editStatus" class="status-text"></div>
+
+      <div style="margin-top:14px;color:var(--muted);font-size:13px;line-height:1.6">
+        <div>Артикул: <span id="editInfoArticle">—</span></div>
+        <div>ID: <span id="editInfoId">—</span></div>
+      </div>
     </div>
   </div>
 
@@ -696,34 +726,48 @@
     var passwordInput = document.getElementById("password");
     var loginError = document.getElementById("loginError");
 
-    var addBtn = document.getElementById("addBtn");
-    var photoInput = document.getElementById("photo");
-    var preview = document.getElementById("preview");
-    var statusEl = document.getElementById("status");
-
+    var refreshBtn = document.getElementById("refreshBtn");
+    var productsContainer = document.getElementById("products");
+    var ordersContainer = document.getElementById("orders");
+    var ordersStatus = document.getElementById("ordersStatus");
     var searchArticleInput = document.getElementById("searchArticle");
     var searchStatusEl = document.getElementById("searchStatus");
 
+    var addModal = document.getElementById("addModal");
+    var openAddModalBtn = document.getElementById("openAddModalBtn");
+    var closeAddModalBtn = document.getElementById("closeAddModalBtn");
+    var addBtn = document.getElementById("addBtn");
     var generateArticleBtn = document.getElementById("generateArticleBtn");
-    var generateEditArticleBtn = document.getElementById("generateEditArticleBtn");
-    var refreshBtn = document.getElementById("refreshBtn");
-
-    var ordersContainer = document.getElementById("orders");
-    var ordersStatus = document.getElementById("ordersStatus");
+    var photoInput = document.getElementById("photo");
+    var preview = document.getElementById("preview");
+    var statusEl = document.getElementById("status");
 
     var editModal = document.getElementById("editModal");
     var editName = document.getElementById("editName");
     var editArticle = document.getElementById("editArticle");
     var editCategory = document.getElementById("editCategory");
     var editPrice = document.getElementById("editPrice");
+    var editStock = document.getElementById("editStock");
     var editDescription = document.getElementById("editDescription");
     var editStatusSelect = document.getElementById("editStatusSelect");
-    var editStock = document.getElementById("editStock");
     var editPhoto = document.getElementById("editPhoto");
     var editPreview = document.getElementById("editPreview");
     var editStatus = document.getElementById("editStatus");
     var saveEditBtn = document.getElementById("saveEditBtn");
     var cancelEditBtn = document.getElementById("cancelEditBtn");
+    var deleteInsideEditBtn = document.getElementById("deleteInsideEditBtn");
+    var generateEditArticleBtn = document.getElementById("generateEditArticleBtn");
+    var editPlusBtn = document.getElementById("editPlusBtn");
+    var editMinusBtn = document.getElementById("editMinusBtn");
+    var editStockValue = document.getElementById("editStockValue");
+    var editInfoArticle = document.getElementById("editInfoArticle");
+    var editInfoId = document.getElementById("editInfoId");
+
+    var statTotal = document.getElementById("statTotal");
+    var statWithPhoto = document.getElementById("statWithPhoto");
+    var statAvgPrice = document.getElementById("statAvgPrice");
+    var statTotalStock = document.getElementById("statTotalStock");
+    var statOrders = document.getElementById("statOrders");
 
     var currentEditId = null;
     var currentEditImageUrl = "";
@@ -734,14 +778,9 @@
       el.className = "toast toast-" + (type || "info");
       el.textContent = text;
       wrap.appendChild(el);
-      setTimeout(function() {
+      setTimeout(function () {
         el.remove();
       }, 2200);
-    }
-
-    function setPairText(id1, id2, value) {
-      document.getElementById(id1).textContent = value;
-      document.getElementById(id2).textContent = value;
     }
 
     function normalizeStatus(status, stock) {
@@ -774,6 +813,11 @@
       return "badge";
     }
 
+    function generateArticle(prefix) {
+      var randomPart = Math.floor(10000 + Math.random() * 90000);
+      return prefix + "-" + randomPart;
+    }
+
     function setStatus(text) {
       statusEl.textContent = text;
     }
@@ -786,9 +830,26 @@
       searchStatusEl.textContent = text;
     }
 
-    function generateArticle(prefix) {
-      var randomPart = Math.floor(10000 + Math.random() * 90000);
-      return prefix + "-" + randomPart;
+    function openModal(modal) {
+      modal.style.display = "flex";
+    }
+
+    function closeModal(modal) {
+      modal.style.display = "none";
+    }
+
+    function clearAddForm() {
+      document.getElementById("name").value = "";
+      document.getElementById("article").value = "";
+      document.getElementById("category").value = "";
+      document.getElementById("price").value = "";
+      document.getElementById("stock").value = "";
+      document.getElementById("description").value = "";
+      document.getElementById("statusSelect").value = "in_stock";
+      photoInput.value = "";
+      preview.src = "";
+      preview.style.display = "none";
+      setStatus("");
     }
 
     function login() {
@@ -805,21 +866,16 @@
     }
 
     loginBtn.addEventListener("click", login);
-    passwordInput.addEventListener("keydown", function(e) {
+    passwordInput.addEventListener("keydown", function (e) {
       if (e.key === "Enter") login();
     });
 
-    refreshBtn.addEventListener("click", function() {
-      refreshAll();
-      toast("Обновлено", "info");
-    });
-
-    document.querySelectorAll(".tab-btn").forEach(function(btn) {
-      btn.addEventListener("click", function() {
-        document.querySelectorAll(".tab-btn").forEach(function(b) {
+    document.querySelectorAll(".tab-btn").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        document.querySelectorAll(".tab-btn").forEach(function (b) {
           b.classList.remove("active");
         });
-        document.querySelectorAll(".tab-panel").forEach(function(panel) {
+        document.querySelectorAll(".tab-panel").forEach(function (panel) {
           panel.classList.remove("active");
         });
         btn.classList.add("active");
@@ -827,19 +883,38 @@
       });
     });
 
-    generateArticleBtn.addEventListener("click", function() {
+    refreshBtn.addEventListener("click", function () {
+      refreshAll();
+      toast("Обновлено", "info");
+    });
+
+    openAddModalBtn.addEventListener("click", function () {
+      clearAddForm();
+      openModal(addModal);
+    });
+
+    closeAddModalBtn.addEventListener("click", function () {
+      closeModal(addModal);
+    });
+
+    cancelEditBtn.addEventListener("click", function () {
+      closeModal(editModal);
+    });
+
+    generateArticleBtn.addEventListener("click", function () {
       document.getElementById("article").value = generateArticle("NUTRI");
       setStatus("✅ Артикул сгенерирован");
       toast("Артикул сгенерирован", "success");
     });
 
-    generateEditArticleBtn.addEventListener("click", function() {
+    generateEditArticleBtn.addEventListener("click", function () {
       editArticle.value = generateArticle("NUTRI");
+      editInfoArticle.textContent = editArticle.value;
       setEditStatus("✅ Артикул сгенерирован");
       toast("Артикул сгенерирован", "success");
     });
 
-    photoInput.addEventListener("change", function() {
+    photoInput.addEventListener("change", function () {
       var file = photoInput.files[0];
       if (!file) {
         preview.style.display = "none";
@@ -850,14 +925,22 @@
       preview.style.display = "block";
     });
 
-    editPhoto.addEventListener("change", function() {
+    editPhoto.addEventListener("change", function () {
       var file = editPhoto.files[0];
       if (!file) return;
       editPreview.src = URL.createObjectURL(file);
       editPreview.style.display = "block";
     });
 
-    searchArticleInput.addEventListener("input", function() {
+    editStock.addEventListener("input", function () {
+      editStockValue.textContent = Math.max(0, Number(editStock.value) || 0);
+    });
+
+    editArticle.addEventListener("input", function () {
+      editInfoArticle.textContent = editArticle.value || "—";
+    });
+
+    searchArticleInput.addEventListener("input", function () {
       loadProducts(searchArticleInput.value.trim());
     });
 
@@ -930,21 +1013,10 @@
           throw new Error("Ошибка добавления: " + insertResult.error.message);
         }
 
-        document.getElementById("name").value = "";
-        document.getElementById("article").value = "";
-        document.getElementById("category").value = "";
-        document.getElementById("price").value = "";
-        document.getElementById("description").value = "";
-        document.getElementById("stock").value = "";
-        document.getElementById("statusSelect").value = "in_stock";
-        photoInput.value = "";
-        preview.src = "";
-        preview.style.display = "none";
-
-        setStatus("✅ Товар добавлен");
         toast("Товар добавлен", "success");
-        await loadProducts(searchArticleInput.value.trim());
-        await loadOrders();
+        clearAddForm();
+        closeModal(addModal);
+        await refreshAll();
       } catch (err) {
         setStatus("❌ " + err.message);
         toast(err.message, "error");
@@ -970,8 +1042,41 @@
       }
 
       toast("Товар удалён", "success");
-      await loadProducts(searchArticleInput.value.trim());
-      await loadOrders();
+      closeModal(editModal);
+      await refreshAll();
+    }
+
+    async function copyArticle(article) {
+      try {
+        await navigator.clipboard.writeText(article || "");
+        toast("Артикул скопирован", "success");
+      } catch (e) {
+        alert("Не удалось скопировать");
+      }
+    }
+
+    async function changeStock(productId, currentStock, currentStatus, delta) {
+      try {
+        var newStock = Math.max(0, (Number(currentStock) || 0) + delta);
+        var newStatus = normalizeStatus(currentStatus, newStock);
+
+        var result = await supabase
+          .from("products")
+          .update({
+            stock: newStock,
+            status: newStatus
+          })
+          .eq("id", productId);
+
+        if (result.error) {
+          alert("Ошибка изменения остатка: " + result.error.message);
+          return;
+        }
+
+        await refreshAll();
+      } catch (e) {
+        alert("Ошибка изменения остатка");
+      }
     }
 
     function openEditModal(product) {
@@ -982,27 +1087,31 @@
       editArticle.value = product.article || "";
       editCategory.value = product.category || "";
       editPrice.value = product.price || "";
+      editStock.value = product.stock || 0;
+      editStockValue.textContent = Math.max(0, Number(product.stock) || 0);
       editDescription.value = product.description || "";
       editStatusSelect.value = product.status || "in_stock";
-      editStock.value = product.stock || 0;
       editPhoto.value = "";
       editPreview.src = currentEditImageUrl || "";
       editPreview.style.display = currentEditImageUrl ? "block" : "none";
+      editInfoArticle.textContent = product.article || "—";
+      editInfoId.textContent = product.id || "—";
       setEditStatus("");
-      editModal.style.display = "flex";
+
+      openModal(editModal);
     }
 
-    function closeEditModal() {
-      editModal.style.display = "none";
-      currentEditId = null;
-      currentEditImageUrl = "";
-      editPhoto.value = "";
-      setEditStatus("");
-    }
+    editPlusBtn.addEventListener("click", function () {
+      editStock.value = Math.max(0, Number(editStock.value) || 0) + 1;
+      editStockValue.textContent = editStock.value;
+    });
 
-    cancelEditBtn.addEventListener("click", closeEditModal);
+    editMinusBtn.addEventListener("click", function () {
+      editStock.value = Math.max(0, (Number(editStock.value) || 0) - 1);
+      editStockValue.textContent = editStock.value;
+    });
 
-    saveEditBtn.addEventListener("click", async function() {
+    saveEditBtn.addEventListener("click", async function () {
       try {
         if (!currentEditId) return;
 
@@ -1050,8 +1159,10 @@
 
         setEditStatus("✅ Сохранено");
         toast("Товар обновлён", "success");
-        await loadProducts(searchArticleInput.value.trim());
-        setTimeout(closeEditModal, 450);
+        await refreshAll();
+        setTimeout(function () {
+          closeModal(editModal);
+        }, 350);
       } catch (err) {
         setEditStatus("❌ " + err.message);
         toast(err.message, "error");
@@ -1060,43 +1171,9 @@
       }
     });
 
-    async function copyArticle(article, buttonElement) {
-      try {
-        await navigator.clipboard.writeText(article || "");
-        var old = buttonElement.textContent;
-        buttonElement.textContent = "Скопировано";
-        toast("Артикул скопирован", "success");
-        setTimeout(function() {
-          buttonElement.textContent = old;
-        }, 900);
-      } catch (e) {
-        alert("Не удалось скопировать");
-      }
-    }
-
-    async function changeStock(product, delta) {
-      try {
-        var newStock = Math.max(0, (Number(product.stock) || 0) + delta);
-        var newStatus = normalizeStatus(product.status, newStock);
-
-        var result = await supabase
-          .from("products")
-          .update({
-            stock: newStock,
-            status: newStatus
-          })
-          .eq("id", product.id);
-
-        if (result.error) {
-          alert("Ошибка изменения остатка: " + result.error.message);
-          return;
-        }
-
-        await loadProducts(searchArticleInput.value.trim());
-      } catch (e) {
-        alert("Ошибка изменения остатка");
-      }
-    }
+    deleteInsideEditBtn.addEventListener("click", function () {
+      if (currentEditId) deleteProduct(currentEditId);
+    });
 
     async function updateOrderStatus(orderId, newStatus) {
       var result = await supabase
@@ -1110,23 +1187,30 @@
       }
 
       toast("Статус заказа обновлён", "success");
-      await loadOrders();
-      await loadProducts(searchArticleInput.value.trim());
+      await refreshAll();
     }
 
     function updateStats(products, orders) {
       var total = products.length;
-      var withPhoto = products.filter(function(p){ return !!p.image_url; }).length;
-      var totalPrice = products.reduce(function(sum,p){ return sum + (Number(p.price) || 0); }, 0);
-      var avg = total > 0 ? Math.round(totalPrice / total) : 0;
-      var totalStock = products.reduce(function(sum,p){ return sum + (Number(p.stock) || 0); }, 0);
-      var ordersCount = orders.length;
+      var withPhoto = products.filter(function (p) {
+        return !!p.image_url;
+      }).length;
 
-      setPairText("statTotal","statTotal2", total);
-      setPairText("statWithPhoto","statWithPhoto2", withPhoto);
-      setPairText("statAvgPrice","statAvgPrice2", avg + " ₽");
-      setPairText("statTotalStock","statTotalStock2", totalStock);
-      setPairText("statOrders","statOrders2", ordersCount);
+      var totalPrice = products.reduce(function (sum, p) {
+        return sum + (Number(p.price) || 0);
+      }, 0);
+
+      var avg = total > 0 ? Math.round(totalPrice / total) : 0;
+
+      var totalStock = products.reduce(function (sum, p) {
+        return sum + (Number(p.stock) || 0);
+      }, 0);
+
+      statTotal.textContent = total;
+      statWithPhoto.textContent = withPhoto;
+      statAvgPrice.textContent = avg + " ₽";
+      statTotalStock.textContent = totalStock;
+      statOrders.textContent = orders.length;
     }
 
     async function loadOrders() {
@@ -1149,7 +1233,7 @@
       ordersStatus.textContent = "";
       ordersContainer.innerHTML = "";
 
-      result.data.forEach(function(o) {
+      result.data.forEach(function (o) {
         var card = document.createElement("div");
         card.className = "order-card";
 
@@ -1171,7 +1255,6 @@
         right.className = "actions";
 
         var select = document.createElement("select");
-        select.className = "order-select";
         select.innerHTML = ""
           + "<option value='new'>Новый</option>"
           + "<option value='accepted'>Принят</option>"
@@ -1183,7 +1266,7 @@
         var saveBtn = document.createElement("button");
         saveBtn.className = "action-btn edit-btn";
         saveBtn.textContent = "Сохранить статус";
-        saveBtn.onclick = function() {
+        saveBtn.onclick = function () {
           updateOrderStatus(o.id, select.value);
         };
 
@@ -1200,8 +1283,6 @@
     }
 
     async function loadProducts(articleQuery) {
-      var container = document.getElementById("products");
-
       var statsProducts = await supabase.from("products").select("*");
       var statsOrders = await supabase.from("orders").select("*");
 
@@ -1224,139 +1305,60 @@
       var result = await query;
 
       if (result.error) {
-        container.textContent = "Ошибка загрузки товаров: " + result.error.message;
+        productsContainer.textContent = "Ошибка загрузки товаров: " + result.error.message;
         return;
       }
 
       if (!result.data || result.data.length === 0) {
-        container.textContent = "Товаров не найдено.";
+        productsContainer.textContent = "Товаров не найдено.";
         return;
       }
 
-      container.innerHTML = "";
+      productsContainer.innerHTML = "";
 
-      result.data.forEach(function(p) {
+      result.data.forEach(function (p) {
         var card = document.createElement("div");
         card.className = "product-card";
 
-        var head = document.createElement("div");
-        head.className = "product-head";
+        var imageWrap = document.createElement("div");
+        imageWrap.className = "product-image-wrap";
 
-        var left = document.createElement("div");
-        left.innerHTML =
-          "<div class='product-main-title'>" + (p.name || "Без названия") + "</div>" +
-          "<div class='product-meta'>Цена: " + (p.price || 0) + " ₽</div>" +
-          "<div class='product-meta'>Артикул: " + (p.article || "—") + "</div>" +
-          "<div class='product-meta'>Категория: " + (p.category || "—") + "</div>" +
-          "<div class='product-meta'>ID: " + p.id + "</div>" +
-          "<div class='product-meta'>Остаток: " + (Number(p.stock) || 0) + "</div>" +
-          "<div class='" + getStatusBadgeClass(p.status) + "'>" + getStatusLabel(p.status) + "</div>";
-
-        var copyBtn = document.createElement("button");
-        copyBtn.className = "action-btn copy-btn";
-        copyBtn.textContent = "Копировать артикул";
-        copyBtn.onclick = function() {
-          copyArticle(p.article || "", copyBtn);
-        };
-        left.appendChild(copyBtn);
-
-        var stockWrap = document.createElement("div");
-        stockWrap.className = "stock-wrap";
-
-        var minusBtn = document.createElement("button");
-        minusBtn.className = "stock-btn";
-        minusBtn.textContent = "−";
-        minusBtn.onclick = function() {
-          changeStock(p, -1);
-        };
-
-        var stockValue = document.createElement("div");
-        stockValue.className = "stock-value";
-        stockValue.textContent = Number(p.stock) || 0;
-
-        var plusBtn = document.createElement("button");
-        plusBtn.className = "stock-btn";
-        plusBtn.textContent = "+";
-        plusBtn.onclick = function() {
-          changeStock(p, 1);
-        };
-
-        stockWrap.appendChild(minusBtn);
-        stockWrap.appendChild(stockValue);
-        stockWrap.appendChild(plusBtn);
-        left.appendChild(stockWrap);
-
-        var right = document.createElement("div");
-        right.className = "actions";
-
-        var editBtn = document.createElement("button");
-        editBtn.className = "action-btn edit-btn";
-        editBtn.textContent = "Редактировать";
-        editBtn.onclick = function() {
+        var editBtnTop = document.createElement("button");
+        editBtnTop.className = "product-edit";
+        editBtnTop.innerHTML = "✎";
+        editBtnTop.onclick = function () {
           openEditModal(p);
         };
-
-        var delBtn = document.createElement("button");
-        delBtn.className = "action-btn danger-btn";
-        delBtn.textContent = "Удалить";
-        delBtn.onclick = function() {
-          deleteProduct(p.id);
-        };
-
-        right.appendChild(editBtn);
-        right.appendChild(delBtn);
-
-        head.appendChild(left);
-        head.appendChild(right);
-        card.appendChild(head);
-
-        if (p.description) {
-          var desc = document.createElement("div");
-          desc.className = "product-meta";
-          desc.style.marginTop = "12px";
-          desc.textContent = p.description;
-          card.appendChild(desc);
-        }
 
         if (p.image_url) {
           var img = document.createElement("img");
           img.className = "product-image";
           img.src = p.image_url;
           img.alt = p.name || "product";
-          card.appendChild(img);
+          imageWrap.appendChild(img);
         }
 
-        container.appendChild(card);
+        imageWrap.appendChild(editBtnTop);
+
+        var body = document.createElement("div");
+        body.className = "product-body";
+
+        var categoryLine = p.category ? "<div class='product-meta'>" + p.category + "</div>" : "";
+        var stockText = "Остаток: " + (Number(p.stock) || 0);
+
+        body.innerHTML =
+          "<div class='product-name'>" + (p.name || "Без названия") + "</div>" +
+          "<div class='product-price'>" + (p.price || 0) + " ₽</div>" +
+          categoryLine +
+          "<div class='product-meta'>" + stockText + "</div>" +
+          "<div class='" + getStatusBadgeClass(p.status) + "'>" + getStatusLabel(p.status) + "</div>";
+
+        card.appendChild(imageWrap);
+        card.appendChild(body);
+
+        productsContainer.appendChild(card);
       });
     }
-
-    function openEditModal(product) {
-      currentEditId = product.id;
-      currentEditImageUrl = product.image_url || "";
-
-      editName.value = product.name || "";
-      editArticle.value = product.article || "";
-      editCategory.value = product.category || "";
-      editPrice.value = product.price || "";
-      editDescription.value = product.description || "";
-      editStatusSelect.value = product.status || "in_stock";
-      editStock.value = product.stock || 0;
-      editPhoto.value = "";
-      editPreview.src = currentEditImageUrl || "";
-      editPreview.style.display = currentEditImageUrl ? "block" : "none";
-      setEditStatus("");
-      editModal.style.display = "flex";
-    }
-
-    function closeEditModal() {
-      editModal.style.display = "none";
-      currentEditId = null;
-      currentEditImageUrl = "";
-      editPhoto.value = "";
-      setEditStatus("");
-    }
-
-    cancelEditBtn.addEventListener("click", closeEditModal);
 
     async function refreshAll() {
       await loadProducts(searchArticleInput.value.trim());
