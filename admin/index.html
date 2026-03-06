@@ -16,11 +16,39 @@ background:#0f172a;
 color:white;
 }
 
-header{
-padding:20px;
-font-size:22px;
+.center{
+display:flex;
+align-items:center;
+justify-content:center;
+height:100vh;
+}
+
+.login-box{
+background:#1e293b;
+padding:30px;
+border-radius:14px;
+width:300px;
+text-align:center;
+}
+
+input{
+width:100%;
+padding:12px;
+border:none;
+border-radius:10px;
+margin-top:10px;
+margin-bottom:10px;
+}
+
+button{
+padding:12px;
+border:none;
+border-radius:10px;
+background:#22c55e;
+color:white;
 font-weight:bold;
-background:#111827;
+width:100%;
+cursor:pointer;
 }
 
 .container{
@@ -36,38 +64,6 @@ border-radius:14px;
 margin-bottom:20px;
 }
 
-input,textarea{
-width:100%;
-box-sizing:border-box;
-padding:12px;
-margin-bottom:12px;
-border-radius:10px;
-border:none;
-background:#e5e7eb;
-color:#111827;
-font-size:16px;
-}
-
-button{
-padding:12px;
-border-radius:10px;
-border:none;
-cursor:pointer;
-font-weight:bold;
-font-size:15px;
-}
-
-.add{
-background:#22c55e;
-color:white;
-width:100%;
-}
-
-.delete{
-background:#ef4444;
-color:white;
-}
-
 .product{
 background:#1e293b;
 padding:15px;
@@ -77,15 +73,13 @@ margin-bottom:12px;
 
 .product img{
 width:100px;
-height:100px;
-object-fit:cover;
 border-radius:10px;
 margin-top:10px;
 }
 
-.status{
+.delete{
+background:#ef4444;
 margin-top:10px;
-color:#cbd5e1;
 }
 
 </style>
@@ -93,9 +87,26 @@ color:#cbd5e1;
 
 <body>
 
-<header>NutriLab Admin</header>
+<div id="login" class="center">
+
+<div class="login-box">
+
+<h2>Admin Login</h2>
+
+<input type="password" id="password" placeholder="Введите пароль">
+
+<button onclick="login()">Войти</button>
+
+</div>
+
+</div>
+
+
+<div id="admin" style="display:none">
 
 <div class="container">
+
+<h1>NutriLab Admin</h1>
 
 <div class="card">
 
@@ -109,9 +120,7 @@ color:#cbd5e1;
 
 <input id="photo" type="file">
 
-<button class="add" onclick="addProduct()">Добавить</button>
-
-<div class="status" id="status"></div>
+<button onclick="addProduct()">Добавить</button>
 
 </div>
 
@@ -125,93 +134,47 @@ color:#cbd5e1;
 
 </div>
 
+</div>
+
+
 <script>
 
-/* ПАРОЛЬ АДМИНКИ */
+const PASSWORD = "abdul2008"
 
-const ADMIN_PASSWORD = "abdul2008"
+function login(){
 
-const input = prompt("Введите пароль администратора")
+const pass = document.getElementById("password").value
 
-if(input !== ADMIN_PASSWORD){
+if(pass === PASSWORD){
 
-document.body.innerHTML = "<h1 style='text-align:center;margin-top:40vh;'>Нет доступа</h1>"
+document.getElementById("login").style.display="none"
+document.getElementById("admin").style.display="block"
 
-throw new Error("Access denied")
+loadProducts()
+
+}else{
+
+alert("Неверный пароль")
 
 }
 
-/* SUPABASE */
+}
 
 const supabaseUrl = "https://cthfqhxnplyibdsjzcrq.supabase.co"
-
 const supabaseKey = "sb_publishable_AjGX1zKhV8kEyGMbvAKwQg_srda-oyI"
 
 const { createClient } = window.supabase
 
 const supabase = createClient(supabaseUrl,supabaseKey)
 
-/* ЗАГРУЗКА ТОВАРОВ */
-
-async function loadProducts(){
-
-const container = document.getElementById("products")
-
-const { data,error } = await supabase
-.from("products")
-.select("*")
-.order("id",{ascending:false})
-
-if(error){
-
-container.innerHTML="Ошибка загрузки"
-
-return
-
-}
-
-container.innerHTML=""
-
-data.forEach(p=>{
-
-container.innerHTML += `
-
-<div class="product">
-
-<b>${p.name}</b> — ${p.price} ₽
-
-<p>${p.description}</p>
-
-<img src="${p.image_url}">
-
-<br><br>
-
-<button class="delete" onclick="deleteProduct(${p.id})">Удалить</button>
-
-</div>
-
-`
-
-})
-
-}
-
-/* ЗАГРУЗКА ФОТО */
-
 async function uploadImage(file){
 
 const fileName = Date.now()+"_"+file.name
 
-const { error } = await supabase
+await supabase
 .storage
 .from("product-images")
 .upload(fileName,file)
-
-if(error){
-
-throw new Error("Ошибка загрузки фото")
-
-}
 
 const { data } = supabase
 .storage
@@ -222,56 +185,30 @@ return data.publicUrl
 
 }
 
-/* ДОБАВЛЕНИЕ ТОВАРА */
-
 async function addProduct(){
 
-const name = document.getElementById("name").value
-const price = document.getElementById("price").value
-const description = document.getElementById("description").value
-const file = document.getElementById("photo").files[0]
+const name=document.getElementById("name").value
+const price=document.getElementById("price").value
+const description=document.getElementById("description").value
+const file=document.getElementById("photo").files[0]
 
 let image_url=""
 
 if(file){
 
-image_url = await uploadImage(file)
+image_url=await uploadImage(file)
 
 }
 
-const { error } = await supabase
+await supabase
 .from("products")
-.insert([
-{
-name,
-price,
-description,
-image_url
-}
-])
-
-if(error){
-
-alert("Ошибка добавления")
-
-return
-
-}
-
-document.getElementById("name").value=""
-document.getElementById("price").value=""
-document.getElementById("description").value=""
-document.getElementById("photo").value=""
+.insert([{name,price,description,image_url}])
 
 loadProducts()
 
 }
 
-/* УДАЛЕНИЕ */
-
 async function deleteProduct(id){
-
-if(!confirm("Удалить товар?")) return
 
 await supabase
 .from("products")
@@ -282,7 +219,40 @@ loadProducts()
 
 }
 
-loadProducts()
+async function loadProducts(){
+
+const { data } = await supabase
+.from("products")
+.select("*")
+.order("id",{ascending:false})
+
+const container=document.getElementById("products")
+
+container.innerHTML=""
+
+data.forEach(p=>{
+
+container.innerHTML+=`
+
+<div class="product">
+
+<b>${p.name}</b> — ${p.price} ₽
+
+<p>${p.description}</p>
+
+<img src="${p.image_url}">
+
+<br>
+
+<button class="delete" onclick="deleteProduct(${p.id})">Удалить</button>
+
+</div>
+
+`
+
+})
+
+}
 
 </script>
 
