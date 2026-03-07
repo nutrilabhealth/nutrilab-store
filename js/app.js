@@ -1,64 +1,151 @@
-import { createClient } from "./supabase.js";
+import {addToCart,getCart,getCartCount} from "./cart.js"
 
-const app = document.getElementById("app");
-const supabase = createClient();
+const SUPABASE_URL="https://cthfqhxnplyibdsjzcrq.supabase.co"
+const SUPABASE_KEY="sb_publishable_AjGX1zKhV8kEyGMbvAKwQg_srda-oyI"
 
-function fmtPrice(v) {
-  return Number(v || 0).toLocaleString("ru-RU") + " ₽";
+const supabase=supabase.createClient(SUPABASE_URL,SUPABASE_KEY)
+
+
+const homeGrid=document.getElementById("homeGrid")
+const catalogGrid=document.getElementById("catalogGrid")
+const cartList=document.getElementById("cartList")
+const cartBadge=document.getElementById("cartBadge")
+
+const searchInput=document.getElementById("searchInput")
+
+let products=[]
+
+
+async function loadProducts(){
+
+const {data}=await supabase
+
+.from("products")
+
+.select("*")
+
+products=data||[]
+
+renderProducts()
+
 }
 
-function getImage(product) {
-  if (Array.isArray(product.images) && product.images.length > 0) {
-    return product.images[0];
-  }
-  if (product.image_url) return product.image_url;
-  return "https://via.placeholder.com/800x800?text=NutriLab";
+
+function productCard(p){
+
+const div=document.createElement("div")
+
+div.className="card"
+
+div.innerHTML=`
+
+<img src="${p.image_url||""}">
+
+<div class="cardBody">
+
+<div>${p.name}</div>
+
+<div class="price">${p.price} ₽</div>
+
+<button class="addCart">В корзину</button>
+
+</div>
+
+`
+
+div.querySelector(".addCart").onclick=()=>{
+
+addToCart(p)
+
+updateCart()
+
 }
 
-function renderProducts(products) {
-  if (!products.length) {
-    app.innerHTML = `<div class="empty">Товаров пока нет.</div>`;
-    return;
-  }
+return div
 
-  app.innerHTML = products.map(product => `
-    <div class="card">
-      <img src="${getImage(product)}" alt="${product.name || "Товар"}">
-      <div class="card-body">
-        <div class="badges">
-          <div class="badge ${Number(product.stock || 0) > 0 ? "in" : "out"}">
-            ${Number(product.stock || 0) > 0 ? "В наличии" : "Нет в наличии"}
-          </div>
-          ${product.category ? `<div class="badge">${product.category}</div>` : ""}
-        </div>
-
-        <div class="title">${product.name || "Без названия"}</div>
-        <div class="desc">${product.description || "Описание товара появится здесь."}</div>
-        <div class="price">${fmtPrice(product.price)}</div>
-
-        <div class="actions">
-          <button class="btn btn-dark" onclick="alert('Подробная карточка товара будет следующим шагом')">Подробнее</button>
-          <button class="btn btn-primary" onclick="alert('Корзину подключим следующим шагом')">В корзину</button>
-        </div>
-      </div>
-    </div>
-  `).join("");
 }
 
-async function loadProducts() {
-  const { data, error } = await supabase
-    .from("products")
-    .select("*")
-    .order("id", { ascending: true });
 
-  if (error) {
-    console.error(error);
-    app.innerHTML = `<div class="empty">Ошибка загрузки товаров: ${error.message}</div>`;
-    return;
-  }
 
-  const visibleProducts = (data || []).filter(p => (p.status || "") !== "hidden");
-  renderProducts(visibleProducts);
+function renderProducts(){
+
+homeGrid.innerHTML=""
+
+catalogGrid.innerHTML=""
+
+products.forEach(p=>{
+
+homeGrid.appendChild(productCard(p))
+
+catalogGrid.appendChild(productCard(p))
+
+})
+
 }
 
-loadProducts();
+
+
+function renderCart(){
+
+const cart=getCart()
+
+cartList.innerHTML=""
+
+cart.forEach(p=>{
+
+const div=document.createElement("div")
+
+div.innerHTML=`${p.name} — ${p.price} ₽`
+
+cartList.appendChild(div)
+
+})
+
+}
+
+
+
+function updateCart(){
+
+cartBadge.textContent=getCartCount()
+
+renderCart()
+
+}
+
+
+
+searchInput.oninput=()=>{
+
+const q=searchInput.value.toLowerCase()
+
+homeGrid.innerHTML=""
+
+products
+
+.filter(p=>p.name.toLowerCase().includes(q))
+
+.forEach(p=>homeGrid.appendChild(productCard(p)))
+
+}
+
+
+
+document.querySelectorAll(".bottomNav button").forEach(btn=>{
+
+btn.onclick=()=>{
+
+const tab=btn.dataset.tab
+
+document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"))
+
+document.getElementById("screen-"+tab).classList.add("active")
+
+}
+
+})
+
+
+loadProducts()
+
+updateCart()
