@@ -19,9 +19,9 @@
       --shadow:0 12px 30px rgba(0,0,0,.25);
     }
 
-    * { box-sizing:border-box; }
+    *{box-sizing:border-box}
 
-    html, body {
+    html,body{
       margin:0;
       min-height:100vh;
       font-family:Arial,sans-serif;
@@ -32,12 +32,12 @@
         linear-gradient(180deg,#07122d 0%,#09173a 100%);
     }
 
-    body.modal-open {
+    body.modal-open{
       overflow:hidden;
       height:100vh;
     }
 
-    .center {
+    .center{
       min-height:100vh;
       display:flex;
       align-items:center;
@@ -47,7 +47,7 @@
 
     .login-box,
     .panel,
-    .modal-shell {
+    .modal-shell{
       background:linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,.02));
       border:1px solid var(--line);
       box-shadow:var(--shadow);
@@ -55,14 +55,14 @@
       border-radius:24px;
     }
 
-    .login-box {
+    .login-box{
       width:100%;
       max-width:380px;
       padding:28px;
       text-align:center;
     }
 
-    .login-logo {
+    .login-logo{
       width:72px;
       height:72px;
       margin:0 auto 16px;
@@ -70,26 +70,26 @@
       background:linear-gradient(135deg,#42ffd0,#2cd69b);
     }
 
-    .login-title {
+    .login-title{
       font-size:34px;
       font-weight:800;
       margin:0 0 10px;
     }
 
-    .login-sub {
+    .login-sub{
       color:var(--muted);
       font-size:14px;
       margin-bottom:18px;
     }
 
-    .page {
+    .page{
       display:none;
       max-width:1180px;
       margin:0 auto;
       padding:20px 16px 90px;
     }
 
-    .topbar {
+    .topbar{
       display:flex;
       justify-content:space-between;
       align-items:center;
@@ -98,39 +98,39 @@
       margin-bottom:18px;
     }
 
-    .brand {
+    .brand{
       display:flex;
       align-items:center;
       gap:14px;
     }
 
-    .brand-logo {
+    .brand-logo{
       width:56px;
       height:56px;
       border-radius:18px;
       background:linear-gradient(135deg,#42ffd0,#2cd69b);
     }
 
-    .brand-title {
+    .brand-title{
       font-size:28px;
       font-weight:800;
       margin:0;
     }
 
-    .brand-sub {
+    .brand-sub{
       margin-top:4px;
       font-size:13px;
       color:var(--muted);
     }
 
-    .tabs {
+    .tabs{
       display:flex;
       gap:10px;
       flex-wrap:wrap;
       margin-bottom:18px;
     }
 
-    .tab-btn {
+    .tab-btn{
       border:none;
       padding:12px 16px;
       border-radius:16px;
@@ -140,31 +140,31 @@
       cursor:pointer;
     }
 
-    .tab-btn.active {
+    .tab-btn.active{
       background:linear-gradient(180deg,#1dd6b4,#119d7f);
     }
 
-    .tab-panel { display:none; }
-    .tab-panel.active { display:block; }
+    .tab-panel{display:none}
+    .tab-panel.active{display:block}
 
-    .panel {
+    .panel{
       padding:18px;
       margin-bottom:16px;
     }
 
-    .panel-title {
+    .panel-title{
       font-size:22px;
       font-weight:800;
       margin:0 0 12px;
     }
 
-    .panel-sub {
+    .panel-sub{
       color:var(--muted);
       font-size:13px;
       margin:0 0 12px;
     }
 
-    input, textarea, select {
+    input, textarea, select{
       width:100%;
       border:none;
       border-radius:16px;
@@ -176,25 +176,25 @@
       margin-bottom:12px;
     }
 
-    textarea {
+    textarea{
       min-height:110px;
       resize:vertical;
     }
 
-    .row2 {
+    .row2{
       display:grid;
       grid-template-columns:1fr 1fr;
       gap:10px;
     }
 
-    .row3 {
+    .row3{
       display:grid;
       grid-template-columns:1fr auto;
       gap:10px;
       align-items:start;
     }
 
-    .btn, .ghost-btn, .danger-btn, .small-btn {
+    .btn, .ghost-btn, .danger-btn, .small-btn{
       border:none;
       border-radius:16px;
       cursor:pointer;
@@ -202,42 +202,42 @@
       color:white;
     }
 
-    .btn {
+    .btn{
       width:100%;
       padding:14px 18px;
       background:linear-gradient(180deg,var(--green),var(--green2));
     }
 
-    .ghost-btn {
+    .ghost-btn{
       background:rgba(255,255,255,.08);
       border:1px solid var(--line);
       padding:12px 14px;
     }
 
-    .danger-btn {
+    .danger-btn{
       background:linear-gradient(180deg,#fb5d5d,#d93636);
       padding:14px 18px;
       width:100%;
     }
 
-    .small-btn {
+    .small-btn{
       width:auto;
       padding:12px 14px;
       background:rgba(255,255,255,.1);
       border:1px solid var(--line);
     }
 
-    .search-wrap {
+    .search-wrap{
       max-width:520px;
     }
 
-    .products-grid {
+    .products-grid{
       display:grid;
       grid-template-columns:repeat(4,1fr);
       gap:14px;
     }
 
-    .product-card {
+    .product-card{
       background:linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,.025));
       border:1px solid var(--line);
       border-radius:22px;
@@ -245,20 +245,23 @@
       box-shadow:var(--shadow);
     }
 
-    .product-image-wrap {
+    .product-image-wrap{
       position:relative;
       aspect-ratio:1/1;
       background:#0b1228;
+      overflow:hidden;
     }
 
-    .product-image {
+    .product-image{
       width:100%;
       height:100%;
       object-fit:cover;
       display:block;
+      user-select:none;
+      -webkit-user-drag:none;
     }
 
-    .product-edit {
+    .product-edit{
       position:absolute;
       top:10px;
       right:10px;
@@ -270,34 +273,75 @@
       color:white;
       font-size:18px;
       cursor:pointer;
+      z-index:3;
     }
 
-    .product-body {
+    .slider-btn{
+      position:absolute;
+      top:50%;
+      transform:translateY(-50%);
+      width:34px;
+      height:34px;
+      border:none;
+      border-radius:12px;
+      background:rgba(12,20,45,.72);
+      color:white;
+      font-size:18px;
+      cursor:pointer;
+      z-index:3;
+    }
+
+    .slider-btn.left{left:10px}
+    .slider-btn.right{right:10px}
+
+    .slider-dots{
+      position:absolute;
+      left:0;
+      right:0;
+      bottom:10px;
+      display:flex;
+      justify-content:center;
+      gap:6px;
+      z-index:3;
+    }
+
+    .dot{
+      width:7px;
+      height:7px;
+      border-radius:999px;
+      background:rgba(255,255,255,.38);
+    }
+
+    .dot.active{
+      background:#fff;
+    }
+
+    .product-body{
       padding:14px;
     }
 
-    .product-name {
-      font-size:20px;
+    .product-name{
+      font-size:19px;
       font-weight:800;
       line-height:1.2;
       margin-bottom:8px;
     }
 
-    .product-price {
+    .product-price{
       font-size:18px;
       font-weight:800;
       margin-bottom:8px;
     }
 
     .product-meta,
-    .order-meta {
+    .order-meta{
       font-size:13px;
       color:var(--muted);
       line-height:1.5;
       margin-bottom:8px;
     }
 
-    .badge {
+    .badge{
       display:inline-block;
       padding:7px 11px;
       border-radius:999px;
@@ -306,45 +350,45 @@
       margin-top:4px;
     }
 
-    .badge-in-stock { background:#14532d; color:#dcfce7; }
-    .badge-out-of-stock { background:#7f1d1d; color:#fee2e2; }
-    .badge-coming-soon { background:#78350f; color:#fef3c7; }
-    .badge-new { background:#1d4ed8; color:#dbeafe; }
-    .badge-accepted { background:#6d28d9; color:#ede9fe; }
-    .badge-shipped { background:#92400e; color:#fef3c7; }
-    .badge-closed { background:#166534; color:#dcfce7; }
-    .badge-cancelled { background:#7f1d1d; color:#fee2e2; }
+    .badge-in-stock{background:#14532d;color:#dcfce7}
+    .badge-out-of-stock{background:#7f1d1d;color:#fee2e2}
+    .badge-coming-soon{background:#78350f;color:#fef3c7}
+    .badge-new{background:#1d4ed8;color:#dbeafe}
+    .badge-accepted{background:#6d28d9;color:#ede9fe}
+    .badge-shipped{background:#92400e;color:#fef3c7}
+    .badge-closed{background:#166534;color:#dcfce7}
+    .badge-cancelled{background:#7f1d1d;color:#fee2e2}
 
-    .stats-grid {
+    .stats-grid{
       display:grid;
       grid-template-columns:repeat(5,1fr);
       gap:12px;
     }
 
-    .stat-card {
+    .stat-card{
       background:linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,.03));
       border:1px solid var(--line);
       border-radius:18px;
       padding:18px;
     }
 
-    .stat-label {
+    .stat-label{
       color:var(--muted);
       font-size:13px;
       margin-bottom:8px;
     }
 
-    .stat-value {
+    .stat-value{
       font-size:26px;
       font-weight:800;
     }
 
-    .cards-list {
+    .cards-list{
       display:grid;
       gap:14px;
     }
 
-    .order-card {
+    .order-card{
       background:linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,.025));
       border:1px solid var(--line);
       border-radius:22px;
@@ -352,13 +396,13 @@
       box-shadow:var(--shadow);
     }
 
-    .order-main-title {
+    .order-main-title{
       font-size:22px;
       font-weight:800;
       margin:0 0 8px;
     }
 
-    .fab {
+    .fab{
       position:fixed;
       right:18px;
       bottom:18px;
@@ -375,7 +419,7 @@
       z-index:1000;
     }
 
-    .modal {
+    .modal{
       display:none;
       position:fixed;
       inset:0;
@@ -387,7 +431,7 @@
       justify-content:center;
     }
 
-    .modal-shell {
+    .modal-shell{
       width:100%;
       max-width:640px;
       max-height:88vh;
@@ -397,7 +441,7 @@
       background:linear-gradient(180deg,#13244d 0%, #0f1d42 100%);
     }
 
-    .modal-header {
+    .modal-header{
       padding:18px 18px 10px;
       border-bottom:1px solid var(--line);
       display:flex;
@@ -406,13 +450,13 @@
       gap:10px;
     }
 
-    .modal-title {
+    .modal-title{
       font-size:22px;
       font-weight:800;
       margin:0;
     }
 
-    .modal-close {
+    .modal-close{
       width:42px;
       height:42px;
       border:none;
@@ -423,14 +467,14 @@
       font-size:20px;
     }
 
-    .modal-body {
+    .modal-body{
       overflow-y:auto;
       padding:18px;
       overscroll-behavior:contain;
       -webkit-overflow-scrolling:touch;
     }
 
-    .modal-footer {
+    .modal-footer{
       padding:14px 18px 18px;
       border-top:1px solid var(--line);
       background:linear-gradient(180deg,rgba(10,17,39,.4),rgba(10,17,39,.85));
@@ -440,7 +484,7 @@
       bottom:0;
     }
 
-    .upload-box {
+    .upload-box{
       position:relative;
       border:1px dashed rgba(255,255,255,.16);
       background:rgba(255,255,255,.04);
@@ -449,11 +493,11 @@
       margin-bottom:12px;
     }
 
-    .upload-input {
+    .upload-input{
       display:none;
     }
 
-    .upload-label {
+    .upload-label{
       display:flex;
       align-items:center;
       justify-content:center;
@@ -468,25 +512,32 @@
       padding:14px;
     }
 
-    .upload-sub {
+    .upload-sub{
       color:var(--muted);
       font-size:12px;
       margin-top:8px;
       text-align:center;
     }
 
-    .preview {
-      display:none;
-      width:130px;
-      height:130px;
-      object-fit:cover;
-      border-radius:18px;
-      background:#0b1228;
-      border:1px solid var(--line);
-      margin:6px 0 12px;
+    .gallery-preview{
+      display:flex;
+      gap:10px;
+      overflow-x:auto;
+      padding-bottom:6px;
+      margin-bottom:12px;
     }
 
-    .stock-inline {
+    .gallery-thumb{
+      width:88px;
+      height:88px;
+      object-fit:cover;
+      border-radius:14px;
+      border:1px solid var(--line);
+      background:#0b1228;
+      flex:0 0 auto;
+    }
+
+    .stock-inline{
       display:flex;
       align-items:center;
       gap:8px;
@@ -494,7 +545,7 @@
       flex-wrap:wrap;
     }
 
-    .stock-btn {
+    .stock-btn{
       width:44px;
       height:44px;
       border-radius:14px;
@@ -505,14 +556,14 @@
       cursor:pointer;
     }
 
-    .stock-value {
+    .stock-value{
       min-width:58px;
       text-align:center;
       font-size:20px;
       font-weight:800;
     }
 
-    .info-box {
+    .info-box{
       margin-top:12px;
       padding:12px 14px;
       border-radius:16px;
@@ -523,13 +574,13 @@
       line-height:1.7;
     }
 
-    .status-text {
+    .status-text{
       min-height:20px;
       font-size:14px;
       color:#dbe4ff;
     }
 
-    .toast-wrap {
+    .toast-wrap{
       position:fixed;
       right:16px;
       bottom:92px;
@@ -539,7 +590,7 @@
       z-index:1200;
     }
 
-    .toast {
+    .toast{
       min-width:220px;
       max-width:320px;
       padding:14px 16px;
@@ -550,39 +601,39 @@
       border:1px solid rgba(255,255,255,.08);
     }
 
-    .toast-success { background:#14532d; }
-    .toast-error { background:#7f1d1d; }
-    .toast-info { background:#1d4ed8; }
+    .toast-success{background:#14532d}
+    .toast-error{background:#7f1d1d}
+    .toast-info{background:#1d4ed8}
 
     @media (max-width:1100px){
-      .products-grid { grid-template-columns:repeat(3,1fr); }
-      .stats-grid { grid-template-columns:repeat(3,1fr); }
+      .products-grid{grid-template-columns:repeat(3,1fr)}
+      .stats-grid{grid-template-columns:repeat(3,1fr)}
     }
 
     @media (max-width:820px){
-      .products-grid { grid-template-columns:repeat(2,1fr); }
-      .stats-grid { grid-template-columns:repeat(2,1fr); }
+      .products-grid{grid-template-columns:repeat(2,1fr)}
+      .stats-grid{grid-template-columns:repeat(2,1fr)}
     }
 
     @media (max-width:560px){
-      .products-grid { grid-template-columns:repeat(2,1fr); }
-      .stats-grid { grid-template-columns:1fr; }
-      .row2, .row3 { grid-template-columns:1fr; display:grid; }
-      .brand-title { font-size:24px; }
-      .product-name { font-size:18px; }
-      .product-price { font-size:18px; }
-      .modal {
+      .products-grid{grid-template-columns:repeat(2,1fr)}
+      .stats-grid{grid-template-columns:1fr}
+      .row2,.row3{grid-template-columns:1fr;display:grid}
+      .brand-title{font-size:24px}
+      .product-name{font-size:18px}
+      .product-price{font-size:18px}
+      .modal{
         padding:6px;
         align-items:flex-end;
       }
-      .modal-shell {
+      .modal-shell{
         max-height:92vh;
         border-radius:22px 22px 0 0;
       }
-      .modal-body {
+      .modal-body{
         padding:16px;
       }
-      .modal-footer {
+      .modal-footer{
         padding:12px 16px 16px;
       }
     }
@@ -643,26 +694,11 @@
       <div class="panel">
         <div class="panel-title">Статистика</div>
         <div class="stats-grid">
-          <div class="stat-card">
-            <div class="stat-label">Товаров</div>
-            <div id="statTotal" class="stat-value">0</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-label">С фото</div>
-            <div id="statWithPhoto" class="stat-value">0</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-label">Средняя цена</div>
-            <div id="statAvgPrice" class="stat-value">0 ₽</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-label">Всего остатков</div>
-            <div id="statTotalStock" class="stat-value">0</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-label">Заказов</div>
-            <div id="statOrders" class="stat-value">0</div>
-          </div>
+          <div class="stat-card"><div class="stat-label">Товаров</div><div id="statTotal" class="stat-value">0</div></div>
+          <div class="stat-card"><div class="stat-label">С фото</div><div id="statWithPhoto" class="stat-value">0</div></div>
+          <div class="stat-card"><div class="stat-label">Средняя цена</div><div id="statAvgPrice" class="stat-value">0 ₽</div></div>
+          <div class="stat-card"><div class="stat-label">Всего остатков</div><div id="statTotalStock" class="stat-value">0</div></div>
+          <div class="stat-card"><div class="stat-label">Заказов</div><div id="statOrders" class="stat-value">0</div></div>
         </div>
       </div>
     </div>
@@ -695,15 +731,15 @@
         </select>
 
         <div class="upload-box">
-          <input id="photo" class="upload-input" type="file" accept="image/*" />
+          <input id="photo" class="upload-input" type="file" accept="image/*" multiple />
           <label for="photo" class="upload-label">
             <span>📷</span>
-            <span>Выбрать фото товара</span>
+            <span>Выбрать до 6 фото товара</span>
           </label>
-          <div class="upload-sub">JPG / PNG / WEBP</div>
+          <div class="upload-sub">Можно загрузить 1–6 фото</div>
         </div>
 
-        <img id="preview" class="preview" alt="preview" />
+        <div id="addGalleryPreview" class="gallery-preview"></div>
         <div id="status" class="status-text"></div>
       </div>
       <div class="modal-footer">
@@ -738,15 +774,15 @@
         </select>
 
         <div class="upload-box">
-          <input id="editPhoto" class="upload-input" type="file" accept="image/*" />
+          <input id="editPhoto" class="upload-input" type="file" accept="image/*" multiple />
           <label for="editPhoto" class="upload-label">
             <span>🖼</span>
             <span>Заменить фото товара</span>
           </label>
-          <div class="upload-sub">Можно оставить текущее фото</div>
+          <div class="upload-sub">Если загрузишь новые фото — старая галерея заменится</div>
         </div>
 
-        <img id="editPreview" class="preview" alt="edit-preview" style="display:block;" />
+        <div id="editGalleryPreview" class="gallery-preview"></div>
 
         <div class="stock-inline">
           <button class="stock-btn" id="editMinusBtn">−</button>
@@ -798,7 +834,7 @@
     var addBtn = document.getElementById("addBtn");
     var generateArticleBtn = document.getElementById("generateArticleBtn");
     var photoInput = document.getElementById("photo");
-    var preview = document.getElementById("preview");
+    var addGalleryPreview = document.getElementById("addGalleryPreview");
     var statusEl = document.getElementById("status");
 
     var editModal = document.getElementById("editModal");
@@ -810,7 +846,7 @@
     var editDescription = document.getElementById("editDescription");
     var editStatusSelect = document.getElementById("editStatusSelect");
     var editPhoto = document.getElementById("editPhoto");
-    var editPreview = document.getElementById("editPreview");
+    var editGalleryPreview = document.getElementById("editGalleryPreview");
     var editStatus = document.getElementById("editStatus");
     var saveEditBtn = document.getElementById("saveEditBtn");
     var cancelEditBtn = document.getElementById("cancelEditBtn");
@@ -830,7 +866,7 @@
     var statOrders = document.getElementById("statOrders");
 
     var currentEditId = null;
-    var currentEditImageUrl = "";
+    var currentEditImages = [];
 
     function toast(text, type) {
       var wrap = document.getElementById("toastWrap");
@@ -919,9 +955,34 @@
       document.getElementById("description").value = "";
       document.getElementById("statusSelect").value = "in_stock";
       photoInput.value = "";
-      preview.src = "";
-      preview.style.display = "none";
+      addGalleryPreview.innerHTML = "";
       setStatus("");
+    }
+
+    function getProductImages(product) {
+      if (Array.isArray(product.images) && product.images.length > 0) return product.images;
+      if (product.image_url) return [product.image_url];
+      return [];
+    }
+
+    function renderGalleryPreview(container, images) {
+      container.innerHTML = "";
+      (images || []).forEach(function (src) {
+        var img = document.createElement("img");
+        img.src = src;
+        img.className = "gallery-thumb";
+        container.appendChild(img);
+      });
+    }
+
+    function renderFilePreview(container, files) {
+      container.innerHTML = "";
+      Array.from(files).slice(0, 6).forEach(function (file) {
+        var img = document.createElement("img");
+        img.src = URL.createObjectURL(file);
+        img.className = "gallery-thumb";
+        container.appendChild(img);
+      });
     }
 
     function login() {
@@ -1003,21 +1064,21 @@
     });
 
     photoInput.addEventListener("change", function () {
-      var file = photoInput.files[0];
-      if (!file) {
-        preview.style.display = "none";
-        preview.src = "";
+      var files = Array.from(photoInput.files || []).slice(0, 6);
+      if (files.length === 0) {
+        addGalleryPreview.innerHTML = "";
         return;
       }
-      preview.src = URL.createObjectURL(file);
-      preview.style.display = "block";
+      renderFilePreview(addGalleryPreview, files);
     });
 
     editPhoto.addEventListener("change", function () {
-      var file = editPhoto.files[0];
-      if (!file) return;
-      editPreview.src = URL.createObjectURL(file);
-      editPreview.style.display = "block";
+      var files = Array.from(editPhoto.files || []).slice(0, 6);
+      if (files.length === 0) {
+        renderGalleryPreview(editGalleryPreview, currentEditImages);
+        return;
+      }
+      renderFilePreview(editGalleryPreview, files);
     });
 
     editStock.addEventListener("input", function () {
@@ -1032,25 +1093,33 @@
       loadProducts(searchArticleInput.value.trim());
     });
 
-    async function uploadImage(file) {
-      var ext = file.name.split(".").pop() || "jpg";
-      var fileName = Date.now() + "_" + Math.random().toString(36).slice(2) + "." + ext;
+    async function uploadManyImages(fileList) {
+      var files = Array.from(fileList || []).slice(0, 6);
+      var urls = [];
 
-      var uploadResult = await supabase
-        .storage
-        .from("product-images")
-        .upload(fileName, file, {
-          cacheControl: "3600",
-          upsert: false,
-          contentType: file.type || "image/jpeg"
-        });
+      for (var i = 0; i < files.length; i++) {
+        var file = files[i];
+        var ext = file.name.split(".").pop() || "jpg";
+        var fileName = Date.now() + "_" + i + "_" + Math.random().toString(36).slice(2) + "." + ext;
 
-      if (uploadResult.error) {
-        throw new Error("Ошибка загрузки фото: " + uploadResult.error.message);
+        var uploadResult = await supabase
+          .storage
+          .from("product-images")
+          .upload(fileName, file, {
+            cacheControl: "3600",
+            upsert: false,
+            contentType: file.type || "image/jpeg"
+          });
+
+        if (uploadResult.error) {
+          throw new Error("Ошибка загрузки фото: " + uploadResult.error.message);
+        }
+
+        var publicResult = supabase.storage.from("product-images").getPublicUrl(fileName);
+        urls.push(publicResult.data.publicUrl);
       }
 
-      var publicResult = supabase.storage.from("product-images").getPublicUrl(fileName);
-      return publicResult.data.publicUrl;
+      return urls;
     }
 
     async function addProduct() {
@@ -1062,7 +1131,7 @@
         var description = document.getElementById("description").value.trim();
         var statusValue = document.getElementById("statusSelect").value;
         var stockValue = document.getElementById("stock").value.trim();
-        var file = photoInput.files[0];
+        var files = Array.from(photoInput.files || []).slice(0, 6);
 
         if (!name || !article || !price) {
           setStatus("Заполни название, артикул и цену.");
@@ -1074,10 +1143,10 @@
 
         var stockNumber = Math.max(0, Number(stockValue) || 0);
         var finalStatus = normalizeStatus(statusValue, stockNumber);
-        var image_url = "";
+        var images = [];
 
-        if (file) {
-          image_url = await uploadImage(file);
+        if (files.length > 0) {
+          images = await uploadManyImages(files);
         }
 
         var insertResult = await supabase.from("products").insert([{
@@ -1088,7 +1157,8 @@
           description: description,
           status: finalStatus,
           stock: stockNumber,
-          image_url: image_url
+          image_url: images[0] || "",
+          images: images
         }]);
 
         if (insertResult.error) {
@@ -1125,39 +1195,9 @@
       await refreshAll();
     }
 
-    async function copyArticle(article) {
-      try {
-        await navigator.clipboard.writeText(article || "");
-        toast("Артикул скопирован", "success");
-      } catch (e) {
-        alert("Не удалось скопировать");
-      }
-    }
-
-    async function changeStock(productId, currentStock, currentStatus, delta) {
-      try {
-        var newStock = Math.max(0, (Number(currentStock) || 0) + delta);
-        var newStatus = normalizeStatus(currentStatus, newStock);
-
-        var result = await supabase
-          .from("products")
-          .update({ stock: newStock, status: newStatus })
-          .eq("id", productId);
-
-        if (result.error) {
-          alert("Ошибка изменения остатка: " + result.error.message);
-          return;
-        }
-
-        await refreshAll();
-      } catch (e) {
-        alert("Ошибка изменения остатка");
-      }
-    }
-
     function openEditModal(product) {
       currentEditId = product.id;
-      currentEditImageUrl = product.image_url || "";
+      currentEditImages = getProductImages(product);
 
       editName.value = product.name || "";
       editArticle.value = product.article || "";
@@ -1168,8 +1208,7 @@
       editDescription.value = product.description || "";
       editStatusSelect.value = product.status || "in_stock";
       editPhoto.value = "";
-      editPreview.src = currentEditImageUrl || "";
-      editPreview.style.display = currentEditImageUrl ? "block" : "none";
+      renderGalleryPreview(editGalleryPreview, currentEditImages);
       editInfoArticle.textContent = product.article || "—";
       editInfoId.textContent = product.id || "—";
       setEditStatus("");
@@ -1201,16 +1240,17 @@
         var newDescription = editDescription.value.trim();
         var newStatus = editStatusSelect.value;
         var newStock = Math.max(0, Number(editStock.value) || 0);
-        var newFile = editPhoto.files[0];
-        var imageUrl = currentEditImageUrl;
+        var newFiles = Array.from(editPhoto.files || []).slice(0, 6);
 
         if (!newName || !newArticle || !newPrice) {
           setEditStatus("Заполни название, артикул и цену.");
           return;
         }
 
-        if (newFile) {
-          imageUrl = await uploadImage(newFile);
+        var imageArray = currentEditImages.slice();
+
+        if (newFiles.length > 0) {
+          imageArray = await uploadManyImages(newFiles);
         }
 
         var finalStatus = normalizeStatus(newStatus, newStock);
@@ -1225,7 +1265,8 @@
             description: newDescription,
             status: finalStatus,
             stock: newStock,
-            image_url: imageUrl
+            image_url: imageArray[0] || "",
+            images: imageArray
           })
           .eq("id", currentEditId);
 
@@ -1265,7 +1306,7 @@
 
     function updateStats(products, orders) {
       var total = products.length;
-      var withPhoto = products.filter(function (p) { return !!p.image_url; }).length;
+      var withPhoto = products.filter(function (p) { return getProductImages(p).length > 0; }).length;
       var totalPrice = products.reduce(function (sum, p) { return sum + (Number(p.price) || 0); }, 0);
       var avg = total > 0 ? Math.round(totalPrice / total) : 0;
       var totalStock = products.reduce(function (sum, p) { return sum + (Number(p.stock) || 0); }, 0);
@@ -1345,6 +1386,74 @@
       return result.data;
     }
 
+    function createSliderCard(images, product) {
+      var wrap = document.createElement("div");
+      wrap.className = "product-image-wrap";
+
+      var list = images.length ? images : [""];
+      var currentIndex = 0;
+
+      var img = document.createElement("img");
+      img.className = "product-image";
+      img.src = list[0] || "";
+      img.alt = product.name || "product";
+      wrap.appendChild(img);
+
+      if (list.length > 1) {
+        var leftBtn = document.createElement("button");
+        leftBtn.className = "slider-btn left";
+        leftBtn.textContent = "‹";
+
+        var rightBtn = document.createElement("button");
+        rightBtn.className = "slider-btn right";
+        rightBtn.textContent = "›";
+
+        var dots = document.createElement("div");
+        dots.className = "slider-dots";
+
+        function renderDots() {
+          dots.innerHTML = "";
+          list.forEach(function (_, i) {
+            var dot = document.createElement("div");
+            dot.className = "dot" + (i === currentIndex ? " active" : "");
+            dots.appendChild(dot);
+          });
+        }
+
+        function updateSlide() {
+          img.src = list[currentIndex];
+          renderDots();
+        }
+
+        leftBtn.onclick = function (e) {
+          e.stopPropagation();
+          currentIndex = currentIndex === 0 ? list.length - 1 : currentIndex - 1;
+          updateSlide();
+        };
+
+        rightBtn.onclick = function (e) {
+          e.stopPropagation();
+          currentIndex = currentIndex === list.length - 1 ? 0 : currentIndex + 1;
+          updateSlide();
+        };
+
+        renderDots();
+        wrap.appendChild(leftBtn);
+        wrap.appendChild(rightBtn);
+        wrap.appendChild(dots);
+      }
+
+      var editBtnTop = document.createElement("button");
+      editBtnTop.className = "product-edit";
+      editBtnTop.innerHTML = "✎";
+      editBtnTop.onclick = function () {
+        openEditModal(product);
+      };
+
+      wrap.appendChild(editBtnTop);
+      return wrap;
+    }
+
     async function loadProducts(articleQuery) {
       var statsProducts = await supabase.from("products").select("*");
       var statsOrders = await supabase.from("orders").select("*");
@@ -1377,28 +1486,11 @@
       productsContainer.innerHTML = "";
 
       result.data.forEach(function (p) {
+        var images = getProductImages(p);
+
         var card = document.createElement("div");
         card.className = "product-card";
-
-        var imageWrap = document.createElement("div");
-        imageWrap.className = "product-image-wrap";
-
-        if (p.image_url) {
-          var img = document.createElement("img");
-          img.className = "product-image";
-          img.src = p.image_url;
-          img.alt = p.name || "product";
-          imageWrap.appendChild(img);
-        }
-
-        var editBtnTop = document.createElement("button");
-        editBtnTop.className = "product-edit";
-        editBtnTop.innerHTML = "✎";
-        editBtnTop.onclick = function () {
-          openEditModal(p);
-        };
-
-        imageWrap.appendChild(editBtnTop);
+        card.appendChild(createSliderCard(images, p));
 
         var body = document.createElement("div");
         body.className = "product-body";
@@ -1409,9 +1501,7 @@
           "<div class='product-meta'>Остаток: " + (Number(p.stock) || 0) + "</div>" +
           "<div class='" + getStatusBadgeClass(p.status) + "'>" + getStatusLabel(p.status) + "</div>";
 
-        card.appendChild(imageWrap);
         card.appendChild(body);
-
         productsContainer.appendChild(card);
       });
     }
