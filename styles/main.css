@@ -641,3 +641,9 @@ body{
 .hidden{
   display:none !important;
 }
+
+@media (min-width: 900px){
+  .grid{
+    grid-template-columns:repeat(3,minmax(0,1fr));
+  }
+}
