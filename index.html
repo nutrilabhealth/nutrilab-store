@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>NutriLab Health Store</title>
 
-  <!-- Telegram WebApp SDK -->
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
   <style>
@@ -16,194 +15,408 @@
       --muted:#a8c6cc;
       --brand:#20d3b7;
       --brand2:#12b59a;
-      --shadow: 0 20px 60px rgba(0,0,0,.35);
-      --radius: 22px;
+      --shadow:0 20px 60px rgba(0,0,0,.35);
+      --radius:22px;
     }
-    *{ box-sizing:border-box; }
+
+    *{box-sizing:border-box}
+
     body{
       margin:0;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
       color:var(--text);
-      background: radial-gradient(1200px 600px at 20% 0%, #0e5d53 0%, transparent 60%),
-                  radial-gradient(900px 900px at 90% 20%, #0f4a4f 0%, transparent 60%),
-                  linear-gradient(180deg, var(--bg2), var(--bg1));
+      background:
+        radial-gradient(1200px 600px at 20% 0%, #0e5d53 0%, transparent 60%),
+        radial-gradient(900px 900px at 90% 20%, #0f4a4f 0%, transparent 60%),
+        linear-gradient(180deg, var(--bg2), var(--bg1));
       min-height:100vh;
-      padding-bottom: 92px;
+      padding-bottom:92px;
     }
-    .container{ max-width: 980px; margin:0 auto; padding: 18px 14px; }
+
+    .container{
+      max-width:980px;
+      margin:0 auto;
+      padding:18px 14px;
+    }
 
     .topbar{
-      display:flex; align-items:center; gap:12px;
-      padding: 10px 10px; border-radius: 20px;
-      background: rgba(10,45,48,.65);
-      backdrop-filter: blur(14px);
-      box-shadow: var(--shadow);
-      border: 1px solid rgba(255,255,255,.06);
-      position: sticky; top: 10px; z-index: 20;
+      display:flex;
+      align-items:center;
+      gap:12px;
+      padding:10px 10px;
+      border-radius:20px;
+      background:rgba(10,45,48,.65);
+      backdrop-filter:blur(14px);
+      box-shadow:var(--shadow);
+      border:1px solid rgba(255,255,255,.06);
+      position:sticky;
+      top:10px;
+      z-index:20;
     }
+
     .logo{
-      width:44px;height:44px;border-radius: 14px;
-      background: linear-gradient(135deg, var(--brand), #2bffd8);
-      box-shadow: 0 12px 30px rgba(32,211,183,.25);
-      flex: 0 0 auto;
+      width:44px;
+      height:44px;
+      border-radius:14px;
+      background:linear-gradient(135deg, var(--brand), #2bffd8);
+      box-shadow:0 12px 30px rgba(32,211,183,.25);
+      flex:0 0 auto;
     }
-    .brand{ display:flex; flex-direction: column; gap:2px; min-width: 120px; }
-    .brand .t1{ font-weight: 800; letter-spacing:.2px; }
-    .brand .t2{ font-size: 12px; color: var(--muted); }
+
+    .brand{
+      display:flex;
+      flex-direction:column;
+      gap:2px;
+      min-width:120px;
+    }
+
+    .brand .t1{
+      font-weight:800;
+      letter-spacing:.2px;
+    }
+
+    .brand .t2{
+      font-size:12px;
+      color:var(--muted);
+    }
 
     .searchWrap{
-      flex: 1 1 auto; display:flex; align-items:center; gap:10px;
-      padding: 10px 12px; border-radius: 16px;
-      background: rgba(0,0,0,.18);
-      border: 1px solid rgba(255,255,255,.06);
+      flex:1 1 auto;
+      display:flex;
+      align-items:center;
+      gap:10px;
+      padding:10px 12px;
+      border-radius:16px;
+      background:rgba(0,0,0,.18);
+      border:1px solid rgba(255,255,255,.06);
     }
+
     .searchWrap input{
-      width:100%; background: transparent; border:0; outline:0;
-      color: var(--text); font-size: 15px;
+      width:100%;
+      background:transparent;
+      border:0;
+      outline:0;
+      color:var(--text);
+      font-size:15px;
     }
-    .searchWrap input::placeholder{ color: rgba(231,251,255,.55); }
+
+    .searchWrap input::placeholder{
+      color:rgba(231,251,255,.55);
+    }
 
     .btn{
-      border:0; padding: 10px 14px; border-radius: 16px;
-      background: linear-gradient(135deg, var(--brand), var(--brand2));
-      color: #032224; font-weight: 800; cursor:pointer;
-      box-shadow: 0 10px 25px rgba(32,211,183,.22);
-      display:flex; align-items:center; gap:8px; white-space: nowrap;
+      border:0;
+      padding:10px 14px;
+      border-radius:16px;
+      background:linear-gradient(135deg, var(--brand), var(--brand2));
+      color:#032224;
+      font-weight:800;
+      cursor:pointer;
+      box-shadow:0 10px 25px rgba(32,211,183,.22);
+      display:flex;
+      align-items:center;
+      gap:8px;
+      white-space:nowrap;
     }
 
-    .chips{ display:flex; gap:10px; margin-top: 14px; overflow:auto; padding-bottom: 4px; }
+    .chips{
+      display:flex;
+      gap:10px;
+      margin-top:14px;
+      overflow:auto;
+      padding-bottom:4px;
+    }
+
     .chip{
-      padding: 10px 14px; border-radius: 18px;
-      background: rgba(0,0,0,.18);
-      border: 1px solid rgba(255,255,255,.06);
-      color: var(--text); cursor:pointer; flex: 0 0 auto;
-      font-weight: 700; opacity: .85;
-    }
-    .chip.active{
-      background: linear-gradient(135deg, rgba(32,211,183,.35), rgba(18,181,154,.18));
-      border: 1px solid rgba(32,211,183,.35);
-      opacity: 1;
+      padding:10px 14px;
+      border-radius:18px;
+      background:rgba(0,0,0,.18);
+      border:1px solid rgba(255,255,255,.06);
+      color:var(--text);
+      cursor:pointer;
+      flex:0 0 auto;
+      font-weight:700;
+      opacity:.85;
     }
 
-    .screen{ display:none; margin-top: 14px; }
-    .screen.active{ display:block; }
+    .chip.active{
+      background:linear-gradient(135deg, rgba(32,211,183,.35), rgba(18,181,154,.18));
+      border:1px solid rgba(32,211,183,.35);
+      opacity:1;
+    }
+
+    .screen{display:none;margin-top:14px}
+    .screen.active{display:block}
 
     .grid{
       display:grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 14px;
-      margin-top: 14px;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:14px;
+      margin-top:14px;
     }
-    @media (min-width: 820px){
-      .grid{ grid-template-columns: repeat(3, minmax(0, 1fr)); }
+
+    @media (min-width:820px){
+      .grid{grid-template-columns:repeat(3,minmax(0,1fr))}
     }
+
     .card{
-      border-radius: var(--radius);
-      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
-      border: 1px solid rgba(255,255,255,.07);
-      box-shadow: var(--shadow);
+      border-radius:var(--radius);
+      background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      border:1px solid rgba(255,255,255,.07);
+      box-shadow:var(--shadow);
       overflow:hidden;
-      position: relative;
-      min-height: 290px;
+      position:relative;
+      min-height:300px;
     }
+
     .card .img{
       width:100%;
-      aspect-ratio: 1/1;
-      background: rgba(0,0,0,.2);
-      display:flex; align-items:center; justify-content:center;
+      aspect-ratio:1/1;
+      background:rgba(0,0,0,.2);
+      display:flex;
+      align-items:center;
+      justify-content:center;
       overflow:hidden;
+      position:relative;
+      touch-action:pan-y;
     }
-    .card .img img{ width:100%; height:100%; object-fit: cover; display:block; transform: scale(1.02); }
+
+    .card .img img{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      display:block;
+      transform:scale(1.02);
+      user-select:none;
+      -webkit-user-drag:none;
+    }
+
+    .slide-left{animation:slideLeft .25s ease}
+    .slide-right{animation:slideRight .25s ease}
+
+    @keyframes slideLeft{
+      from{transform:translateX(16px);opacity:.65}
+      to{transform:translateX(0);opacity:1}
+    }
+
+    @keyframes slideRight{
+      from{transform:translateX(-16px);opacity:.65}
+      to{transform:translateX(0);opacity:1}
+    }
+
     .favBtn{
-      position:absolute; top: 12px; right: 12px;
-      width: 40px; height: 40px; border-radius: 14px;
-      border: 1px solid rgba(255,255,255,.10);
-      background: rgba(0,0,0,.25);
-      backdrop-filter: blur(10px);
-      display:flex; align-items:center; justify-content:center;
-      cursor:pointer; user-select:none;
+      position:absolute;
+      top:12px;
+      right:12px;
+      width:40px;
+      height:40px;
+      border-radius:14px;
+      border:1px solid rgba(255,255,255,.10);
+      background:rgba(0,0,0,.25);
+      backdrop-filter:blur(10px);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      cursor:pointer;
+      user-select:none;
+      z-index:4;
     }
+
     .favBtn.active{
-      background: rgba(255, 60, 120, .18);
-      border-color: rgba(255, 60, 120, .35);
+      background:rgba(255,60,120,.18);
+      border-color:rgba(255,60,120,.35);
     }
-    .cardBody{ padding: 12px 12px 14px; display:flex; flex-direction: column; gap: 8px; }
-    .title{ font-weight: 900; letter-spacing:.2px; font-size: 15px; line-height: 1.2; min-height: 36px; }
+
+    .slideBtn{
+      position:absolute;
+      top:50%;
+      transform:translateY(-50%);
+      width:34px;
+      height:34px;
+      border:none;
+      border-radius:12px;
+      background:rgba(0,0,0,.28);
+      color:#fff;
+      font-size:18px;
+      z-index:4;
+      cursor:pointer;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      backdrop-filter:blur(8px);
+    }
+
+    .slideBtn.left{left:10px}
+    .slideBtn.right{right:10px}
+
+    .dots{
+      position:absolute;
+      left:0;
+      right:0;
+      bottom:10px;
+      display:flex;
+      justify-content:center;
+      gap:6px;
+      z-index:4;
+    }
+
+    .dot{
+      width:7px;
+      height:7px;
+      border-radius:999px;
+      background:rgba(255,255,255,.36);
+    }
+
+    .dot.active{
+      background:#fff;
+    }
+
+    .cardBody{
+      padding:12px 12px 14px;
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+    }
+
+    .title{
+      font-weight:900;
+      letter-spacing:.2px;
+      font-size:15px;
+      line-height:1.2;
+      min-height:36px;
+    }
+
     .desc{
-      font-size: 12px; color: var(--muted); line-height: 1.35;
-      min-height: 32px; overflow:hidden;
-      display:-webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+      font-size:12px;
+      color:var(--muted);
+      line-height:1.35;
+      min-height:32px;
+      overflow:hidden;
+      display:-webkit-box;
+      -webkit-line-clamp:2;
+      -webkit-box-orient:vertical;
     }
-    .row{ display:flex; align-items:center; justify-content: space-between; gap:10px; margin-top: 2px; }
-    .price{ font-size: 20px; font-weight: 900; }
-    .mini{ display:flex; gap:10px; margin-top: 6px; }
+
+    .row{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      margin-top:2px;
+    }
+
+    .price{
+      font-size:20px;
+      font-weight:900;
+    }
+
+    .mini{
+      display:flex;
+      gap:10px;
+      margin-top:6px;
+    }
+
     .btn2{
-      flex:1; border: 1px solid rgba(255,255,255,.10);
-      background: rgba(0,0,0,.20);
-      color: var(--text);
-      padding: 11px 12px;
-      border-radius: 18px;
-      font-weight: 900;
+      flex:1;
+      border:1px solid rgba(255,255,255,.10);
+      background:rgba(0,0,0,.20);
+      color:var(--text);
+      padding:11px 12px;
+      border-radius:18px;
+      font-weight:900;
       cursor:pointer;
     }
+
     .btn2.primary{
-      background: linear-gradient(135deg, var(--brand), var(--brand2));
+      background:linear-gradient(135deg, var(--brand), var(--brand2));
       color:#032224;
       border:0;
     }
+
+    .badgeStatus{
+      display:inline-block;
+      padding:6px 10px;
+      border-radius:999px;
+      font-size:11px;
+      font-weight:800;
+      background:rgba(32,211,183,.18);
+      border:1px solid rgba(32,211,183,.32);
+      width:max-content;
+    }
+
     .empty{
-      margin-top: 22px;
-      padding: 16px;
-      border-radius: 18px;
-      background: rgba(0,0,0,.18);
-      border: 1px dashed rgba(255,255,255,.15);
-      color: rgba(231,251,255,.85);
-      white-space: pre-wrap;
+      margin-top:22px;
+      padding:16px;
+      border-radius:18px;
+      background:rgba(0,0,0,.18);
+      border:1px dashed rgba(255,255,255,.15);
+      color:rgba(231,251,255,.85);
+      white-space:pre-wrap;
     }
 
     .tabs{
-      position: fixed; left:0; right:0; bottom:0;
-      padding: 12px 14px calc(12px + env(safe-area-inset-bottom));
-      background: rgba(8,26,28,.75);
-      border-top: 1px solid rgba(255,255,255,.06);
-      backdrop-filter: blur(16px);
-      z-index: 50;
-    }
-    .tabRow{ max-width: 980px; margin:0 auto; display:flex; gap: 12px; }
-    .tab{
-      flex:1; padding: 12px 10px; border-radius: 18px;
-      border: 1px solid rgba(255,255,255,.08);
-      background: rgba(0,0,0,.18);
-      color: rgba(231,251,255,.9);
-      font-weight: 900;
-      display:flex; align-items:center; justify-content:center; gap:8px;
-      cursor:pointer; user-select:none;
-    }
-    .tab.active{
-      background: linear-gradient(135deg, rgba(32,211,183,.45), rgba(18,181,154,.22));
-      border-color: rgba(32,211,183,.35);
-      color: var(--text);
-    }
-    .badge{
-      font-size: 12px; padding: 2px 8px; border-radius: 999px;
-      background: rgba(32,211,183,.20);
-      border: 1px solid rgba(32,211,183,.35);
+      position:fixed;
+      left:0;
+      right:0;
+      bottom:0;
+      padding:12px 14px calc(12px + env(safe-area-inset-bottom));
+      background:rgba(8,26,28,.75);
+      border-top:1px solid rgba(255,255,255,.06);
+      backdrop-filter:blur(16px);
+      z-index:50;
     }
 
-    /* DEBUG BOX */
-    .debugBox{
-      margin-top: 14px;
-      padding: 12px 14px;
-      border-radius: 16px;
-      background: rgba(0,0,0,.28);
-      border: 1px solid rgba(255,255,255,.12);
-      font-size: 12px;
-      line-height: 1.35;
-      white-space: pre-wrap;
+    .tabRow{
+      max-width:980px;
+      margin:0 auto;
+      display:flex;
+      gap:12px;
     }
-    .debugTitle{ font-weight: 900; margin-bottom: 6px; }
-    .ok{ color: #7dffcf; }
-    .bad{ color: #ff9a9a; }
+
+    .tab{
+      flex:1;
+      padding:12px 10px;
+      border-radius:18px;
+      border:1px solid rgba(255,255,255,.08);
+      background:rgba(0,0,0,.18);
+      color:rgba(231,251,255,.9);
+      font-weight:900;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:8px;
+      cursor:pointer;
+      user-select:none;
+    }
+
+    .tab.active{
+      background:linear-gradient(135deg, rgba(32,211,183,.45), rgba(18,181,154,.22));
+      border-color:rgba(32,211,183,.35);
+      color:var(--text);
+    }
+
+    .badge{
+      font-size:12px;
+      padding:2px 8px;
+      border-radius:999px;
+      background:rgba(32,211,183,.20);
+      border:1px solid rgba(32,211,183,.35);
+    }
+
+    .debugBox{
+      margin-top:14px;
+      padding:12px 14px;
+      border-radius:16px;
+      background:rgba(0,0,0,.28);
+      border:1px solid rgba(255,255,255,.12);
+      font-size:12px;
+      line-height:1.35;
+      white-space:pre-wrap;
+    }
+
+    .debugTitle{font-weight:900;margin-bottom:6px}
+    .ok{color:#7dffcf}
+    .bad{color:#ff9a9a}
   </style>
 </head>
 
@@ -225,9 +438,8 @@
       <button class="btn" id="orderBtn">✉️ Заказ</button>
     </div>
 
-    <!-- DEBUG -->
     <div class="debugBox" id="debugBox">
-      <div class="debugTitle">Диагностика (версия 1.0-debug)</div>
+      <div class="debugTitle">Диагностика</div>
       <div id="dbg">Старт…</div>
     </div>
 
@@ -244,16 +456,12 @@
     </div>
 
     <div class="screen" id="screenCart">
-      <div class="empty" id="emptyCart">Корзина пустая.</div>
-      <div class="empty" style="margin-top:12px;">
-        (В debug-версии корзину не усложняем — нам важно сначала увидеть, грузит ли Supabase.)
-      </div>
+      <div class="empty" id="emptyCart">Корзина пока не используется. Сейчас заказ создаётся сразу кнопкой «Купить».</div>
     </div>
 
     <div class="screen" id="screenProfile">
       <div class="empty" id="profileText">Профиль…</div>
     </div>
-
   </div>
 
   <div class="tabs">
@@ -266,10 +474,8 @@
   </div>
 
   <script>
-    /* ============ ТВОЙ SUPABASE ============ */
     const SUPABASE_URL = "https://cthfqhxnplyibdsjzcrq.supabase.co";
     const SUPABASE_KEY = "sb_publishable_AjGX1zKhV8kEyGMbvAKwQg_srda-oyI";
-    /* ====================================== */
 
     const dbgEl = document.getElementById("dbg");
     function dbg(msg, cls){
@@ -280,7 +486,6 @@
       console.log("[DBG]", msg);
     }
 
-    // чтобы было видно прямо в телефоне
     window.addEventListener("error", (e)=>{
       dbg("JS ERROR: " + (e.message || "unknown"), "bad");
     });
@@ -306,20 +511,27 @@
           tg.expand();
           dbg("Telegram WebApp: OK", "ok");
         } else {
-          dbg("Telegram WebApp: нет (браузер)", "ok");
+          dbg("Telegram WebApp: браузер", "ok");
         }
       }catch(e){
         dbg("Telegram init error: " + e.message, "bad");
       }
     }
 
+    function getTelegramUser(){
+      return tg?.initDataUnsafe?.user || null;
+    }
+
     function renderProfile(){
       const el = document.getElementById("profileText");
-      const u = tg?.initDataUnsafe?.user;
+      const u = getTelegramUser();
       if (u){
-        el.textContent = `Имя: ${(u.first_name||"")} ${(u.last_name||"")}\nUsername: ${u.username?("@"+u.username):"-"}\nID: ${u.id}`;
+        el.textContent =
+          "Имя: " + ((u.first_name || "") + " " + (u.last_name || "")).trim() +
+          "\nUsername: " + (u.username ? ("@" + u.username) : "-") +
+          "\nID: " + (u.id || "-");
       } else {
-        el.textContent = "Открыто в браузере (не Telegram WebApp).";
+        el.textContent = "Открыто в браузере, не в Telegram WebApp.";
       }
     }
 
@@ -328,18 +540,30 @@
       return n.toLocaleString("ru-RU") + " ₽";
     }
 
+    function getVisibleProducts(products){
+      return (products || []).filter(p => (p.status || "") !== "hidden");
+    }
+
+    function getProductImages(product){
+      if (Array.isArray(product.images) && product.images.length > 0) return product.images;
+      if (product.image_url) return [product.image_url];
+      return ["https://via.placeholder.com/600x600?text=NutriLab"];
+    }
+
     function getCategories(products){
       const set = new Set();
-      products.forEach(p => { if (p.category) set.add(String(p.category)); });
+      getVisibleProducts(products).forEach(p => {
+        if (p.category) set.add(String(p.category));
+      });
       return ["Все", ...[...set].sort((a,b)=>a.localeCompare(b,'ru'))];
     }
 
     function filteredProducts(){
-      return allProducts.filter(p=>{
-        if (currentCategory !== "Все" && String(p.category||"") !== currentCategory) return false;
+      return getVisibleProducts(allProducts).filter(p=>{
+        if (currentCategory !== "Все" && String(p.category || "") !== currentCategory) return false;
         if (searchQuery){
           const s = searchQuery.toLowerCase();
-          const t = `${p.name||""} ${p.description||""}`.toLowerCase();
+          const t = `${p.name || ""} ${p.description || ""} ${p.article || ""}`.toLowerCase();
           if (!t.includes(s)) return false;
         }
         return true;
@@ -350,9 +574,12 @@
       const chips = document.getElementById("chips");
       chips.innerHTML = "";
       const cats = getCategories(allProducts);
+
+      if (!cats.length) return;
+
       cats.forEach(c=>{
         const b = document.createElement("button");
-        b.className = "chip" + (c===currentCategory ? " active": "");
+        b.className = "chip" + (c === currentCategory ? " active" : "");
         b.textContent = c;
         b.onclick = ()=>{
           currentCategory = c;
@@ -369,31 +596,142 @@
       document.getElementById("cartBadge").textContent = "0";
     }
 
+    async function createOrder(product){
+      try{
+        const u = getTelegramUser();
+        const customerName = u
+          ? ((u.first_name || "") + " " + (u.last_name || "")).trim()
+          : "Покупатель";
+        const customerUsername = u?.username || "";
+
+        const payload = {
+          product_name: product.name || "Товар",
+          article: product.article || "",
+          qty: 1,
+          price: Number(product.price || 0),
+          customer_name: customerName || "Покупатель",
+          customer_username: customerUsername,
+          status: "new"
+        };
+
+        dbg("Создаю заказ: " + JSON.stringify(payload), "ok");
+
+        const { error } = await supabaseClient
+          .from("orders")
+          .insert([payload]);
+
+        if (error){
+          dbg("Ошибка создания заказа: " + error.message, "bad");
+          alert("Не удалось создать заказ: " + error.message);
+          return;
+        }
+
+        dbg("Заказ создан ✅", "ok");
+        alert("Заказ отправлен ✅");
+      }catch(err){
+        dbg("createOrder error: " + err.message, "bad");
+        alert("Ошибка заказа: " + err.message);
+      }
+    }
+
+    function buildSlider(imgWrap, images){
+      let currentIndex = 0;
+      let startX = 0;
+      let endX = 0;
+
+      const img = document.createElement("img");
+      img.className = "product-image";
+      img.src = images[0];
+      img.alt = "";
+      imgWrap.appendChild(img);
+
+      function animate(direction){
+        img.classList.remove("slide-left", "slide-right");
+        void img.offsetWidth;
+        img.classList.add(direction === "left" ? "slide-left" : "slide-right");
+      }
+
+      function renderDots(dotsWrap){
+        dotsWrap.innerHTML = "";
+        images.forEach((_, i)=>{
+          const d = document.createElement("div");
+          d.className = "dot" + (i === currentIndex ? " active" : "");
+          dotsWrap.appendChild(d);
+        });
+      }
+
+      function update(direction, dotsWrap){
+        img.src = images[currentIndex];
+        animate(direction);
+        renderDots(dotsWrap);
+      }
+
+      if (images.length > 1){
+        const leftBtn = document.createElement("button");
+        leftBtn.className = "slideBtn left";
+        leftBtn.textContent = "‹";
+
+        const rightBtn = document.createElement("button");
+        rightBtn.className = "slideBtn right";
+        rightBtn.textContent = "›";
+
+        const dotsWrap = document.createElement("div");
+        dotsWrap.className = "dots";
+
+        leftBtn.onclick = (e)=>{
+          e.stopPropagation();
+          currentIndex = currentIndex === 0 ? images.length - 1 : currentIndex - 1;
+          update("right", dotsWrap);
+        };
+
+        rightBtn.onclick = (e)=>{
+          e.stopPropagation();
+          currentIndex = currentIndex === images.length - 1 ? 0 : currentIndex + 1;
+          update("left", dotsWrap);
+        };
+
+        imgWrap.addEventListener("touchstart", (e)=>{
+          startX = e.changedTouches[0].screenX;
+        }, { passive:true });
+
+        imgWrap.addEventListener("touchend", (e)=>{
+          endX = e.changedTouches[0].screenX;
+          const diff = startX - endX;
+          if (Math.abs(diff) < 30) return;
+
+          if (diff > 0){
+            currentIndex = currentIndex === images.length - 1 ? 0 : currentIndex + 1;
+            update("left", dotsWrap);
+          } else {
+            currentIndex = currentIndex === 0 ? images.length - 1 : currentIndex - 1;
+            update("right", dotsWrap);
+          }
+        }, { passive:true });
+
+        renderDots(dotsWrap);
+        imgWrap.appendChild(leftBtn);
+        imgWrap.appendChild(rightBtn);
+        imgWrap.appendChild(dotsWrap);
+      }
+    }
+
     function productCard(p){
       const fav = getFav();
       const inFav = fav.has(p.id);
+      const images = getProductImages(p);
 
       const card = document.createElement("div");
       card.className = "card";
-      const imgUrl = p.image_url || "https://via.placeholder.com/600x600?text=NutriLab";
 
-      card.innerHTML = `
-        <div class="img"><img src="${imgUrl}" alt=""></div>
-        <div class="favBtn ${inFav ? "active": ""}">${inFav ? "❤️" : "🤍"}</div>
-        <div class="cardBody">
-          <div class="title">${p.name || "Без названия"}</div>
-          <div class="desc">${p.description || ""}</div>
-          <div class="row">
-            <div class="price">${fmtPrice(p.price)}</div>
-            <div style="color:var(--muted); font-size:12px;">${p.category ? p.category : ""}</div>
-          </div>
-          <div class="mini">
-            <button class="btn2 primary" data-act="buy">Купить</button>
-          </div>
-        </div>
-      `;
+      const imgWrap = document.createElement("div");
+      imgWrap.className = "img";
+      buildSlider(imgWrap, images);
 
-      card.querySelector(".favBtn").onclick = ()=>{
+      const favBtn = document.createElement("div");
+      favBtn.className = "favBtn" + (inFav ? " active" : "");
+      favBtn.textContent = inFav ? "❤️" : "🤍";
+
+      favBtn.onclick = ()=>{
         const s = getFav();
         if (s.has(p.id)) s.delete(p.id); else s.add(p.id);
         setFav(s);
@@ -402,10 +740,41 @@
         renderHome();
       };
 
-      card.querySelector('[data-act="buy"]').onclick = ()=>{
-        // в debug-версии просто проверяем клики
-        alert("Клик работает ✅");
+      const body = document.createElement("div");
+      body.className = "cardBody";
+      body.innerHTML =
+        `<div class="title">${p.name || "Без названия"}</div>
+         <div class="desc">${p.description || ""}</div>
+         <div class="row">
+           <div class="price">${fmtPrice(p.price)}</div>
+           <div style="color:var(--muted); font-size:12px;">${p.category || ""}</div>
+         </div>
+         <div class="badgeStatus">${(p.status === "coming_soon") ? "Скоро" : ((p.status === "out_of_stock") ? "Нет в наличии" : "В наличии")}</div>`;
+
+      const mini = document.createElement("div");
+      mini.className = "mini";
+
+      const buyBtn = document.createElement("button");
+      buyBtn.className = "btn2 primary";
+      buyBtn.textContent = "Купить";
+      buyBtn.onclick = ()=>{
+        if ((p.status || "") === "out_of_stock"){
+          alert("Товара нет в наличии");
+          return;
+        }
+        if (Number(p.stock || 0) <= 0){
+          alert("Товара нет в наличии");
+          return;
+        }
+        createOrder(p);
       };
+
+      mini.appendChild(buyBtn);
+      body.appendChild(mini);
+
+      card.appendChild(imgWrap);
+      card.appendChild(favBtn);
+      card.appendChild(body);
 
       return card;
     }
@@ -418,12 +787,7 @@
 
       if (!arr.length){
         empty.style.display = "block";
-        empty.textContent =
-          "Товаров нет.\n\nЕсли в Supabase товары есть — значит SELECT не проходит.\n" +
-          "Чаще всего причина: RLS включён без policy.\n\n" +
-          "Открой Supabase → Table Editor → products → RLS:\n" +
-          "• либо временно Disable RLS\n" +
-          "• либо добавь policy на SELECT для anon.";
+        empty.textContent = "Товаров не найдено.";
         return;
       }
 
@@ -437,13 +801,14 @@
       grid.innerHTML = "";
 
       const fav = getFav();
-      const arr = allProducts.filter(p=>fav.has(p.id));
+      const arr = getVisibleProducts(allProducts).filter(p=>fav.has(p.id));
 
       if (!arr.length){
         empty.style.display = "block";
         empty.textContent = "Избранное пустое.";
         return;
       }
+
       empty.style.display = "none";
       arr.forEach(p=>grid.appendChild(productCard(p)));
     }
@@ -463,7 +828,6 @@
       if (tab === "profile") renderProfile();
     }
 
-    // загрузка supabase библиотеки с fallback (если jsdelivr не доступен)
     function loadSupabaseLib(){
       return new Promise((resolve, reject)=>{
         const tryLoad = (src, next)=>{
@@ -486,14 +850,13 @@
       dbg("Шаг: loadProducts()");
 
       if (!window.supabase){
-        dbg("supabase-js НЕ загрузился (window.supabase пустой)", "bad");
+        dbg("supabase-js НЕ загрузился", "bad");
         return;
       }
 
       supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
       dbg("Supabase client: OK", "ok");
 
-      dbg("Запрос: select * from products …");
       const { data, error } = await supabaseClient
         .from("products")
         .select("*")
@@ -501,12 +864,11 @@
 
       if (error){
         dbg("Supabase ERROR: " + error.message, "bad");
-        dbg("Подсказка: если RLS ON — сделай policy на SELECT или временно отключи RLS.", "bad");
         return;
       }
 
       allProducts = Array.isArray(data) ? data : [];
-      dbg("Supabase OK. Товаров: " + allProducts.length, allProducts.length ? "ok" : "bad");
+      dbg("Supabase OK. Товаров: " + allProducts.length, "ok");
 
       renderCategories();
       renderHome();
@@ -529,7 +891,9 @@
         t.addEventListener("click", ()=> switchTab(t.dataset.tab));
       });
 
-      document.getElementById("orderBtn").onclick = ()=> alert("Кнопка 'Заказ' кликается ✅");
+      document.getElementById("orderBtn").onclick = ()=>{
+        alert("Заказ создаётся кнопкой «Купить» внутри карточки товара.");
+      };
 
       updateBadges();
 
