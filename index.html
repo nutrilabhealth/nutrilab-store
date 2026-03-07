@@ -9,34 +9,35 @@
 
   <style>
     :root{
-      --bg:#071819;
-      --bg2:#0a2325;
+      --bg:#061617;
+      --bg2:#092224;
       --bg3:#0d2d30;
       --panel:rgba(255,255,255,.05);
-      --panel2:rgba(255,255,255,.08);
+      --panel-2:rgba(255,255,255,.035);
       --line:rgba(255,255,255,.08);
-      --text:#edfdfc;
-      --muted:#9db9b8;
+      --text:#eefdfb;
+      --muted:#95b7b4;
       --brand:#28dbc3;
       --brand2:#17bca7;
-      --accent:#ff914d;
+      --accent:#ff934f;
       --danger:#ef4444;
-      --shadow:0 16px 50px rgba(0,0,0,.35);
-      --radius:26px;
+      --shadow:0 16px 50px rgba(0,0,0,.34);
+      --radius:28px;
       --safe-bottom:calc(18px + env(safe-area-inset-bottom));
     }
 
     *{box-sizing:border-box}
     html,body{margin:0;padding:0}
+
     body{
       min-height:100vh;
       color:var(--text);
       font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
       background:
-        radial-gradient(900px 440px at 10% 0%, rgba(40,219,195,.16), transparent 60%),
-        radial-gradient(700px 500px at 100% 10%, rgba(25,150,130,.12), transparent 60%),
+        radial-gradient(900px 460px at 10% 0%, rgba(40,219,195,.14), transparent 60%),
+        radial-gradient(700px 540px at 100% 10%, rgba(23,188,167,.10), transparent 60%),
         linear-gradient(180deg,var(--bg2),var(--bg));
-      padding-bottom:110px;
+      padding-bottom:120px;
       overflow-x:hidden;
     }
 
@@ -64,22 +65,23 @@
       gap:12px;
       padding:12px;
       border-radius:24px;
+      margin-bottom:18px;
     }
 
     .logo{
-      width:52px;height:52px;border-radius:18px;flex:0 0 auto;
+      width:54px;height:54px;border-radius:18px;flex:0 0 auto;
       background:linear-gradient(135deg,var(--brand),#7af5df);
       box-shadow:0 12px 34px rgba(40,219,195,.24);
     }
 
     .brand{
-      min-width:110px;
+      min-width:130px;
     }
 
     .brand .t1{
-      font-size:15px;
-      font-weight:900;
-      line-height:1.05;
+      font-size:16px;
+      font-weight:1000;
+      line-height:1.02;
       letter-spacing:.1px;
     }
 
@@ -94,7 +96,7 @@
       display:flex;
       align-items:center;
       gap:10px;
-      padding:12px 14px;
+      padding:13px 14px;
       border-radius:18px;
       background:rgba(0,0,0,.16);
       border:1px solid rgba(255,255,255,.06);
@@ -110,15 +112,13 @@
       font-size:15px;
     }
 
-    .searchWrap input::placeholder{
-      color:rgba(237,253,252,.45);
-    }
+    .searchWrap input::placeholder{color:rgba(238,253,251,.42)}
 
     .headerBtn{
       border:0;
       cursor:pointer;
       color:#032624;
-      font-weight:900;
+      font-weight:1000;
       border-radius:18px;
       padding:12px 16px;
       background:linear-gradient(135deg,var(--brand),var(--brand2));
@@ -126,140 +126,165 @@
       white-space:nowrap;
     }
 
-    .hero{
-      margin-top:16px;
-      padding:18px;
-      border-radius:30px;
-      display:grid;
-      grid-template-columns:1.05fr .95fr;
-      gap:18px;
-      overflow:hidden;
-      position:relative;
+    .screen{display:none}
+    .screen.active{display:block}
+
+    .sectionBlock{margin-bottom:20px}
+
+    .sectionHead{
+      display:flex;
+      align-items:end;
+      justify-content:space-between;
+      gap:14px;
+      margin-bottom:12px;
     }
 
-    .hero::before{
+    .sectionTitle{
+      font-size:30px;
+      font-weight:1000;
+      letter-spacing:-.7px;
+    }
+
+    .sectionSub{
+      margin-top:4px;
+      color:var(--muted);
+      font-size:13px;
+      line-height:1.45;
+    }
+
+    .subtleLink{
+      color:var(--brand);
+      font-size:13px;
+      font-weight:900;
+      background:none;
+      border:0;
+      padding:0;
+      cursor:pointer;
+    }
+
+    .promoRow{
+      display:grid;
+      grid-template-columns:1.2fr .8fr;
+      gap:14px;
+    }
+
+    .promoCard{
+      min-height:210px;
+      border-radius:30px;
+      padding:18px;
+      position:relative;
+      overflow:hidden;
+    }
+
+    .promoCard::before{
       content:"";
       position:absolute;
       inset:0;
-      background:
-        radial-gradient(500px 220px at 0% 0%, rgba(40,219,195,.12), transparent 60%),
-        radial-gradient(500px 260px at 100% 0%, rgba(255,145,77,.10), transparent 60%);
       pointer-events:none;
+      background:
+        radial-gradient(380px 180px at 0% 0%, rgba(40,219,195,.18), transparent 60%),
+        radial-gradient(260px 160px at 100% 100%, rgba(255,147,79,.12), transparent 60%);
     }
 
-    .heroLeft,.heroRight{position:relative;z-index:1}
+    .promoInner{position:relative;z-index:1}
 
-    .eyebrow{
+    .promoBadge{
       display:inline-flex;
       align-items:center;
       gap:8px;
       padding:8px 12px;
       border-radius:999px;
       background:rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.08);
       color:var(--muted);
       font-size:12px;
-      font-weight:800;
+      font-weight:900;
       margin-bottom:12px;
     }
 
-    .heroTitle{
-      font-size:42px;
-      line-height:1.02;
+    .promoTitle{
+      font-size:34px;
+      line-height:1.03;
       font-weight:1000;
-      letter-spacing:-1.2px;
+      letter-spacing:-1px;
       margin:0;
-      max-width:460px;
+      max-width:420px;
     }
 
-    .heroSub{
-      margin-top:12px;
+    .promoDesc{
+      margin-top:10px;
       color:var(--muted);
-      font-size:15px;
+      font-size:14px;
       line-height:1.55;
-      max-width:520px;
+      max-width:470px;
     }
 
-    .heroMeta{
+    .promoActionRow{
       margin-top:18px;
       display:flex;
-      flex-wrap:wrap;
       gap:10px;
-    }
-
-    .pill{
-      padding:10px 14px;
-      border-radius:999px;
-      background:rgba(255,255,255,.06);
-      border:1px solid rgba(255,255,255,.08);
-      font-size:13px;
-      color:#ddfffa;
-      font-weight:800;
-    }
-
-    .heroActions{
-      margin-top:20px;
-      display:flex;
-      gap:12px;
       flex-wrap:wrap;
     }
 
-    .cta,.ghost{
+    .promoBtn,
+    .promoGhost{
       border:0;
       cursor:pointer;
       border-radius:18px;
-      padding:14px 18px;
-      font-weight:900;
+      padding:13px 16px;
+      font-weight:1000;
     }
 
-    .cta{
+    .promoBtn{
       background:linear-gradient(135deg,var(--brand),var(--brand2));
       color:#032624;
-      box-shadow:0 12px 28px rgba(40,219,195,.22);
     }
 
-    .ghost{
-      color:var(--text);
+    .promoGhost{
       background:rgba(255,255,255,.06);
+      color:#fff;
       border:1px solid rgba(255,255,255,.08);
     }
 
-    .heroCard{
-      border-radius:28px;
+    .miniSpot{
+      border-radius:30px;
       overflow:hidden;
-      background:linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02));
-      border:1px solid rgba(255,255,255,.08);
+      min-height:210px;
+      display:flex;
+      flex-direction:column;
     }
 
-    .heroImageWrap{
-      aspect-ratio:1 / 1;
-      overflow:hidden;
+    .miniSpotImg{
+      aspect-ratio:1.15 / 1;
       background:#091618;
+      overflow:hidden;
     }
 
-    .heroImageWrap img{
+    .miniSpotImg img{
       width:100%;
       height:100%;
       object-fit:cover;
       display:block;
     }
 
-    .heroCardBody{
+    .miniSpotBody{
       padding:16px;
     }
 
-    .heroCardBody h3{
-      margin:0 0 8px;
+    .miniSpotTitle{
       font-size:22px;
+      font-weight:1000;
+      margin:0 0 8px;
+      letter-spacing:-.4px;
     }
 
-    .heroPrice{
-      font-size:30px;
+    .miniSpotPrice{
+      font-size:28px;
       font-weight:1000;
-      margin-bottom:10px;
+      margin-bottom:4px;
     }
 
     .chips{
-      margin-top:18px;
       display:flex;
       gap:10px;
       overflow:auto;
@@ -276,7 +301,7 @@
       padding:11px 15px;
       border-radius:18px;
       color:var(--text);
-      font-weight:800;
+      font-weight:900;
       background:rgba(255,255,255,.05);
       border:1px solid rgba(255,255,255,.07);
     }
@@ -287,28 +312,52 @@
       box-shadow:0 10px 28px rgba(40,219,195,.12);
     }
 
-    .sectionHead{
-      margin-top:22px;
+    .popularRow{
       display:flex;
-      align-items:end;
-      justify-content:space-between;
-      gap:14px;
+      gap:12px;
+      overflow:auto;
+      padding-bottom:6px;
+      scrollbar-width:none;
     }
 
-    .sectionTitle{
-      font-size:28px;
+    .popularRow::-webkit-scrollbar{display:none}
+
+    .popularCard{
+      width:220px;
+      flex:0 0 auto;
+      border-radius:24px;
+      overflow:hidden;
+      background:linear-gradient(180deg, rgba(255,255,255,.055), rgba(255,255,255,.028));
+      border:1px solid rgba(255,255,255,.08);
+      box-shadow:var(--shadow);
+      cursor:pointer;
+    }
+
+    .popularCard img{
+      width:100%;
+      aspect-ratio:1 / 1;
+      object-fit:cover;
+      display:block;
+    }
+
+    .popularBody{
+      padding:14px;
+    }
+
+    .popularName{
       font-weight:1000;
-      letter-spacing:-.5px;
+      line-height:1.15;
+      font-size:16px;
+      min-height:38px;
     }
 
-    .sectionSub{
-      margin-top:4px;
-      color:var(--muted);
-      font-size:13px;
+    .popularPrice{
+      margin-top:10px;
+      font-size:24px;
+      font-weight:1000;
     }
 
     .grid{
-      margin-top:14px;
       display:grid;
       grid-template-columns:repeat(2,minmax(0,1fr));
       gap:14px;
@@ -368,7 +417,7 @@
       border:0;
       cursor:pointer;
       border-radius:14px;
-      background:rgba(7,24,25,.45);
+      background:rgba(7,24,25,.48);
       backdrop-filter:blur(10px);
       border:1px solid rgba(255,255,255,.10);
       display:flex;
@@ -407,9 +456,7 @@
     }
     .dot.active{background:#fff}
 
-    .cardBody{
-      padding:14px;
-    }
+    .cardBody{padding:14px 14px 15px}
 
     .badgeRow{
       display:flex;
@@ -425,7 +472,7 @@
       padding:7px 10px;
       border-radius:999px;
       font-size:11px;
-      font-weight:900;
+      font-weight:1000;
       background:rgba(255,255,255,.06);
       border:1px solid rgba(255,255,255,.08);
       color:#ebfffd;
@@ -433,7 +480,7 @@
 
     .status-in{background:rgba(40,219,195,.12);border-color:rgba(40,219,195,.28)}
     .status-out{background:rgba(239,68,68,.12);border-color:rgba(239,68,68,.28)}
-    .status-soon{background:rgba(255,145,77,.12);border-color:rgba(255,145,77,.26)}
+    .status-soon{background:rgba(255,147,79,.12);border-color:rgba(255,147,79,.24)}
 
     .title{
       font-size:18px;
@@ -489,7 +536,7 @@
       border:0;
       border-radius:18px;
       padding:12px 14px;
-      font-weight:900;
+      font-weight:1000;
       cursor:pointer;
     }
 
@@ -505,22 +552,17 @@
     }
 
     .empty{
-      margin-top:16px;
       padding:18px;
       border-radius:22px;
       background:rgba(255,255,255,.04);
       border:1px dashed rgba(255,255,255,.14);
-      color:rgba(237,253,252,.82);
+      color:rgba(237,253,251,.82);
       white-space:pre-wrap;
     }
-
-    .screen{display:none}
-    .screen.active{display:block}
 
     .cartWrap{
       display:grid;
       gap:12px;
-      margin-top:14px;
     }
 
     .cartItem{
@@ -561,7 +603,7 @@
 
     .qtyBtn{
       width:38px;height:38px;border-radius:14px;border:0;cursor:pointer;
-      background:rgba(255,255,255,.08);color:#fff;font-size:20px;font-weight:900;
+      background:rgba(255,255,255,.08);color:#fff;font-size:20px;font-weight:1000;
     }
 
     .qtyValue{
@@ -623,7 +665,6 @@
     }
 
     .profileCard{
-      margin-top:14px;
       padding:18px;
       border-radius:26px;
     }
@@ -712,7 +753,7 @@
       background:#ff4d6d;
       color:#fff;
       font-size:11px;
-      font-weight:900;
+      font-weight:1000;
       display:flex;
       align-items:center;
       justify-content:center;
@@ -733,9 +774,7 @@
     }
 
     .sheet.open,
-    .checkoutSheet.open{
-      display:flex;
-    }
+    .checkoutSheet.open{display:flex}
 
     .sheetBody,
     .checkoutBody{
@@ -878,7 +917,7 @@
       align-items:center;
       justify-content:space-between;
       gap:10px;
-      font-weight:900;
+      font-weight:1000;
       cursor:pointer;
     }
 
@@ -909,11 +948,9 @@
     }
     .specRow:last-child{border-bottom:0}
     .specKey{color:var(--muted)}
-    .specVal{font-weight:800;text-align:right}
+    .specVal{font-weight:900;text-align:right}
 
-    .relatedWrap{
-      margin-top:20px;
-    }
+    .relatedWrap{margin-top:20px}
 
     .relatedRow{
       display:flex;
@@ -940,7 +977,7 @@
     }
 
     .relatedBody{padding:12px}
-    .relatedName{font-weight:900;font-size:14px;line-height:1.2}
+    .relatedName{font-weight:1000;font-size:14px;line-height:1.2}
     .relatedPrice{margin-top:8px;font-weight:1000;font-size:18px}
 
     .checkoutTitle{
@@ -996,7 +1033,7 @@
       padding:14px 16px;
       border-radius:18px;
       color:#fff;
-      font-weight:900;
+      font-weight:1000;
       border:1px solid rgba(255,255,255,.08);
       box-shadow:var(--shadow);
       backdrop-filter:blur(10px);
@@ -1007,7 +1044,7 @@
     .toast.info{background:rgba(29,78,216,.88)}
 
     .debugToggle{
-      margin-top:10px;
+      margin-top:6px;
       color:var(--muted);
       font-size:12px;
       cursor:pointer;
@@ -1027,23 +1064,16 @@
     }
     .debugBox.show{display:block}
 
-    @media (max-width:920px){
-      .hero{
-        grid-template-columns:1fr;
-      }
-      .heroTitle{
-        font-size:34px;
-      }
+    @media (max-width:960px){
+      .promoRow{grid-template-columns:1fr}
     }
 
     @media (max-width:560px){
       .container{padding:14px 12px}
-      .topbar{gap:10px}
       .brand{display:none}
       .headerBtn{padding:11px 14px}
-      .hero{padding:14px;border-radius:26px}
-      .heroTitle{font-size:30px}
       .sectionTitle{font-size:24px}
+      .promoTitle{font-size:28px}
       .sheetActions{grid-template-columns:1fr}
       .cartBottomActions{flex-direction:column}
     }
@@ -1071,42 +1101,87 @@
       <button class="headerBtn" id="headerHelpBtn">Заказ</button>
     </div>
 
-    <div class="hero glass" id="heroBlock"></div>
-
-    <div class="chips" id="chips"></div>
-
     <div class="debugToggle" id="debugToggle">Показать диагностику</div>
     <div class="debugBox" id="debugBox"><div id="dbg">Старт…</div></div>
 
     <div class="screen active" id="screenHome">
-      <div class="sectionHead">
-        <div>
-          <div class="sectionTitle">Подборка товаров</div>
-          <div class="sectionSub">Премиальные добавки NutriLab</div>
+      <div class="sectionBlock">
+        <div class="promoRow">
+          <div class="promoCard glass">
+            <div class="promoInner">
+              <div class="promoBadge">NutriLab Premium</div>
+              <h1 class="promoTitle">Премиальные добавки для ежедневной поддержки</h1>
+              <div class="promoDesc">Чистый каталог, быстрый заказ, понятный выбор и ощущение дорогого продукта без лишнего шума.</div>
+              <div class="promoActionRow">
+                <button class="promoBtn" id="goCatalogBtn">Открыть каталог</button>
+                <button class="promoGhost" id="goCartBtn">Перейти в корзину</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="miniSpot glass" id="miniSpot"></div>
         </div>
       </div>
-      <div class="grid" id="grid"></div>
-      <div class="empty" id="emptyHome" style="display:none;"></div>
+
+      <div class="sectionBlock">
+        <div class="sectionHead">
+          <div>
+            <div class="sectionTitle">Популярное</div>
+            <div class="sectionSub">Быстрый выбор самых заметных товаров</div>
+          </div>
+        </div>
+        <div class="popularRow" id="popularRow"></div>
+      </div>
+
+      <div class="sectionBlock">
+        <div class="sectionHead">
+          <div>
+            <div class="sectionTitle">Категории</div>
+            <div class="sectionSub">Выбери нужный раздел</div>
+          </div>
+        </div>
+        <div class="chips" id="chipsHome"></div>
+      </div>
+
+      <div class="sectionBlock">
+        <div class="sectionHead">
+          <div>
+            <div class="sectionTitle">Каталог</div>
+            <div class="sectionSub">Все товары в фирменной подборке</div>
+          </div>
+        </div>
+        <div class="grid" id="gridHome"></div>
+        <div class="empty" id="emptyHome" style="display:none;"></div>
+      </div>
     </div>
 
     <div class="screen" id="screenCatalog">
-      <div class="sectionHead">
-        <div>
-          <div class="sectionTitle">Каталог</div>
-          <div class="sectionSub">Все доступные товары</div>
+      <div class="sectionBlock">
+        <div class="sectionHead">
+          <div>
+            <div class="sectionTitle">Каталог</div>
+            <div class="sectionSub">Все доступные товары</div>
+          </div>
         </div>
+        <div class="chips" id="chipsCatalog"></div>
       </div>
-      <div class="grid" id="gridCatalog"></div>
-      <div class="empty" id="emptyCatalog" style="display:none;"></div>
+
+      <div class="sectionBlock">
+        <div class="grid" id="gridCatalog"></div>
+        <div class="empty" id="emptyCatalog" style="display:none;"></div>
+      </div>
     </div>
 
     <div class="screen" id="screenCart">
-      <div class="sectionHead">
-        <div>
-          <div class="sectionTitle">Корзина</div>
-          <div class="sectionSub">Твои выбранные товары</div>
+      <div class="sectionBlock">
+        <div class="sectionHead">
+          <div>
+            <div class="sectionTitle">Корзина</div>
+            <div class="sectionSub">Твои выбранные товары</div>
+          </div>
         </div>
       </div>
+
       <div class="cartWrap" id="cartWrap"></div>
       <div class="empty" id="emptyCart" style="display:none;">Корзина пуста.</div>
 
@@ -1125,10 +1200,12 @@
     </div>
 
     <div class="screen" id="screenProfile">
-      <div class="sectionHead">
-        <div>
-          <div class="sectionTitle">Профиль</div>
-          <div class="sectionSub">Данные покупателя</div>
+      <div class="sectionBlock">
+        <div class="sectionHead">
+          <div>
+            <div class="sectionTitle">Профиль</div>
+            <div class="sectionSub">Данные покупателя</div>
+          </div>
         </div>
       </div>
 
@@ -1219,7 +1296,6 @@
     let allProducts = [];
     let currentCategory = "Все";
     let searchQuery = "";
-    let currentProduct = null;
 
     const dbgEl = document.getElementById("dbg");
     function dbg(msg){
@@ -1311,8 +1387,7 @@
         badge.style.display = "none";
       }
 
-      const favCount = getFav().size;
-      document.getElementById("profileFavCount").textContent = favCount;
+      document.getElementById("profileFavCount").textContent = getFav().size;
       document.getElementById("profileCartCount").textContent = count;
     }
 
@@ -1352,74 +1427,27 @@
       }
     }
 
-    function buildHero(){
-      const block = document.getElementById("heroBlock");
-      const visible = getVisibleProducts(allProducts);
-      const hero = visible[0];
-
-      if (!hero){
-        block.innerHTML = `
-          <div class="heroLeft">
-            <div class="eyebrow">NutriLab Premium</div>
-            <h1 class="heroTitle">Магазин готов к наполнению</h1>
-            <div class="heroSub">Добавь больше товаров через админку — и здесь появится твой премиальный каталог.</div>
-          </div>
-        `;
-        return;
-      }
-
-      const images = getProductImages(hero);
-      block.innerHTML = `
-        <div class="heroLeft">
-          <div class="eyebrow">NutriLab Premium</div>
-          <h1 class="heroTitle">${hero.name || "NutriLab Product"}</h1>
-          <div class="heroSub">${hero.description || "Премиальная добавка для здоровья, энергии и ежедневной поддержки организма."}</div>
-          <div class="heroMeta">
-            <div class="pill">${hero.category || "Supplement"}</div>
-            <div class="pill">${Number(hero.stock || 0) > 0 ? "В наличии" : "Нет в наличии"}</div>
-            <div class="pill">Артикул: ${hero.article || "—"}</div>
-          </div>
-          <div class="heroActions">
-            <button class="cta" id="heroOpenBtn">Открыть товар</button>
-            <button class="ghost" id="heroAddBtn">В корзину</button>
-          </div>
-        </div>
-        <div class="heroRight">
-          <div class="heroCard">
-            <div class="heroImageWrap">
-              <img src="${images[0]}" alt="">
-            </div>
-            <div class="heroCardBody">
-              <h3>${hero.name || "Товар"}</h3>
-              <div class="heroPrice">${fmtPrice(hero.price)}</div>
-              <div style="color:var(--muted);font-size:13px;">${hero.category || ""}</div>
-            </div>
-          </div>
-        </div>
-      `;
-
-      document.getElementById("heroOpenBtn").onclick = () => openProduct(hero);
-      document.getElementById("heroAddBtn").onclick = () => addToCart(hero.id, 1);
-    }
-
-    function renderCategories(){
-      const chips = document.getElementById("chips");
+    function renderCategoryChips(targetId){
+      const chips = document.getElementById(targetId);
       chips.innerHTML = "";
+
       getCategories(allProducts).forEach(cat => {
         const btn = document.createElement("button");
         btn.className = "chip" + (cat === currentCategory ? " active" : "");
         btn.textContent = cat;
         btn.onclick = () => {
           currentCategory = cat;
-          renderCategories();
+          renderCategoryChips("chipsHome");
+          renderCategoryChips("chipsCatalog");
           renderHome();
           renderCatalog();
+          renderPopular();
         };
         chips.appendChild(btn);
       });
     }
 
-    function createGallerySlider(imgWrap, images, extraClass = ""){
+    function createGallerySlider(imgWrap, images){
       let currentIndex = 0;
       let touchStartX = 0;
       let touchEndX = 0;
@@ -1427,7 +1455,6 @@
       const img = document.createElement("img");
       img.src = images[0];
       img.alt = "";
-      if (extraClass) img.classList.add(extraClass);
       imgWrap.appendChild(img);
 
       function animate(direction){
@@ -1499,9 +1526,6 @@
       }
 
       return {
-        setIndex(index){
-          currentIndex = index;
-        },
         updateThumb(index){
           currentIndex = index;
           img.src = images[currentIndex];
@@ -1530,6 +1554,7 @@
         updateBadges();
         renderHome();
         renderCatalog();
+        renderPopular();
       };
 
       const body = document.createElement("div");
@@ -1576,7 +1601,6 @@
 
       actions.appendChild(openBtn);
       actions.appendChild(cartBtn);
-
       body.appendChild(actions);
 
       card.appendChild(imgWrap);
@@ -1587,14 +1611,69 @@
       return card;
     }
 
-    function renderGrid(targetId, emptyId, products){
+    function renderMiniSpot(){
+      const el = document.getElementById("miniSpot");
+      const visible = getVisibleProducts(allProducts);
+      const product = visible[0];
+
+      if (!product){
+        el.innerHTML = `
+          <div class="miniSpotBody">
+            <div class="miniSpotTitle">NutriLab</div>
+            <div style="color:var(--muted);font-size:14px;">Добавь товары через админку</div>
+          </div>
+        `;
+        return;
+      }
+
+      el.innerHTML = `
+        <div class="miniSpotImg">
+          <img src="${getProductImages(product)[0]}" alt="">
+        </div>
+        <div class="miniSpotBody">
+          <div class="miniSpotTitle">${product.name || "Товар"}</div>
+          <div class="miniSpotPrice">${fmtPrice(product.price)}</div>
+          <div style="color:var(--muted);font-size:13px;">${product.category || ""}</div>
+        </div>
+      `;
+
+      el.onclick = () => openProduct(product);
+    }
+
+    function renderPopular(){
+      const row = document.getElementById("popularRow");
+      row.innerHTML = "";
+
+      const products = filteredProducts().slice(0, 8);
+
+      if (!products.length){
+        row.innerHTML = `<div class="empty" style="min-width:100%;">Популярных товаров пока нет.</div>`;
+        return;
+      }
+
+      products.forEach(p => {
+        const card = document.createElement("div");
+        card.className = "popularCard";
+        card.innerHTML = `
+          <img src="${getProductImages(p)[0]}" alt="">
+          <div class="popularBody">
+            <div class="popularName">${p.name || "Товар"}</div>
+            <div class="popularPrice">${fmtPrice(p.price)}</div>
+          </div>
+        `;
+        card.onclick = () => openProduct(p);
+        row.appendChild(card);
+      });
+    }
+
+    function renderGrid(targetId, emptyId, products, emptyText){
       const grid = document.getElementById(targetId);
       const empty = document.getElementById(emptyId);
       grid.innerHTML = "";
 
       if (!products.length){
         empty.style.display = "block";
-        empty.textContent = "Товаров не найдено.";
+        empty.textContent = emptyText || "Товаров не найдено.";
         return;
       }
 
@@ -1603,22 +1682,19 @@
     }
 
     function renderHome(){
-      renderGrid("grid", "emptyHome", filteredProducts());
+      renderGrid("gridHome", "emptyHome", filteredProducts(), "На главной пока нет товаров.");
     }
 
     function renderCatalog(){
-      renderGrid("gridCatalog", "emptyCatalog", filteredProducts());
+      renderGrid("gridCatalog", "emptyCatalog", filteredProducts(), "В каталоге пока нет товаров.");
     }
 
     function openProduct(product){
-      currentProduct = product;
       const images = getProductImages(product);
       const oldPrice = Number(product.old_price || 0) > 0 ? `<div class="sheetOld">${fmtPrice(product.old_price)}</div>` : "";
-
       const composition = product.composition || product.description || "Информация о составе будет добавлена позже.";
       const benefits = product.benefits || "Поддержка организма, удобный формат и премиальное качество.";
       const usage = product.usage || "Следуйте рекомендациям на упаковке или инструкции специалиста.";
-
       const related = filteredProducts().filter(p => String(p.id) !== String(product.id)).slice(0, 8);
 
       const wrap = document.getElementById("sheetScroll");
@@ -1830,7 +1906,6 @@
 
         const card = document.createElement("div");
         card.className = "cartItem";
-
         card.innerHTML = `
           <div class="cartItemImg"><img src="${getProductImages(item.product)[0]}" alt=""></div>
           <div>
@@ -1880,7 +1955,7 @@
           ${items.map(item => `
             <div class="listRow">
               <div>
-                <div style="font-weight:900;">${item.product.name}</div>
+                <div style="font-weight:1000;">${item.product.name}</div>
                 <div style="color:var(--muted);font-size:13px;">${item.qty} × ${fmtPrice(item.product.price)}</div>
               </div>
               <div style="font-weight:1000;">${fmtPrice(item.lineTotal)}</div>
@@ -2002,8 +2077,10 @@
       allProducts = Array.isArray(data) ? data : [];
       dbg("Supabase OK. Товаров: " + allProducts.length);
 
-      buildHero();
-      renderCategories();
+      renderMiniSpot();
+      renderCategoryChips("chipsHome");
+      renderCategoryChips("chipsCatalog");
+      renderPopular();
       renderHome();
       renderCatalog();
       renderCart();
@@ -2028,6 +2105,7 @@
 
       document.getElementById("search").addEventListener("input", (e) => {
         searchQuery = (e.target.value || "").trim().toLowerCase();
+        renderPopular();
         renderHome();
         renderCatalog();
       });
@@ -2039,6 +2117,9 @@
       document.getElementById("headerHelpBtn").onclick = () => {
         toast("Используй кнопку «В корзину» внутри товара", "info");
       };
+
+      document.getElementById("goCatalogBtn").onclick = () => switchTab("catalog");
+      document.getElementById("goCartBtn").onclick = () => switchTab("cart");
 
       document.getElementById("productSheet").addEventListener("click", (e) => {
         if (e.target.id === "productSheet") closeProductSheet();
