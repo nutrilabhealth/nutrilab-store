@@ -35,6 +35,18 @@ const cartCount = document.getElementById("cartCount");
 const profileAvatar = document.getElementById("profileAvatar");
 const profileCategory = document.getElementById("profileCategory");
 
+const toastWrap = document.createElement("div");
+toastWrap.className = "toastWrap";
+document.body.appendChild(toastWrap);
+
+function showToast(text, type = "ok") {
+  const el = document.createElement("div");
+  el.className = `toast ${type}`;
+  el.textContent = text;
+  toastWrap.appendChild(el);
+  setTimeout(() => el.remove(), 1800);
+}
+
 function fmtPrice(value) {
   return Number(value || 0).toLocaleString("ru-RU") + " ₽";
 }
@@ -164,10 +176,23 @@ function renderProductCards(list, target) {
       const id = btn.dataset.add;
       const product = state.products.find((item) => String(item.id) === String(id));
       if (!product) return;
+
+      if (Number(product.stock || 0) <= 0) {
+        showToast("Товара нет в наличии", "info");
+        return;
+      }
+
+      const current = Number(getCart()[id] || 0);
+      if (current + 1 > Number(product.stock || 0)) {
+        showToast("Больше нет на складе", "info");
+        return;
+      }
+
       addToCart(id, 1);
       renderCart();
       updateCartBadge();
       renderProfile();
+      showToast("Добавлено в корзину");
     });
   });
 
@@ -177,6 +202,7 @@ function renderProductCards(list, target) {
       toggleFav(btn.dataset.fav);
       renderProducts();
       renderProfile();
+      showToast("Избранное обновлено", "info");
     });
   });
 }
@@ -254,6 +280,14 @@ function renderCart() {
     btn.addEventListener("click", () => {
       const id = btn.dataset.plus;
       const current = Number(getCart()[id] || 0);
+      const product = state.products.find((p) => String(p.id) === String(id));
+      if (!product) return;
+
+      if (current + 1 > Number(product.stock || 0)) {
+        showToast("Больше нет на складе", "info");
+        return;
+      }
+
       updateCartQty(id, current + 1);
       renderCart();
       updateCartBadge();
@@ -269,10 +303,11 @@ function renderCart() {
     renderCart();
     updateCartBadge();
     renderProfile();
+    showToast("Корзина очищена", "info");
   });
 
   checkoutBtn?.addEventListener("click", () => {
-    alert("Оформление заказа подключим следующим шагом");
+    showToast("Оформление заказа подключим следующим шагом", "info");
   });
 }
 
