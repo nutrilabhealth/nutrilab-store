@@ -1,19 +1,21 @@
-import { LS_CART } from "./config.js";
+export function getCart(){
 
-export function getCart() {
-  return JSON.parse(localStorage.getItem(LS_CART) || "{}");
+return JSON.parse(localStorage.getItem("nutrilab_cart")||"[]")
+
 }
 
-export function setCart(cart) {
-  localStorage.setItem(LS_CART, JSON.stringify(cart));
+export function addToCart(product){
+
+let cart=getCart()
+
+cart.push(product)
+
+localStorage.setItem("nutrilab_cart",JSON.stringify(cart))
+
 }
 
-export function addToCart(id, qty = 1) {
-  const cart = getCart();
-  cart[id] = (cart[id] || 0) + qty;
-  setCart(cart);
-}
+export function getCartCount(){
 
-export function clearCart() {
-  localStorage.removeItem(LS_CART);
+return getCart().length
+
 }
