@@ -10,6 +10,7 @@
   --brand2:#1fbca8;
   --danger:#ff4d6d;
   --warning:#ffb84d;
+  --violet:#9b6bff;
   --shadow:0 16px 40px rgba(0,0,0,.28);
   --shadow-soft:0 10px 24px rgba(0,0,0,.18);
 }
@@ -206,6 +207,44 @@ body{
   transform:scale(1.025);
 }
 
+.cardTopLeft{
+  position:absolute;
+  left:8px;
+  top:8px;
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px;
+  z-index:2;
+  max-width:72%;
+}
+
+.imgPill{
+  display:inline-flex;
+  align-items:center;
+  gap:4px;
+  padding:5px 8px;
+  border-radius:999px;
+  font-size:10px;
+  font-weight:1000;
+  color:#fff;
+  backdrop-filter:blur(8px);
+  border:1px solid rgba(255,255,255,.08);
+  box-shadow:var(--shadow-soft);
+}
+
+.imgPill.discount{
+  background:rgba(255,77,109,.94);
+}
+
+.imgPill.hit{
+  background:rgba(255,184,77,.94);
+  color:#2b1a00;
+}
+
+.imgPill.new{
+  background:rgba(155,107,255,.95);
+}
+
 .cardFav{
   position:absolute;
   top:8px;
@@ -229,40 +268,46 @@ body{
 .cardFav.active{
   background:rgba(255,77,109,.18);
   border-color:rgba(255,77,109,.24);
-  color:#fff;
 }
 
-.cardDiscount{
+.cardBottomBtns{
   position:absolute;
   left:8px;
+  right:8px;
   bottom:8px;
-  display:inline-flex;
+  display:flex;
   align-items:center;
-  padding:5px 8px;
-  border-radius:999px;
-  background:rgba(255,77,109,.96);
-  color:#fff;
-  font-size:11px;
-  font-weight:1000;
+  justify-content:space-between;
+  gap:8px;
   z-index:2;
-  box-shadow:var(--shadow-soft);
+}
+
+.cardMore{
+  width:34px;
+  height:34px;
+  border:1px solid rgba(255,255,255,.12);
+  border-radius:12px;
+  background:rgba(7,25,27,.58);
+  color:#fff;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:18px;
+  backdrop-filter:blur(8px);
+  cursor:pointer;
 }
 
 .cardCart{
-  position:absolute;
-  right:8px;
-  bottom:8px;
   width:46px;
   height:46px;
   border:0;
   border-radius:15px;
   background:linear-gradient(135deg,var(--brand),var(--brand2));
   color:#032624;
-  font-size:20px;
+  font-size:22px;
   font-weight:1000;
   box-shadow:0 10px 22px rgba(52,221,198,.22);
   cursor:pointer;
-  z-index:2;
   transition:transform .15s ease, box-shadow .15s ease;
 }
 
@@ -354,6 +399,11 @@ body{
   border-color:rgba(52,221,198,.24);
 }
 
+.stockPill.low{
+  background:rgba(255,184,77,.14);
+  border-color:rgba(255,184,77,.2);
+}
+
 .stockPill.out{
   background:rgba(255,77,109,.12);
   border-color:rgba(255,77,109,.24);
@@ -366,6 +416,55 @@ body{
   overflow:hidden;
   text-overflow:ellipsis;
   max-width:84px;
+}
+
+.cardDrawer{
+  display:none;
+  margin-top:10px;
+  padding:10px;
+  border-radius:16px;
+  background:rgba(255,255,255,.04);
+  border:1px solid rgba(255,255,255,.07);
+}
+
+.cardDrawer.open{
+  display:block;
+}
+
+.drawerGrid{
+  display:grid;
+  gap:8px;
+}
+
+.drawerRow{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  font-size:12px;
+}
+
+.drawerKey{
+  color:var(--muted);
+}
+
+.drawerVal{
+  color:var(--text);
+  font-weight:800;
+  text-align:right;
+}
+
+.drawerDesc{
+  margin-top:4px;
+  padding-top:8px;
+  border-top:1px solid rgba(255,255,255,.06);
+  color:var(--muted);
+  font-size:12px;
+  line-height:1.45;
+  display:-webkit-box;
+  -webkit-line-clamp:3;
+  -webkit-box-orient:vertical;
+  overflow:hidden;
 }
 
 .empty{
