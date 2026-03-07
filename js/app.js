@@ -1,4 +1,4 @@
-import { addToCart, getCart, getCartCount } from "./cart.js";
+import { getCart, addToCart, getCartCount } from "./cart.js";
 
 const SUPABASE_URL = "https://cthfqhxnplyibdsjzcrq.supabase.co";
 const SUPABASE_KEY = "sb_publishable_AjGX1zKhV8kEyGMbvAKwQg_srda-oyI";
@@ -10,45 +10,112 @@ const catalogGrid = document.getElementById("catalogGrid");
 const cartList = document.getElementById("cartList");
 const cartBadge = document.getElementById("cartBadge");
 const searchInput = document.getElementById("searchInput");
+const userName = document.getElementById("userName");
+const userId = document.getElementById("userId");
+const favCount = document.getElementById("favCount");
+const cartCount = document.getElementById("cartCount");
 
 let products = [];
 
-function showProducts(list, target) {
+function fmtPrice(value) {
+  return Number(value || 0).toLocaleString("ru-RU") + " ₽";
+}
+
+function getImage(product) {
+  if (Array.isArray(product.images) && product.images.length > 0) return product.images[0];
+  if (product.image_url) return product.image_url;
+  return "https://via.placeholder.com/800x800?text=NutriLab";
+}
+
+function getDiscount(product) {
+  const oldPrice = Number(product.old_price || 0);
+  const price = Number(product.price || 0);
+  if (!oldPrice || oldPrice <= price) return "";
+  const percent = Math.round(((oldPrice - price) / oldPrice) * 100);
+  return `-${percent}%`;
+}
+
+function visibleProducts(list) {
+  return (list || []).filter(p => (p.status || "") !== "hidden");
+}
+
+function renderProductCards(list, target) {
   if (!target) return;
 
   if (!list.length) {
-    target.innerHTML = `<div style="padding:16px;color:white;">Товаров нет</div>`;
+    target.innerHTML = `<div class="empty">Товаров не найдено.</div>`;
     return;
   }
 
-  target.innerHTML = "";
+  target.innerHTML = list.map((p) => {
+    const discount = getDiscount(p);
+    const inStock = Number(p.stock || 0) > 0;
 
-  list.forEach((p) => {
-    const card = document.createElement("div");
-    card.className = "card";
+    return `
+      <div class="card">
+        <div class="card-image">
+          <img src="${getImage(p)}" alt="${p.name || "Товар"}">
+          <div class="card-fav">♡</div>
+          ${discount ? `<div class="card-discount">${discount}</div>` : ""}
+          <button class="card-cart" data-add="${p.id}">🛒</button>
+        </div>
 
-    card.innerHTML = `
-      <img src="${p.image_url || ""}" alt="${p.name || "Товар"}">
-      <div class="cardBody">
-        <div>${p.name || "Без названия"}</div>
-        <div class="price">${Number(p.price || 0).toLocaleString("ru-RU")} ₽</div>
-        <button class="addCart">В корзину</button>
+        <div class="card-body">
+          <div class="card-price-row">
+            <div class="price">${fmtPrice(p.price)}</div>
+            ${Number(p.old_price || 0) > 0 ? `<div class="old-price">${fmtPrice(p.old_price)}</div>` : ""}
+          </div>
+
+          <div class="brand-line">NutriLab</div>
+
+          <div class="title">${p.name || "Без названия"}</div>
+
+          <div class="meta-line">
+            <div class="stock-pill ${inStock ? "in" : "out"}">
+              ${inStock ? "В наличии" : "Нет"}
+            </div>
+            <div class="article">${p.article || ""}</div>
+          </div>
+        </div>
       </div>
     `;
+  }).join("");
 
-    card.querySelector(".addCart").onclick = () => {
-      addToCart(p);
-      updateCart();
-      alert("Добавлено в корзину");
-    };
-
-    target.appendChild(card);
+  target.querySelectorAll("[data-add]").forEach((btn) => {
+    btn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      const id = btn.dataset.add;
+      const product = products.find(item => String(item.id) === String(id));
+      if (!product) return;
+      addToCart(product);
+      renderCart();
+      updateCartBadge();
+      renderProfile();
+    });
   });
 }
 
 function renderProducts() {
-  showProducts(products, homeGrid);
-  showProducts(products, catalogGrid);
+  const list = visibleProducts(products);
+  renderProductCards(list, homeGrid);
+  renderProductCards(list, catalogGrid);
+}
+
+function renderSearchProducts() {
+  const query = (searchInput?.value || "").trim().toLowerCase();
+
+  if (!query) {
+    renderProducts();
+    return;
+  }
+
+  const filtered = visibleProducts(products).filter((p) => {
+    const text = `${p.name || ""} ${p.description || ""} ${p.category || ""} ${p.article || ""}`.toLowerCase();
+    return text.includes(query);
+  });
+
+  renderProductCards(filtered, homeGrid);
+  renderProductCards(filtered, catalogGrid);
 }
 
 function renderCart() {
@@ -57,48 +124,108 @@ function renderCart() {
   if (!cartList) return;
 
   if (!cart.length) {
-    cartList.innerHTML = `<div style="padding:16px;color:white;">Корзина пуста</div>`;
+    cartList.innerHTML = `<div class="empty">Корзина пуста.</div>`;
     return;
   }
 
-  cartList.innerHTML = "";
+  let total = 0;
 
-  cart.forEach((p) => {
-    const div = document.createElement("div");
-    div.style.padding = "12px 16px";
-    div.style.color = "white";
-    div.textContent = `${p.name} — ${Number(p.price || 0).toLocaleString("ru-RU")} ₽`;
-    cartList.appendChild(div);
-  });
+  cartList.innerHTML = cart.map((p, index) => {
+    total += Number(p.price || 0);
+
+    return `
+      <div class="cart-item">
+        <img src="${getImage(p)}" alt="${p.name || "Товар"}">
+        <div>
+          <div class="cart-item-title">${p.name || "Товар"}</div>
+          <div class="cart-item-price">${fmtPrice(p.price)}</div>
+          <div class="cart-row">
+            <div class="qty-value">1 шт</div>
+            <div class="cart-line-total">${fmtPrice(p.price)}</div>
+          </div>
+        </div>
+      </div>
+    `;
+  }).join("") + `
+    <div class="cart-box">
+      <div class="muted">Итого</div>
+      <div class="cart-total">${fmtPrice(total)}</div>
+      <div class="cart-actions">
+        <button class="btn btn-dark" id="clearCartBtn">Очистить</button>
+        <button class="btn btn-primary" id="checkoutBtn">Оформить</button>
+      </div>
+    </div>
+  `;
+
+  const clearBtn = document.getElementById("clearCartBtn");
+  const checkoutBtn = document.getElementById("checkoutBtn");
+
+  if (clearBtn) {
+    clearBtn.onclick = () => {
+      localStorage.setItem("nutrilab_cart", "[]");
+      renderCart();
+      updateCartBadge();
+      renderProfile();
+    };
+  }
+
+  if (checkoutBtn) {
+    checkoutBtn.onclick = () => {
+      alert("Оформление заказа подключим следующим шагом");
+    };
+  }
 }
 
-function updateCart() {
+function updateCartBadge() {
   const count = getCartCount();
-  if (cartBadge) cartBadge.textContent = count;
-  renderCart();
+  if (!cartBadge) return;
+
+  cartBadge.textContent = count;
+  if (count > 0) {
+    cartBadge.classList.remove("hidden");
+  } else {
+    cartBadge.classList.add("hidden");
+  }
+}
+
+function renderProfile() {
+  const tgUser = window.Telegram?.WebApp?.initDataUnsafe?.user;
+
+  if (tgUser) {
+    const fullName = `${tgUser.first_name || ""} ${tgUser.last_name || ""}`.trim() || "Пользователь";
+    userName.textContent = fullName;
+    userId.textContent = `Telegram ID: ${tgUser.id || "—"}`;
+  } else {
+    userName.textContent = "Гость";
+    userId.textContent = "Открыто вне Telegram";
+  }
+
+  favCount.textContent = "Избранное: 0";
+  cartCount.textContent = `Товаров в корзине: ${getCartCount()}`;
 }
 
 function switchTab(tab) {
-  document.querySelectorAll(".screen").forEach((s) => s.classList.remove("active"));
-  document.querySelectorAll(".bottomNav button").forEach((b) => b.classList.remove("active"));
+  document.querySelectorAll(".screen").forEach((screen) => screen.classList.remove("active"));
+  document.querySelectorAll(".bottomNav button").forEach((btn) => btn.classList.remove("active"));
 
-  const screen = document.getElementById("screen-" + tab);
+  const screen = document.getElementById(`screen-${tab}`);
   if (screen) screen.classList.add("active");
 
-  const btn = document.querySelector(`.bottomNav button[data-tab="${tab}"]`);
-  if (btn) btn.classList.add("active");
+  const activeBtn = document.querySelector(`.bottomNav button[data-tab="${tab}"]`);
+  if (activeBtn) activeBtn.classList.add("active");
 }
 
 async function loadProducts() {
   const { data, error } = await sb
     .from("products")
-    .select("*");
+    .select("*")
+    .order("id", { ascending: true });
 
   if (error) {
     console.error("Supabase error:", error);
-    if (homeGrid) {
-      homeGrid.innerHTML = `<div style="padding:16px;color:white;">Ошибка загрузки: ${error.message}</div>`;
-    }
+    const html = `<div class="empty">Ошибка загрузки: ${error.message}</div>`;
+    homeGrid.innerHTML = html;
+    catalogGrid.innerHTML = html;
     return;
   }
 
@@ -106,24 +233,16 @@ async function loadProducts() {
   renderProducts();
 }
 
-searchInput?.addEventListener("input", () => {
-  const q = searchInput.value.trim().toLowerCase();
-
-  const filtered = products.filter((p) =>
-    `${p.name || ""} ${p.description || ""} ${p.category || ""} ${p.article || ""}`
-      .toLowerCase()
-      .includes(q)
-  );
-
-  showProducts(filtered, homeGrid);
-});
+searchInput?.addEventListener("input", renderSearchProducts);
 
 document.querySelectorAll(".bottomNav button").forEach((btn) => {
-  btn.onclick = () => {
+  btn.addEventListener("click", () => {
     const tab = btn.dataset.tab;
     switchTab(tab);
-  };
+  });
 });
 
 loadProducts();
-updateCart();
+renderCart();
+updateCartBadge();
+renderProfile();
