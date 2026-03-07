@@ -1,27 +1,104 @@
 <!DOCTYPE html>
 <html lang="ru">
-
 <head>
 
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 
 <title>NutriLab Store</title>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
 <link rel="stylesheet" href="/styles/main.css">
+
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 </head>
 
 <body>
 
+<header class="header">
 <h1>NutriLab Store</h1>
 
-<div id="app"></div>
+<input id="searchInput" placeholder="Поиск товара...">
+
+</header>
+
+
+<!-- HOME -->
+
+<section id="screen-home" class="screen active">
+
+<div id="homeGrid" class="grid"></div>
+
+</section>
+
+
+<!-- CATALOG -->
+
+<section id="screen-catalog" class="screen">
+
+<h2>Каталог</h2>
+
+<div id="catalogGrid" class="grid"></div>
+
+</section>
+
+
+<!-- CART -->
+
+<section id="screen-cart" class="screen">
+
+<h2>Корзина</h2>
+
+<div id="cartList"></div>
+
+</section>
+
+
+<!-- PROFILE -->
+
+<section id="screen-profile" class="screen">
+
+<h2>Профиль</h2>
+
+<div class="profileBox">
+
+<div id="userName">Гость</div>
+
+<div id="userId"></div>
+
+<div id="favCount"></div>
+
+<div id="cartCount"></div>
+
+</div>
+
+</section>
+
+
+
+<!-- NAVIGATION -->
+
+<nav class="bottomNav">
+
+<button data-tab="home">🏠</button>
+
+<button data-tab="catalog">⬛</button>
+
+<button data-tab="cart">
+
+🛒
+
+<span id="cartBadge">0</span>
+
+</button>
+
+<button data-tab="profile">👤</button>
+
+</nav>
+
 
 <script type="module" src="/js/app.js"></script>
 
 </body>
-
 </html>
