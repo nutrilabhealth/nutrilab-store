@@ -17,7 +17,8 @@ const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 const state = {
   products: [],
   search: "",
-  category: "Все"
+  category: "Все",
+  openedCards: []
 };
 
 const homeGrid = document.getElementById("homeGrid");
@@ -75,8 +76,28 @@ function getReviews(product) {
   return "1";
 }
 
+function isHit(product) {
+  return Number(product.rating || 5) >= 4.9;
+}
+
+function isNew(product) {
+  return Boolean(product.is_new);
+}
+
+function isLowStock(product) {
+  const stock = Number(product.stock || 0);
+  return stock > 0 && stock <= 5;
+}
+
+function getStockLabel(product) {
+  const stock = Number(product.stock || 0);
+  if (stock <= 0) return { text: "Нет", className: "out" };
+  if (stock <= 5) return { text: `Осталось ${stock}`, className: "low" };
+  return { text: "В наличии", className: "in" };
+}
+
 function visibleProducts() {
-  return (state.products || []).filter(p => (p.status || "") !== "hidden");
+  return (state.products || []).filter((p) => (p.status || "") !== "hidden");
 }
 
 function filteredProducts() {
@@ -99,6 +120,19 @@ function getCategories() {
     if (p.category) set.add(String(p.category));
   });
   return ["Все", ...Array.from(set).sort((a, b) => a.localeCompare(b, "ru"))];
+}
+
+function isCardOpened(id) {
+  return state.openedCards.includes(String(id));
+}
+
+function toggleCard(id) {
+  const sid = String(id);
+  if (state.openedCards.includes(sid)) {
+    state.openedCards = state.openedCards.filter((item) => item !== sid);
+  } else {
+    state.openedCards.push(sid);
+  }
 }
 
 function renderChips() {
@@ -128,18 +162,29 @@ function renderProductCards(list, target) {
 
   target.innerHTML = list.map((p) => {
     const discount = getDiscount(p);
-    const inStock = Number(p.stock || 0) > 0;
     const favActive = isFav(p.id);
+    const drawerOpen = isCardOpened(p.id);
+    const stockInfo = getStockLabel(p);
 
     return `
       <div class="card">
         <div class="cardImage">
+          <div class="cardTopLeft">
+            ${discount ? `<div class="imgPill discount">${discount}</div>` : ""}
+            ${isHit(p) ? `<div class="imgPill hit">Хит</div>` : ""}
+            ${isNew(p) ? `<div class="imgPill new">New</div>` : ""}
+          </div>
+
           <img src="${getImage(p)}" alt="${p.name || "Товар"}">
+
           <button class="cardFav ${favActive ? "active" : ""}" data-fav="${p.id}">
             ${favActive ? "♥" : "♡"}
           </button>
-          ${discount ? `<div class="cardDiscount">${discount}</div>` : ""}
-          <button class="cardCart" data-add="${p.id}">＋</button>
+
+          <div class="cardBottomBtns">
+            <button class="cardMore" data-more="${p.id}">⋯</button>
+            <button class="cardCart" data-add="${p.id}">＋</button>
+          </div>
         </div>
 
         <div class="cardBody">
@@ -160,10 +205,38 @@ function renderProductCards(list, target) {
           </div>
 
           <div class="metaLine">
-            <div class="stockPill ${inStock ? "in" : "out"}">
-              ${inStock ? "В наличии" : "Нет"}
+            <div class="stockPill ${stockInfo.className}">
+              ${stockInfo.text}
             </div>
             <div class="article">${p.article || ""}</div>
+          </div>
+
+          <div class="cardDrawer ${drawerOpen ? "open" : ""}">
+            <div class="drawerGrid">
+              <div class="drawerRow">
+                <div class="drawerKey">Артикул</div>
+                <div class="drawerVal">${p.article || "—"}</div>
+              </div>
+
+              <div class="drawerRow">
+                <div class="drawerKey">Категория</div>
+                <div class="drawerVal">${p.category || "—"}</div>
+              </div>
+
+              <div class="drawerRow">
+                <div class="drawerKey">Остаток</div>
+                <div class="drawerVal">${Number(p.stock || 0)} шт</div>
+              </div>
+
+              <div class="drawerRow">
+                <div class="drawerKey">Статус</div>
+                <div class="drawerVal">${Number(p.stock || 0) > 0 ? "Доступен" : "Нет в наличии"}</div>
+              </div>
+            </div>
+
+            <div class="drawerDesc">
+              ${p.description || "Описание товара будет добавлено позже."}
+            </div>
           </div>
         </div>
       </div>
@@ -203,6 +276,14 @@ function renderProductCards(list, target) {
       renderProducts();
       renderProfile();
       showToast("Избранное обновлено", "info");
+    });
+  });
+
+  target.querySelectorAll("[data-more]").forEach((btn) => {
+    btn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      toggleCard(btn.dataset.more);
+      renderProducts();
     });
   });
 }
