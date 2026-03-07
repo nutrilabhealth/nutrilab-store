@@ -35,6 +35,16 @@ function getDiscount(product) {
   return `-${percent}%`;
 }
 
+function getRating(product) {
+  if (product.rating) return Number(product.rating).toFixed(1);
+  return "5.0";
+}
+
+function getReviews(product) {
+  if (product.reviews_count) return Number(product.reviews_count).toLocaleString("ru-RU");
+  return "1";
+}
+
 function visibleProducts(list) {
   return (list || []).filter(p => (p.status || "") !== "hidden");
 }
@@ -61,7 +71,7 @@ function renderProductCards(list, target) {
         </div>
 
         <div class="card-body">
-          <div class="card-price-row">
+          <div class="price-row">
             <div class="price">${fmtPrice(p.price)}</div>
             ${Number(p.old_price || 0) > 0 ? `<div class="old-price">${fmtPrice(p.old_price)}</div>` : ""}
           </div>
@@ -69,6 +79,13 @@ function renderProductCards(list, target) {
           <div class="brand-line">NutriLab</div>
 
           <div class="title">${p.name || "Без названия"}</div>
+
+          <div class="rating-row">
+            <span class="rating-star">★</span>
+            <span>${getRating(p)}</span>
+            <span>·</span>
+            <span>${getReviews(p)} отзыв.</span>
+          </div>
 
           <div class="meta-line">
             <div class="stock-pill ${inStock ? "in" : "out"}">
@@ -130,7 +147,7 @@ function renderCart() {
 
   let total = 0;
 
-  cartList.innerHTML = cart.map((p, index) => {
+  cartList.innerHTML = cart.map((p) => {
     total += Number(p.price || 0);
 
     return `
@@ -148,7 +165,7 @@ function renderCart() {
     `;
   }).join("") + `
     <div class="cart-box">
-      <div class="muted">Итого</div>
+      <div class="article">Итого</div>
       <div class="cart-total">${fmtPrice(total)}</div>
       <div class="cart-actions">
         <button class="btn btn-dark" id="clearCartBtn">Очистить</button>
@@ -181,11 +198,8 @@ function updateCartBadge() {
   if (!cartBadge) return;
 
   cartBadge.textContent = count;
-  if (count > 0) {
-    cartBadge.classList.remove("hidden");
-  } else {
-    cartBadge.classList.add("hidden");
-  }
+  if (count > 0) cartBadge.classList.remove("hidden");
+  else cartBadge.classList.add("hidden");
 }
 
 function renderProfile() {
