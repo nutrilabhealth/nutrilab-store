@@ -84,11 +84,6 @@ function isNew(product) {
   return Boolean(product.is_new);
 }
 
-function isLowStock(product) {
-  const stock = Number(product.stock || 0);
-  return stock > 0 && stock <= 5;
-}
-
 function getStockLabel(product) {
   const stock = Number(product.stock || 0);
   if (stock <= 0) return { text: "Нет", className: "out" };
