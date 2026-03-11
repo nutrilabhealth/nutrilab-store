@@ -167,6 +167,54 @@ function switchTab(tab) {
   if (activeBtn) activeBtn.classList.add("active");
 }
 
+function buildProductSubline(product) {
+  const parts = [];
+
+  if (product.category) parts.push(String(product.category));
+  if (product.form) parts.push(String(product.form));
+  else parts.push("капсулы");
+
+  if (product.servings) parts.push(`${product.servings} порц.`);
+  else if (product.count) parts.push(`${product.count} шт`);
+  else parts.push("ежедневный курс");
+
+  return parts.slice(0, 3).join(" • ");
+}
+
+function buildFeatureBadges(product) {
+  const badges = [];
+  const text = `${product.name || ""} ${product.description || ""} ${product.category || ""}`.toLowerCase();
+
+  if (text.includes("omega") || text.includes("омега")) badges.push("Omega");
+  if (text.includes("магний") || text.includes("magnesium")) badges.push("Магний");
+  if (text.includes("vitamin") || text.includes("витамин")) badges.push("Daily");
+  if (text.includes("energy") || text.includes("энерг")) badges.push("Энергия");
+  if (text.includes("sleep") || text.includes("сон")) badges.push("Сон");
+  if (text.includes("immune") || text.includes("иммун")) badges.push("Иммунитет");
+  if (text.includes("skin") || text.includes("кожа")) badges.push("Beauty");
+
+  if (!badges.length && product.category) badges.push(String(product.category));
+  if (badges.length < 2) badges.push("Clean formula");
+  if (badges.length < 3) badges.push("Premium");
+
+  return badges.slice(0, 3);
+}
+
+function buildDrawerInfo(product) {
+  const chips = [];
+
+  if (product.form) chips.push(product.form);
+  else chips.push("Капсулы");
+
+  if (product.servings) chips.push(`${product.servings} порций`);
+  else chips.push("Курс 30 дней");
+
+  if (product.count) chips.push(`${product.count} шт`);
+  else chips.push("Daily use");
+
+  return chips.slice(0, 3);
+}
+
 function renderChips() {
   chips.innerHTML = getCategories().map((cat) => `
     <button class="chip ${state.category === cat ? "active" : ""}" data-chip="${cat}">
@@ -261,6 +309,9 @@ function renderProductCards(list, target) {
     const favActive = isFav(p.id);
     const drawerOpen = isCardOpened(p.id);
     const stockInfo = getStockLabel(p);
+    const subline = buildProductSubline(p);
+    const features = buildFeatureBadges(p);
+    const drawerInfo = buildDrawerInfo(p);
 
     return `
       <div class="card" style="animation-delay:${Math.min(index * 0.03, 0.24)}s">
@@ -299,11 +350,17 @@ function renderProductCards(list, target) {
 
           <div class="title">${p.name || "Без названия"}</div>
 
+          <div class="productSubline">${subline}</div>
+
           <div class="ratingRow">
             <span class="ratingStar">★</span>
             <span>${getRating(p)}</span>
             <span>·</span>
             <span>${getReviews(p)} отзыв.</span>
+          </div>
+
+          <div class="featureBadges">
+            ${features.map((item) => `<div class="featureBadge">${item}</div>`).join("")}
           </div>
 
           <div class="metaLine">
@@ -314,6 +371,11 @@ function renderProductCards(list, target) {
           </div>
 
           <div class="cardDrawer ${drawerOpen ? "open" : ""}">
+            <div class="drawerHeader">
+              <div class="drawerTitle">Информация о товаре</div>
+              <div class="drawerLabel">NutriLab</div>
+            </div>
+
             <div class="drawerGrid">
               <div class="drawerRow">
                 <div class="drawerKey">Артикул</div>
@@ -336,8 +398,12 @@ function renderProductCards(list, target) {
               </div>
             </div>
 
+            <div class="drawerInfoChips">
+              ${drawerInfo.map((item) => `<div class="drawerInfoChip">${item}</div>`).join("")}
+            </div>
+
             <div class="drawerDesc">
-              ${p.description || "Описание товара будет добавлено позже."}
+              ${p.description || "Премиальный продукт NutriLab для ежедневной поддержки организма. Чистая формула, удобный формат и аккуратно подобранный состав."}
             </div>
           </div>
         </div>
