@@ -26,8 +26,10 @@ const catalogGrid = document.getElementById("catalogGrid");
 const cartList = document.getElementById("cartList");
 const cartSummary = document.getElementById("cartSummary");
 const cartBadge = document.getElementById("cartBadge");
+const cartBadgeTop = document.getElementById("cartBadgeTop");
 const searchInput = document.getElementById("searchInput");
 const chips = document.getElementById("chips");
+const heroMount = document.getElementById("heroMount");
 
 const userName = document.getElementById("userName");
 const userId = document.getElementById("userId");
@@ -55,7 +57,7 @@ function fmtPrice(value) {
 function getImage(product) {
   if (Array.isArray(product.images) && product.images.length > 0) return product.images[0];
   if (product.image_url) return product.image_url;
-  return "https://via.placeholder.com/800x800?text=NutriLab";
+  return "https://via.placeholder.com/1200x1200?text=NutriLab";
 }
 
 function getDiscount(product) {
@@ -130,6 +132,17 @@ function toggleCard(id) {
   }
 }
 
+function switchTab(tab) {
+  document.querySelectorAll(".screen").forEach((screen) => screen.classList.remove("active"));
+  document.querySelectorAll(".navBtn").forEach((btn) => btn.classList.remove("active"));
+
+  const screen = document.getElementById(`screen-${tab}`);
+  if (screen) screen.classList.add("active");
+
+  const activeBtn = document.querySelector(`.navBtn[data-tab="${tab}"]`);
+  if (activeBtn) activeBtn.classList.add("active");
+}
+
 function renderChips() {
   chips.innerHTML = getCategories().map((cat) => `
     <button class="chip ${state.category === cat ? "active" : ""}" data-chip="${cat}">
@@ -143,6 +156,71 @@ function renderChips() {
       renderChips();
       renderProducts();
       renderProfile();
+    });
+  });
+}
+
+function renderHero() {
+  const products = visibleProducts().slice(0, 2);
+
+  if (!products.length) {
+    heroMount.innerHTML = "";
+    return;
+  }
+
+  heroMount.innerHTML = `
+    <div class="heroStack">
+      ${products.map((product, index) => `
+        <section class="heroCard white">
+          <div class="heroText">
+            <div class="heroEyebrow">NutriLab Premium</div>
+            <h2 class="heroTitle">${product.name || "NutriLab"}</h2>
+            <div class="heroSub">${product.description || "Минималистичный магазин витаминов и БАДов."}</div>
+            <div class="heroMeta">Доступно от ${fmtPrice(product.price)}</div>
+
+            <div class="heroActions">
+              <button class="heroBtn primary" data-hero-add="${product.id}">В корзину</button>
+              <button class="heroBtn secondary" data-hero-tab="catalog">Подробнее</button>
+            </div>
+          </div>
+
+          <div class="heroImageWrap">
+            <img class="heroImage" src="${getImage(product)}" alt="${product.name || "Товар"}">
+            ${index === 0 ? `<div class="heroFloating">▶ Смотреть товар</div>` : ""}
+          </div>
+        </section>
+      `).join("")}
+    </div>
+  `;
+
+  heroMount.querySelectorAll("[data-hero-add]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const id = btn.dataset.heroAdd;
+      const product = state.products.find((item) => String(item.id) === String(id));
+      if (!product) return;
+
+      if (Number(product.stock || 0) <= 0) {
+        showToast("Товара нет в наличии", "info");
+        return;
+      }
+
+      const current = Number(getCart()[id] || 0);
+      if (current + 1 > Number(product.stock || 0)) {
+        showToast("Больше нет на складе", "info");
+        return;
+      }
+
+      addToCart(id, 1);
+      renderCart();
+      updateCartBadge();
+      renderProfile();
+      showToast("Добавлено в корзину");
+    });
+  });
+
+  heroMount.querySelectorAll("[data-hero-tab]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      switchTab(btn.dataset.heroTab);
     });
   });
 }
@@ -285,6 +363,7 @@ function renderProductCards(list, target) {
 
 function renderProducts() {
   const list = filteredProducts();
+  renderHero();
   renderProductCards(list, homeGrid);
   renderProductCards(list, catalogGrid);
 }
@@ -389,9 +468,18 @@ function renderCart() {
 
 function updateCartBadge() {
   const count = getCartCount();
-  cartBadge.textContent = count > 99 ? "99+" : count;
-  if (count > 0) cartBadge.classList.remove("hidden");
-  else cartBadge.classList.add("hidden");
+  const text = count > 99 ? "99+" : count;
+
+  cartBadge.textContent = text;
+  cartBadgeTop.textContent = text;
+
+  if (count > 0) {
+    cartBadge.classList.remove("hidden");
+    cartBadgeTop.classList.remove("hidden");
+  } else {
+    cartBadge.classList.add("hidden");
+    cartBadgeTop.classList.add("hidden");
+  }
 }
 
 function renderProfile() {
@@ -411,17 +499,6 @@ function renderProfile() {
   favCount.textContent = getFavCount();
   cartCount.textContent = getCartCount();
   profileCategory.textContent = state.category;
-}
-
-function switchTab(tab) {
-  document.querySelectorAll(".screen").forEach((screen) => screen.classList.remove("active"));
-  document.querySelectorAll(".navBtn").forEach((btn) => btn.classList.remove("active"));
-
-  const screen = document.getElementById(`screen-${tab}`);
-  if (screen) screen.classList.add("active");
-
-  const activeBtn = document.querySelector(`.navBtn[data-tab="${tab}"]`);
-  if (activeBtn) activeBtn.classList.add("active");
 }
 
 async function loadProducts() {
@@ -452,6 +529,12 @@ searchInput?.addEventListener("input", () => {
 });
 
 document.querySelectorAll(".navBtn").forEach((btn) => {
+  btn.addEventListener("click", () => {
+    switchTab(btn.dataset.tab);
+  });
+});
+
+document.querySelectorAll(".iconBtn[data-tab]").forEach((btn) => {
   btn.addEventListener("click", () => {
     switchTab(btn.dataset.tab);
   });
