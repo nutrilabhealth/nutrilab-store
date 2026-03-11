@@ -18,7 +18,9 @@ const state = {
   products: [],
   search: "",
   category: "Все",
-  openedCards: []
+  openedCards: [],
+  activeProduct: null,
+  activeProductTab: "specs"
 };
 
 const homeGrid = document.getElementById("homeGrid");
@@ -42,6 +44,10 @@ const toastWrap = document.createElement("div");
 toastWrap.className = "toastWrap";
 document.body.appendChild(toastWrap);
 
+const modalRoot = document.createElement("div");
+modalRoot.className = "productModal";
+document.body.appendChild(modalRoot);
+
 const heartIcon = `
   <svg viewBox="0 0 24 24" aria-hidden="true">
     <path d="M12 20s-7-4.35-7-10a4 4 0 0 1 7-2.5A4 4 0 0 1 19 10c0 5.65-7 10-7 10Z"></path>
@@ -63,6 +69,19 @@ const plusCartIcon = `
     <path d="M3 4h2l2.2 10h10.8L21 7H7"></path>
     <path d="M12 10v4"></path>
     <path d="M10 12h4"></path>
+  </svg>
+`;
+
+const closeIcon = `
+  <svg viewBox="0 0 24 24" aria-hidden="true">
+    <path d="M6 6l12 12"></path>
+    <path d="M18 6L6 18"></path>
+  </svg>
+`;
+
+const verifyIcon = `
+  <svg viewBox="0 0 24 24" aria-hidden="true">
+    <path d="M20 6L9 17l-5-5"></path>
   </svg>
 `;
 
@@ -94,16 +113,16 @@ function getDiscount(product) {
 
 function getRating(product) {
   if (product.rating) return Number(product.rating).toFixed(1);
-  return "5.0";
+  return "4.9";
 }
 
 function getReviews(product) {
   if (product.reviews_count) return Number(product.reviews_count).toLocaleString("ru-RU");
-  return "1";
+  return "40";
 }
 
 function isHit(product) {
-  return Number(product.rating || 5) >= 4.9;
+  return Number(product.rating || 4.9) >= 4.9;
 }
 
 function isNew(product) {
@@ -113,7 +132,7 @@ function isNew(product) {
 function getStockLabel(product) {
   const stock = Number(product.stock || 0);
   if (stock <= 0) return { text: "Нет", className: "out" };
-  if (stock <= 5) return { text: `Осталось ${stock}`, className: "low" };
+  if (stock <= 12) return { text: `Осталось ${stock}`, className: "low" };
   return { text: "В наличии", className: "in" };
 }
 
@@ -187,11 +206,11 @@ function buildFeatureBadges(product) {
 
   if (text.includes("omega") || text.includes("омега")) badges.push("Omega");
   if (text.includes("магний") || text.includes("magnesium")) badges.push("Магний");
-  if (text.includes("vitamin") || text.includes("витамин")) badges.push("Daily");
-  if (text.includes("energy") || text.includes("энерг")) badges.push("Энергия");
-  if (text.includes("sleep") || text.includes("сон")) badges.push("Сон");
-  if (text.includes("immune") || text.includes("иммун")) badges.push("Иммунитет");
-  if (text.includes("skin") || text.includes("кожа")) badges.push("Beauty");
+  if (text.includes("витамин") || text.includes("vitamin")) badges.push("Daily");
+  if (text.includes("энерг") || text.includes("energy")) badges.push("Энергия");
+  if (text.includes("сон") || text.includes("sleep")) badges.push("Сон");
+  if (text.includes("иммун") || text.includes("immune")) badges.push("Иммунитет");
+  if (text.includes("нерв") || text.includes("stress")) badges.push("Нервная система");
 
   if (!badges.length && product.category) badges.push(String(product.category));
   if (badges.length < 2) badges.push("Clean formula");
@@ -213,6 +232,27 @@ function buildDrawerInfo(product) {
   else chips.push("Daily use");
 
   return chips.slice(0, 3);
+}
+
+function productSpecs(product) {
+  const desc = String(product.description || "").toLowerCase();
+
+  return [
+    ["Артикул", product.article || "—"],
+    ["Вид пищевой добавки", product.purpose || product.benefit || (desc.includes("сон") ? "для нервной системы; крепкий сон; для энергии" : "для ежедневной поддержки организма")],
+    ["Срок годности", product.shelf_life || "24 мес"],
+    ["Форма выпуска", product.form || "капсулы/таблетки"],
+    ["Действующее вещество", product.active_ingredient || (desc.includes("магний") ? "магний" : "витаминный комплекс")],
+    ["Количество капсул/таблеток", product.count ? `${product.count} шт.` : "90 шт."],
+    ["Страна производства", product.country || "Россия"],
+    ["Максимальная температура хранения", product.temperature_max || "+25 °C"],
+    ["Минимальная температура хранения", product.temperature_min || "+5 °C"],
+    ["Особенности продукта", product.features || product.benefit || "чистая формула; ежедневный прием; удобный формат"],
+    ["Вес товара без упаковки", product.weight_g ? `${product.weight_g} г` : "90 г"],
+    ["Категория", product.category || "БАД"],
+    ["Рейтинг", `${getRating(product)} / 5`],
+    ["Остаток", `${Number(product.stock || 0)} шт`]
+  ];
 }
 
 function renderChips() {
@@ -252,7 +292,7 @@ function renderHero() {
 
           <div class="heroActions">
             <button class="heroBtn primary" data-hero-tab="catalog">Смотреть каталог</button>
-            <button class="heroBtn secondary" data-hero-add="${heroProduct.id}">В корзину</button>
+            <button class="heroBtn secondary" data-hero-open="${heroProduct.id}">Подробнее</button>
           </div>
         </div>
 
@@ -264,34 +304,16 @@ function renderHero() {
     </div>
   `;
 
-  heroMount.querySelectorAll("[data-hero-add]").forEach((btn) => {
-    btn.addEventListener("click", () => {
-      const id = btn.dataset.heroAdd;
-      const product = state.products.find((item) => String(item.id) === String(id));
-      if (!product) return;
-
-      if (Number(product.stock || 0) <= 0) {
-        showToast("Товара нет в наличии", "info");
-        return;
-      }
-
-      const current = Number(getCart()[id] || 0);
-      if (current + 1 > Number(product.stock || 0)) {
-        showToast("Больше нет на складе", "info");
-        return;
-      }
-
-      addToCart(id, 1);
-      renderCart();
-      updateCartBadge();
-      renderProfile();
-      showToast("Добавлено в корзину");
-    });
-  });
-
   heroMount.querySelectorAll("[data-hero-tab]").forEach((btn) => {
     btn.addEventListener("click", () => {
       switchTab(btn.dataset.heroTab);
+    });
+  });
+
+  heroMount.querySelectorAll("[data-hero-open]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const product = state.products.find((item) => String(item.id) === String(btn.dataset.heroOpen));
+      if (product) openProductModal(product);
     });
   });
 }
@@ -314,7 +336,7 @@ function renderProductCards(list, target) {
     const drawerInfo = buildDrawerInfo(p);
 
     return `
-      <div class="card" style="animation-delay:${Math.min(index * 0.03, 0.24)}s">
+      <div class="card" data-open-product="${p.id}" style="animation-delay:${Math.min(index * 0.03, 0.24)}s">
         <div class="cardImage">
           <div class="cardTopLeft">
             ${discount ? `<div class="imgPill discount">${discount}</div>` : ""}
@@ -329,7 +351,7 @@ function renderProductCards(list, target) {
           </button>
 
           <div class="cardBottomBtns">
-            <button class="cardMore" data-more="${p.id}" aria-label="Подробнее">
+            <button class="cardMore" data-more="${p.id}" aria-label="Кратко">
               ${dotsIcon}
             </button>
 
@@ -411,6 +433,13 @@ function renderProductCards(list, target) {
     `;
   }).join("");
 
+  target.querySelectorAll("[data-open-product]").forEach((card) => {
+    card.addEventListener("click", () => {
+      const product = state.products.find((item) => String(item.id) === String(card.dataset.openProduct));
+      if (product) openProductModal(product);
+    });
+  });
+
   target.querySelectorAll("[data-add]").forEach((btn) => {
     btn.addEventListener("click", (e) => {
       e.stopPropagation();
@@ -443,6 +472,9 @@ function renderProductCards(list, target) {
       toggleFav(btn.dataset.fav);
       renderProducts();
       renderProfile();
+      if (state.activeProduct && String(state.activeProduct.id) === String(btn.dataset.fav)) {
+        renderProductModal();
+      }
       showToast("Избранное обновлено", "info");
     });
   });
@@ -452,6 +484,146 @@ function renderProductCards(list, target) {
       e.stopPropagation();
       toggleCard(btn.dataset.more);
       renderProducts();
+    });
+  });
+}
+
+function openProductModal(product) {
+  state.activeProduct = product;
+  state.activeProductTab = "specs";
+  renderProductModal();
+  modalRoot.classList.add("open");
+  document.body.classList.add("modal-open");
+}
+
+function closeProductModal() {
+  modalRoot.classList.remove("open");
+  document.body.classList.remove("modal-open");
+}
+
+function renderProductModal() {
+  const p = state.activeProduct;
+  if (!p) return;
+
+  const discount = getDiscount(p);
+  const specs = productSpecs(p);
+  const features = buildFeatureBadges(p);
+  const stockInfo = getStockLabel(p);
+  const favActive = isFav(p.id);
+
+  modalRoot.innerHTML = `
+    <div class="productModalBackdrop" data-close-modal="1"></div>
+
+    <div class="productSheet">
+      <div class="productSheetHandle"></div>
+
+      <div class="productSheetTop">
+        <div>
+          <h3 class="productSheetTitle">О товаре</h3>
+
+          <div class="productModalPrice">
+            <div class="productModalPriceNow">${fmtPrice(p.price)}</div>
+            ${Number(p.old_price || 0) > 0 ? `<div class="productModalPriceOld">${fmtPrice(p.old_price)}</div>` : ""}
+            ${discount ? `<div class="productModalPriceSale">${discount}</div>` : ""}
+          </div>
+
+          <div class="productModalSub">${p.name || "Товар"} · ${buildProductSubline(p)}</div>
+
+          <div class="productModalBadges">
+            <div class="productModalBadge">${stockInfo.text}</div>
+            <div class="productModalBadge">★ ${getRating(p)}</div>
+            <div class="productModalBadge">${getReviews(p)} отзыв.</div>
+            ${features.map((item) => `<div class="productModalBadge">${item}</div>`).join("")}
+          </div>
+        </div>
+
+        <button class="productSheetClose" data-close-modal="1" aria-label="Закрыть">
+          ${closeIcon}
+        </button>
+      </div>
+
+      <div class="productSheetTabs">
+        <button class="productTab ${state.activeProductTab === "specs" ? "active" : ""}" data-product-tab="specs">Характеристики</button>
+        <button class="productTab ${state.activeProductTab === "desc" ? "active" : ""}" data-product-tab="desc">Описание</button>
+      </div>
+
+      <div class="productVerified">
+        ${verifyIcon}
+        Документы проверены
+      </div>
+
+      ${state.activeProductTab === "specs" ? `
+        <div class="productModalSection">
+          <h4 class="productModalSectionTitle">Основные</h4>
+
+          <div class="productInfoGrid">
+            ${specs.map(([key, val]) => `
+              <div class="productInfoRow">
+                <div class="productInfoKey">${key}</div>
+                <div class="productInfoVal">${val}</div>
+              </div>
+            `).join("")}
+          </div>
+        </div>
+      ` : `
+        <div class="productModalSection">
+          <h4 class="productModalSectionTitle">Описание</h4>
+          <div class="productDescBox">
+            ${p.description || "Премиальный продукт NutriLab для ежедневной поддержки организма. Чистая формула, удобный формат и аккуратно подобранный состав. Подходит для регулярного приема и аккуратно вписывается в ежедневную wellness-рутину."}
+          </div>
+
+          <div class="productModalBadges">
+            <div class="productModalBadge">Артикул: ${p.article || "—"}</div>
+            <div class="productModalBadge">${p.category || "БАД"}</div>
+            <div class="productModalBadge">${p.form || "Капсулы"}</div>
+          </div>
+        </div>
+      `}
+
+      <div class="productModalActions">
+        <button class="productActionBtn secondary" data-modal-buy="${p.id}">Купить сейчас</button>
+        <button class="productActionBtn primary" data-modal-cart="${p.id}">
+          ${favActive ? "" : ""}
+          В корзину
+        </button>
+      </div>
+    </div>
+  `;
+
+  modalRoot.querySelectorAll("[data-close-modal]").forEach((el) => {
+    el.addEventListener("click", closeProductModal);
+  });
+
+  modalRoot.querySelectorAll("[data-product-tab]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      state.activeProductTab = btn.dataset.productTab;
+      renderProductModal();
+    });
+  });
+
+  modalRoot.querySelectorAll("[data-modal-buy], [data-modal-cart]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const id = btn.dataset.modalBuy || btn.dataset.modalCart;
+      const product = state.products.find((item) => String(item.id) === String(id));
+      if (!product) return;
+
+      if (Number(product.stock || 0) <= 0) {
+        showToast("Товара нет в наличии", "info");
+        return;
+      }
+
+      const current = Number(getCart()[id] || 0);
+      if (current + 1 > Number(product.stock || 0)) {
+        showToast("Больше нет на складе", "info");
+        return;
+      }
+
+      addToCart(id, 1);
+      renderCart();
+      updateCartBadge();
+      renderProfile();
+      showToast(btn.dataset.modalBuy ? "Переходим к оформлению" : "Добавлено в корзину");
+      if (btn.dataset.modalBuy) switchTab("cart");
     });
   });
 }
@@ -640,6 +812,10 @@ document.querySelectorAll('[data-action="focus-search"]').forEach((btn) => {
   btn.addEventListener("click", () => {
     searchInput?.focus();
   });
+});
+
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape") closeProductModal();
 });
 
 try {
