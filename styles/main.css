@@ -623,6 +623,15 @@ body{
   font-weight:600;
 }
 
+.productSubline{
+  margin-top:6px;
+  color:#6e6e73;
+  font-size:12px;
+  line-height:1.35;
+  min-height:16px;
+  font-weight:500;
+}
+
 .ratingRow{
   margin-top:8px;
   display:flex;
@@ -639,8 +648,28 @@ body{
   line-height:1;
 }
 
-.metaLine{
+.featureBadges{
   margin-top:8px;
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px;
+}
+
+.featureBadge{
+  display:inline-flex;
+  align-items:center;
+  min-height:24px;
+  padding:0 8px;
+  border-radius:999px;
+  background:#f8fafc;
+  border:1px solid rgba(17,24,39,.06);
+  color:#4b5563;
+  font-size:11px;
+  font-weight:700;
+}
+
+.metaLine{
+  margin-top:9px;
   display:flex;
   align-items:center;
   justify-content:space-between;
@@ -688,7 +717,7 @@ body{
 .cardDrawer{
   display:none;
   margin-top:10px;
-  padding:10px;
+  padding:11px;
   border-radius:18px;
   background:#f8fafc;
   border:1px solid rgba(17,24,39,.05);
@@ -697,6 +726,26 @@ body{
 .cardDrawer.open{
   display:block;
   animation:fadeUp .25s ease both;
+}
+
+.drawerHeader{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  margin-bottom:8px;
+}
+
+.drawerTitle{
+  font-size:12px;
+  font-weight:800;
+  color:#111827;
+}
+
+.drawerLabel{
+  font-size:11px;
+  color:#6b7280;
+  font-weight:700;
 }
 
 .drawerGrid{
@@ -723,15 +772,35 @@ body{
   text-align:right;
 }
 
+.drawerInfoChips{
+  margin-top:9px;
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px;
+}
+
+.drawerInfoChip{
+  min-height:24px;
+  padding:0 8px;
+  border-radius:999px;
+  background:#ffffff;
+  border:1px solid rgba(17,24,39,.06);
+  display:inline-flex;
+  align-items:center;
+  font-size:11px;
+  color:#4b5563;
+  font-weight:700;
+}
+
 .drawerDesc{
-  margin-top:6px;
+  margin-top:8px;
   padding-top:8px;
   border-top:1px solid rgba(17,24,39,.06);
   color:#6b7280;
   font-size:12px;
   line-height:1.45;
   display:-webkit-box;
-  -webkit-line-clamp:3;
+  -webkit-line-clamp:4;
   -webkit-box-orient:vertical;
   overflow:hidden;
   font-weight:500;
