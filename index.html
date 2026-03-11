@@ -12,28 +12,31 @@
 </head>
 <body>
 
-  <header class="topbar">
+  <header class="topbar fade-in">
     <div class="topbar-left">
-      <div class="appleMark">◐</div>
+      <div class="brandMini">
+        <div class="brandMiniLogo">N</div>
+      </div>
     </div>
 
     <div class="topbar-right">
-      <button class="iconBtn" type="button" aria-label="Поиск">
+      <button class="iconBtn" type="button" data-action="focus-search" aria-label="Поиск">
         <svg viewBox="0 0 24 24">
           <circle cx="11" cy="11" r="7"></circle>
           <path d="M20 20l-3.5-3.5"></path>
         </svg>
       </button>
 
-      <button class="iconBtn" type="button" aria-label="Корзина" data-tab="cart">
+      <button class="iconBtn" type="button" data-tab="cart" aria-label="Корзина">
         <svg viewBox="0 0 24 24">
-          <path d="M6 7h12l-1 12H7L6 7Z"></path>
-          <path d="M9 7a3 3 0 0 1 6 0"></path>
+          <circle cx="9" cy="20" r="1.5"></circle>
+          <circle cx="18" cy="20" r="1.5"></circle>
+          <path d="M3 4h2l2.2 10h10.8L21 7H7"></path>
         </svg>
         <span id="cartBadgeTop" class="badgeDot hidden">0</span>
       </button>
 
-      <button class="iconBtn" type="button" aria-label="Меню" data-tab="catalog">
+      <button class="iconBtn" type="button" data-tab="catalog" aria-label="Каталог">
         <svg viewBox="0 0 24 24">
           <path d="M4 7h16"></path>
           <path d="M4 12h16"></path>
@@ -43,7 +46,7 @@
     </div>
   </header>
 
-  <section class="searchBarWrap">
+  <section class="searchBarWrap fade-in delay-1">
     <div class="searchBar">
       <svg viewBox="0 0 24 24">
         <circle cx="11" cy="11" r="7"></circle>
@@ -53,15 +56,15 @@
     </div>
   </section>
 
-  <div class="chips" id="chips"></div>
+  <div class="chips fade-in delay-2" id="chips"></div>
 
   <main class="page">
     <section id="screen-home" class="screen active">
       <div id="heroMount"></div>
 
-      <div class="sectionHead sectionHeadCards">
+      <div class="sectionHead sectionHeadCards fade-in delay-3">
         <h2>Подобрали для вас</h2>
-        <p>Минималистичный каталог NutriLab</p>
+        <p>Лучшие формулы NutriLab</p>
       </div>
 
       <div id="homeGrid" class="productGrid"></div>
@@ -70,7 +73,7 @@
     <section id="screen-catalog" class="screen">
       <div class="sectionHead">
         <h1>Каталог</h1>
-        <p>Все товары</p>
+        <p>Все доступные товары</p>
       </div>
       <div id="catalogGrid" class="productGrid"></div>
     </section>
@@ -137,8 +140,8 @@
 
     <button class="navBtn" data-tab="cart" aria-label="Корзина">
       <svg viewBox="0 0 24 24">
-        <circle cx="9" cy="20" r="1.7"></circle>
-        <circle cx="18" cy="20" r="1.7"></circle>
+        <circle cx="9" cy="20" r="1.5"></circle>
+        <circle cx="18" cy="20" r="1.5"></circle>
         <path d="M3 4h2l2.2 10h10.8L21 7H7"></path>
       </svg>
       <span id="cartBadge" class="badgeDot hidden">0</span>
