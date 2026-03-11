@@ -13,41 +13,66 @@
 <body>
 
   <header class="topbar">
-    <div class="brandBox">
-      <div class="logo"></div>
-
-      <div class="brandText">
-        <div class="brandTitle">NutriLab Store</div>
-        <div class="brandSub">Premium Supplements</div>
-      </div>
+    <div class="topbar-left">
+      <div class="appleMark">◐</div>
     </div>
 
-    <div class="searchWrap">
-      <svg viewBox="0 0 24 24" aria-hidden="true">
+    <div class="topbar-right">
+      <button class="iconBtn" type="button" aria-label="Поиск">
+        <svg viewBox="0 0 24 24">
+          <circle cx="11" cy="11" r="7"></circle>
+          <path d="M20 20l-3.5-3.5"></path>
+        </svg>
+      </button>
+
+      <button class="iconBtn" type="button" aria-label="Корзина" data-tab="cart">
+        <svg viewBox="0 0 24 24">
+          <path d="M6 7h12l-1 12H7L6 7Z"></path>
+          <path d="M9 7a3 3 0 0 1 6 0"></path>
+        </svg>
+        <span id="cartBadgeTop" class="badgeDot hidden">0</span>
+      </button>
+
+      <button class="iconBtn" type="button" aria-label="Меню" data-tab="catalog">
+        <svg viewBox="0 0 24 24">
+          <path d="M4 7h16"></path>
+          <path d="M4 12h16"></path>
+          <path d="M4 17h16"></path>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <section class="searchBarWrap">
+    <div class="searchBar">
+      <svg viewBox="0 0 24 24">
         <circle cx="11" cy="11" r="7"></circle>
         <path d="M20 20l-3.5-3.5"></path>
       </svg>
-      <input id="searchInput" type="text" placeholder="Поиск товара..." />
+      <input id="searchInput" type="text" placeholder="Поиск витаминов и БАДов" />
     </div>
-  </header>
+  </section>
 
   <div class="chips" id="chips"></div>
 
   <main class="page">
     <section id="screen-home" class="screen active">
-      <div class="sectionHead">
-        <h1>Главная</h1>
-        <p>Подборка товаров NutriLab</p>
+      <div id="heroMount"></div>
+
+      <div class="sectionHead sectionHeadCards">
+        <h2>Подобрали для вас</h2>
+        <p>Минималистичный каталог NutriLab</p>
       </div>
-      <div id="homeGrid" class="grid"></div>
+
+      <div id="homeGrid" class="productGrid"></div>
     </section>
 
     <section id="screen-catalog" class="screen">
       <div class="sectionHead">
         <h1>Каталог</h1>
-        <p>Все доступные товары</p>
+        <p>Все товары</p>
       </div>
-      <div id="catalogGrid" class="grid"></div>
+      <div id="catalogGrid" class="productGrid"></div>
     </section>
 
     <section id="screen-cart" class="screen">
@@ -63,7 +88,7 @@
     <section id="screen-profile" class="screen">
       <div class="sectionHead">
         <h1>Профиль</h1>
-        <p>Информация покупателя</p>
+        <p>Данные покупателя</p>
       </div>
 
       <div class="profileCard">
@@ -85,7 +110,7 @@
             <span id="cartCount">0</span>
           </div>
           <div class="statRow">
-            <span>Выбрана категория</span>
+            <span>Категория</span>
             <span id="profileCategory">Все</span>
           </div>
         </div>
