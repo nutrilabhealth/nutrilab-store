@@ -89,7 +89,7 @@ function getDiscount(product) {
   const price = Number(product.price || 0);
   if (!oldPrice || oldPrice <= price) return "";
   const percent = Math.round(((oldPrice - price) / oldPrice) * 100);
-  return `-${percent}%`;
+  return percent > 0 ? `-${percent}%` : "";
 }
 
 function getRating(product) {
@@ -256,14 +256,14 @@ function renderProductCards(list, target) {
     return;
   }
 
-  target.innerHTML = list.map((p) => {
+  target.innerHTML = list.map((p, index) => {
     const discount = getDiscount(p);
     const favActive = isFav(p.id);
     const drawerOpen = isCardOpened(p.id);
     const stockInfo = getStockLabel(p);
 
     return `
-      <div class="card">
+      <div class="card" style="animation-delay:${Math.min(index * 0.03, 0.24)}s">
         <div class="cardImage">
           <div class="cardTopLeft">
             ${discount ? `<div class="imgPill discount">${discount}</div>` : ""}
@@ -292,6 +292,7 @@ function renderProductCards(list, target) {
           <div class="priceRow">
             <div class="price">${fmtPrice(p.price)}</div>
             ${Number(p.old_price || 0) > 0 ? `<div class="oldPrice">${fmtPrice(p.old_price)}</div>` : ""}
+            ${discount ? `<div class="priceSale">${discount}</div>` : ""}
           </div>
 
           <div class="brandLine">NutriLab</div>
