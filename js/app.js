@@ -42,6 +42,30 @@ const toastWrap = document.createElement("div");
 toastWrap.className = "toastWrap";
 document.body.appendChild(toastWrap);
 
+const heartIcon = `
+  <svg viewBox="0 0 24 24" aria-hidden="true">
+    <path d="M12 20s-7-4.35-7-10a4 4 0 0 1 7-2.5A4 4 0 0 1 19 10c0 5.65-7 10-7 10Z"></path>
+  </svg>
+`;
+
+const dotsIcon = `
+  <svg viewBox="0 0 24 24" aria-hidden="true">
+    <path d="M5 12h.01"></path>
+    <path d="M12 12h.01"></path>
+    <path d="M19 12h.01"></path>
+  </svg>
+`;
+
+const plusCartIcon = `
+  <svg viewBox="0 0 24 24" aria-hidden="true">
+    <circle cx="9" cy="20" r="1.5"></circle>
+    <circle cx="18" cy="20" r="1.5"></circle>
+    <path d="M3 4h2l2.2 10h10.8L21 7H7"></path>
+    <path d="M12 10v4"></path>
+    <path d="M10 12h4"></path>
+  </svg>
+`;
+
 function showToast(text, type = "ok") {
   const el = document.createElement("div");
   el.className = `toast ${type}`;
@@ -161,35 +185,34 @@ function renderChips() {
 }
 
 function renderHero() {
-  const products = visibleProducts().slice(0, 2);
+  const products = visibleProducts();
+  const heroProduct = products[0];
 
-  if (!products.length) {
+  if (!heroProduct) {
     heroMount.innerHTML = "";
     return;
   }
 
   heroMount.innerHTML = `
     <div class="heroStack">
-      ${products.map((product, index) => `
-        <section class="heroCard white">
-          <div class="heroText">
-            <div class="heroEyebrow">NutriLab Premium</div>
-            <h2 class="heroTitle">${product.name || "NutriLab"}</h2>
-            <div class="heroSub">${product.description || "Минималистичный магазин витаминов и БАДов."}</div>
-            <div class="heroMeta">Доступно от ${fmtPrice(product.price)}</div>
+      <section class="heroCard">
+        <div class="heroText">
+          <div class="heroEyebrow">NutriLab Premium</div>
+          <h2 class="heroTitle">Витамины нового поколения</h2>
+          <div class="heroSub">Чистые формулы. Максимальная биодоступность. Минималистичный подход к заботе о здоровье.</div>
+          <div class="heroMeta">Коллекция витаминов и БАДов NutriLab</div>
 
-            <div class="heroActions">
-              <button class="heroBtn primary" data-hero-add="${product.id}">В корзину</button>
-              <button class="heroBtn secondary" data-hero-tab="catalog">Подробнее</button>
-            </div>
+          <div class="heroActions">
+            <button class="heroBtn primary" data-hero-tab="catalog">Смотреть каталог</button>
+            <button class="heroBtn secondary" data-hero-add="${heroProduct.id}">В корзину</button>
           </div>
+        </div>
 
-          <div class="heroImageWrap">
-            <img class="heroImage" src="${getImage(product)}" alt="${product.name || "Товар"}">
-            ${index === 0 ? `<div class="heroFloating">▶ Смотреть товар</div>` : ""}
-          </div>
-        </section>
-      `).join("")}
+        <div class="heroImageWrap">
+          <img class="heroImage" src="${getImage(heroProduct)}" alt="${heroProduct.name || "NutriLab"}">
+          <div class="heroFloating">▶ Смотреть товар</div>
+        </div>
+      </section>
     </div>
   `;
 
@@ -250,13 +273,18 @@ function renderProductCards(list, target) {
 
           <img src="${getImage(p)}" alt="${p.name || "Товар"}">
 
-          <button class="cardFav ${favActive ? "active" : ""}" data-fav="${p.id}">
-            ${favActive ? "♥" : "♡"}
+          <button class="cardFav ${favActive ? "active" : ""}" data-fav="${p.id}" aria-label="Избранное">
+            ${heartIcon}
           </button>
 
           <div class="cardBottomBtns">
-            <button class="cardMore" data-more="${p.id}">⋯</button>
-            <button class="cardCart" data-add="${p.id}">＋</button>
+            <button class="cardMore" data-more="${p.id}" aria-label="Подробнее">
+              ${dotsIcon}
+            </button>
+
+            <button class="cardCart" data-add="${p.id}" aria-label="В корзину">
+              ${plusCartIcon}
+            </button>
           </div>
         </div>
 
@@ -512,6 +540,7 @@ async function loadProducts() {
     const html = `<div class="empty">Ошибка загрузки: ${error.message}</div>`;
     homeGrid.innerHTML = html;
     catalogGrid.innerHTML = html;
+    heroMount.innerHTML = "";
     return;
   }
 
@@ -537,6 +566,12 @@ document.querySelectorAll(".navBtn").forEach((btn) => {
 document.querySelectorAll(".iconBtn[data-tab]").forEach((btn) => {
   btn.addEventListener("click", () => {
     switchTab(btn.dataset.tab);
+  });
+});
+
+document.querySelectorAll('[data-action="focus-search"]').forEach((btn) => {
+  btn.addEventListener("click", () => {
+    searchInput?.focus();
   });
 });
 
