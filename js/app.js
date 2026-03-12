@@ -20,7 +20,8 @@ const state = {
   category: "Все",
   openedCards: [],
   activeProduct: null,
-  activeProductTab: "specs"
+  activeProductTab: "specs",
+  activeImageIndex: 0
 };
 
 const homeGrid = document.getElementById("homeGrid");
@@ -85,6 +86,18 @@ const verifyIcon = `
   </svg>
 `;
 
+const chevronLeftIcon = `
+  <svg viewBox="0 0 24 24" aria-hidden="true">
+    <path d="M15 18l-6-6 6-6"></path>
+  </svg>
+`;
+
+const chevronRightIcon = `
+  <svg viewBox="0 0 24 24" aria-hidden="true">
+    <path d="M9 18l6-6-6-6"></path>
+  </svg>
+`;
+
 function showToast(text, type = "ok") {
   const el = document.createElement("div");
   el.className = `toast ${type}`;
@@ -97,10 +110,14 @@ function fmtPrice(value) {
   return Number(value || 0).toLocaleString("ru-RU") + " ₽";
 }
 
+function getImages(product) {
+  if (Array.isArray(product.images) && product.images.length > 0) return product.images;
+  if (product.image_url) return [product.image_url];
+  return ["https://via.placeholder.com/1200x1200?text=NutriLab"];
+}
+
 function getImage(product) {
-  if (Array.isArray(product.images) && product.images.length > 0) return product.images[0];
-  if (product.image_url) return product.image_url;
-  return "https://via.placeholder.com/1200x1200?text=NutriLab";
+  return getImages(product)[0];
 }
 
 function getDiscount(product) {
@@ -131,8 +148,8 @@ function isNew(product) {
 
 function getStockLabel(product) {
   const stock = Number(product.stock || 0);
-  if (stock <= 0) return { text: "Нет", className: "out" };
-  if (stock <= 12) return { text: `Осталось ${stock}`, className: "low" };
+  if (stock <= 0) return { text: "Нет в наличии", className: "out" };
+  if (stock <= 12) return { text: `Осталось ${stock} шт`, className: "low" };
   return { text: "В наличии", className: "in" };
 }
 
@@ -188,13 +205,11 @@ function switchTab(tab) {
 
 function buildProductSubline(product) {
   const parts = [];
-
   if (product.category) parts.push(String(product.category));
   if (product.form) parts.push(String(product.form));
   else parts.push("капсулы");
 
-  if (product.servings) parts.push(`${product.servings} порц.`);
-  else if (product.count) parts.push(`${product.count} шт`);
+  if (product.count) parts.push(`${product.count} шт`);
   else parts.push("ежедневный курс");
 
   return parts.slice(0, 3).join(" • ");
@@ -210,28 +225,18 @@ function buildFeatureBadges(product) {
   if (text.includes("энерг") || text.includes("energy")) badges.push("Энергия");
   if (text.includes("сон") || text.includes("sleep")) badges.push("Сон");
   if (text.includes("иммун") || text.includes("immune")) badges.push("Иммунитет");
-  if (text.includes("нерв") || text.includes("stress")) badges.push("Нервная система");
-
   if (!badges.length && product.category) badges.push(String(product.category));
   if (badges.length < 2) badges.push("Clean formula");
   if (badges.length < 3) badges.push("Premium");
-
   return badges.slice(0, 3);
 }
 
 function buildDrawerInfo(product) {
-  const chips = [];
-
-  if (product.form) chips.push(product.form);
-  else chips.push("Капсулы");
-
-  if (product.servings) chips.push(`${product.servings} порций`);
-  else chips.push("Курс 30 дней");
-
-  if (product.count) chips.push(`${product.count} шт`);
-  else chips.push("Daily use");
-
-  return chips.slice(0, 3);
+  const list = [];
+  list.push(product.form || "Капсулы");
+  list.push(product.count ? `${product.count} шт` : "90 шт");
+  list.push(product.country || "Россия");
+  return list.slice(0, 3);
 }
 
 function productSpecs(product) {
@@ -239,23 +244,27 @@ function productSpecs(product) {
 
   return [
     ["Артикул", product.article || "—"],
-    ["Вид пищевой добавки", product.purpose || product.benefit || (desc.includes("сон") ? "для нервной системы; крепкий сон; для энергии" : "для ежедневной поддержки организма")],
-    ["Срок годности", product.shelf_life || "24 мес"],
+    ["Назначение", product.purpose || product.benefit || (desc.includes("сон") ? "Поддержка нервной системы и сна" : "Ежедневная поддержка организма")],
     ["Форма выпуска", product.form || "капсулы/таблетки"],
     ["Действующее вещество", product.active_ingredient || (desc.includes("магний") ? "магний" : "витаминный комплекс")],
-    ["Количество капсул/таблеток", product.count ? `${product.count} шт.` : "90 шт."],
+    ["Количество", product.count ? `${product.count} шт.` : "90 шт."],
+    ["Срок годности", product.shelf_life || "24 мес"],
     ["Страна производства", product.country || "Россия"],
-    ["Максимальная температура хранения", product.temperature_max || "+25 °C"],
-    ["Минимальная температура хранения", product.temperature_min || "+5 °C"],
-    ["Особенности продукта", product.features || product.benefit || "чистая формула; ежедневный прием; удобный формат"],
-    ["Вес товара без упаковки", product.weight_g ? `${product.weight_g} г` : "90 г"],
-    ["Категория", product.category || "БАД"],
-    ["Рейтинг", `${getRating(product)} / 5`],
-    ["Остаток", `${Number(product.stock || 0)} шт`]
+    ["Температура хранения", `${product.temperature_min || "+5 °C"} — ${product.temperature_max || "+25 °C"}`],
+    ["Особенности", product.features || product.benefit || "Чистая формула, ежедневный прием, удобный формат"],
+    ["Вес", product.weight_g ? `${product.weight_g} г` : "90 г"]
   ];
 }
 
+function relatedProducts(product) {
+  return visibleProducts()
+    .filter((p) => String(p.id) !== String(product.id))
+    .slice(0, 4);
+}
+
 function renderChips() {
+  if (!chips) return;
+
   chips.innerHTML = getCategories().map((cat) => `
     <button class="chip ${state.category === cat ? "active" : ""}" data-chip="${cat}">
       ${cat}
@@ -273,6 +282,8 @@ function renderChips() {
 }
 
 function renderHero() {
+  if (!heroMount) return;
+
   const products = visibleProducts();
   const heroProduct = products[0];
 
@@ -305,9 +316,7 @@ function renderHero() {
   `;
 
   heroMount.querySelectorAll("[data-hero-tab]").forEach((btn) => {
-    btn.addEventListener("click", () => {
-      switchTab(btn.dataset.heroTab);
-    });
+    btn.addEventListener("click", () => switchTab(btn.dataset.heroTab));
   });
 
   heroMount.querySelectorAll("[data-hero-open]").forEach((btn) => {
@@ -330,25 +339,20 @@ function renderProductCards(list, target) {
     const discount = getDiscount(p);
     const favActive = isFav(p.id);
     const drawerOpen = isCardOpened(p.id);
-    const stockInfo = getStockLabel(p);
-    const subline = buildProductSubline(p);
-    const features = buildFeatureBadges(p);
-    const drawerInfo = buildDrawerInfo(p);
 
     return `
       <div class="card" data-open-product="${p.id}" style="animation-delay:${Math.min(index * 0.03, 0.24)}s">
         <div class="cardImage">
-          <div class="cardTopLeft">
-            ${discount ? `<div class="imgPill discount">${discount}</div>` : ""}
-            ${isHit(p) ? `<div class="imgPill hit">Хит</div>` : ""}
-            ${isNew(p) ? `<div class="imgPill new">New</div>` : ""}
-          </div>
-
-          <img src="${getImage(p)}" alt="${p.name || "Товар"}">
-
           <button class="cardFav ${favActive ? "active" : ""}" data-fav="${p.id}" aria-label="Избранное">
             ${heartIcon}
           </button>
+
+          <img src="${getImage(p)}" alt="${p.name || "Товар"}">
+
+          <div class="cardTopLeft">
+            ${discount ? `<div class="imgPill discount">${discount}</div>` : ""}
+            ${isHit(p) ? `<div class="imgPill hit">Скидки расцвели</div>` : ""}
+          </div>
 
           <div class="cardBottomBtns">
             <button class="cardMore" data-more="${p.id}" aria-label="Кратко">
@@ -365,37 +369,22 @@ function renderProductCards(list, target) {
           <div class="priceRow">
             <div class="price">${fmtPrice(p.price)}</div>
             ${Number(p.old_price || 0) > 0 ? `<div class="oldPrice">${fmtPrice(p.old_price)}</div>` : ""}
-            ${discount ? `<div class="priceSale">${discount}</div>` : ""}
           </div>
 
-          <div class="brandLine">NutriLab</div>
-
+          <div class="brandLine">${p.brand || "NutriLab"}</div>
           <div class="title">${p.name || "Без названия"}</div>
-
-          <div class="productSubline">${subline}</div>
 
           <div class="ratingRow">
             <span class="ratingStar">★</span>
             <span>${getRating(p)}</span>
             <span>·</span>
-            <span>${getReviews(p)} отзыв.</span>
-          </div>
-
-          <div class="featureBadges">
-            ${features.map((item) => `<div class="featureBadge">${item}</div>`).join("")}
-          </div>
-
-          <div class="metaLine">
-            <div class="stockPill ${stockInfo.className}">
-              ${stockInfo.text}
-            </div>
-            <div class="article">${p.article || ""}</div>
+            <span>${getReviews(p)} оценка</span>
           </div>
 
           <div class="cardDrawer ${drawerOpen ? "open" : ""}">
             <div class="drawerHeader">
-              <div class="drawerTitle">Информация о товаре</div>
-              <div class="drawerLabel">NutriLab</div>
+              <div class="drawerTitle">Кратко о товаре</div>
+              <div class="drawerLabel">${p.brand || "NutriLab"}</div>
             </div>
 
             <div class="drawerGrid">
@@ -403,29 +392,22 @@ function renderProductCards(list, target) {
                 <div class="drawerKey">Артикул</div>
                 <div class="drawerVal">${p.article || "—"}</div>
               </div>
-
               <div class="drawerRow">
                 <div class="drawerKey">Категория</div>
                 <div class="drawerVal">${p.category || "—"}</div>
               </div>
-
               <div class="drawerRow">
                 <div class="drawerKey">Остаток</div>
                 <div class="drawerVal">${Number(p.stock || 0)} шт</div>
               </div>
-
-              <div class="drawerRow">
-                <div class="drawerKey">Статус</div>
-                <div class="drawerVal">${Number(p.stock || 0) > 0 ? "Доступен" : "Нет в наличии"}</div>
-              </div>
             </div>
 
             <div class="drawerInfoChips">
-              ${drawerInfo.map((item) => `<div class="drawerInfoChip">${item}</div>`).join("")}
+              ${buildDrawerInfo(p).map((item) => `<div class="drawerInfoChip">${item}</div>`).join("")}
             </div>
 
             <div class="drawerDesc">
-              ${p.description || "Премиальный продукт NutriLab для ежедневной поддержки организма. Чистая формула, удобный формат и аккуратно подобранный состав."}
+              ${p.description || "Премиальный продукт NutriLab для ежедневной поддержки организма."}
             </div>
           </div>
         </div>
@@ -443,26 +425,7 @@ function renderProductCards(list, target) {
   target.querySelectorAll("[data-add]").forEach((btn) => {
     btn.addEventListener("click", (e) => {
       e.stopPropagation();
-      const id = btn.dataset.add;
-      const product = state.products.find((item) => String(item.id) === String(id));
-      if (!product) return;
-
-      if (Number(product.stock || 0) <= 0) {
-        showToast("Товара нет в наличии", "info");
-        return;
-      }
-
-      const current = Number(getCart()[id] || 0);
-      if (current + 1 > Number(product.stock || 0)) {
-        showToast("Больше нет на складе", "info");
-        return;
-      }
-
-      addToCart(id, 1);
-      renderCart();
-      updateCartBadge();
-      renderProfile();
-      showToast("Добавлено в корзину");
+      quickAddToCart(btn.dataset.add);
     });
   });
 
@@ -488,9 +451,33 @@ function renderProductCards(list, target) {
   });
 }
 
+function quickAddToCart(id, buyNow = false) {
+  const product = state.products.find((item) => String(item.id) === String(id));
+  if (!product) return;
+
+  if (Number(product.stock || 0) <= 0) {
+    showToast("Товара нет в наличии", "info");
+    return;
+  }
+
+  const current = Number(getCart()[id] || 0);
+  if (current + 1 > Number(product.stock || 0)) {
+    showToast("Больше нет на складе", "info");
+    return;
+  }
+
+  addToCart(id, 1);
+  renderCart();
+  updateCartBadge();
+  renderProfile();
+  showToast(buyNow ? "Переходим к оформлению" : "Добавлено в корзину");
+  if (buyNow) switchTab("cart");
+}
+
 function openProductModal(product) {
   state.activeProduct = product;
   state.activeProductTab = "specs";
+  state.activeImageIndex = 0;
   renderProductModal();
   modalRoot.classList.add("open");
   document.body.classList.add("modal-open");
@@ -501,6 +488,14 @@ function closeProductModal() {
   document.body.classList.remove("modal-open");
 }
 
+function setModalImage(index) {
+  const imgs = getImages(state.activeProduct);
+  const len = imgs.length;
+  if (!len) return;
+  state.activeImageIndex = (index + len) % len;
+  renderProductModal();
+}
+
 function renderProductModal() {
   const p = state.activeProduct;
   if (!p) return;
@@ -509,7 +504,9 @@ function renderProductModal() {
   const specs = productSpecs(p);
   const features = buildFeatureBadges(p);
   const stockInfo = getStockLabel(p);
-  const favActive = isFav(p.id);
+  const imgs = getImages(p);
+  const currentImg = imgs[state.activeImageIndex] || imgs[0];
+  const related = relatedProducts(p);
 
   modalRoot.innerHTML = `
     <div class="productModalBackdrop" data-close-modal="1"></div>
@@ -520,26 +517,50 @@ function renderProductModal() {
       <div class="productSheetTop">
         <div>
           <h3 class="productSheetTitle">О товаре</h3>
-
-          <div class="productModalPrice">
-            <div class="productModalPriceNow">${fmtPrice(p.price)}</div>
-            ${Number(p.old_price || 0) > 0 ? `<div class="productModalPriceOld">${fmtPrice(p.old_price)}</div>` : ""}
-            ${discount ? `<div class="productModalPriceSale">${discount}</div>` : ""}
-          </div>
-
-          <div class="productModalSub">${p.name || "Товар"} · ${buildProductSubline(p)}</div>
-
-          <div class="productModalBadges">
-            <div class="productModalBadge">${stockInfo.text}</div>
-            <div class="productModalBadge">★ ${getRating(p)}</div>
-            <div class="productModalBadge">${getReviews(p)} отзыв.</div>
-            ${features.map((item) => `<div class="productModalBadge">${item}</div>`).join("")}
-          </div>
         </div>
 
         <button class="productSheetClose" data-close-modal="1" aria-label="Закрыть">
           ${closeIcon}
         </button>
+      </div>
+
+      <div class="productGallery">
+        <div class="productGalleryMain">
+          <img src="${currentImg}" alt="${p.name || "Товар"}">
+          ${imgs.length > 1 ? `
+            <button class="productGalleryNav prev" data-gallery-prev="1">${chevronLeftIcon}</button>
+            <button class="productGalleryNav next" data-gallery-next="1">${chevronRightIcon}</button>
+          ` : ""}
+        </div>
+
+        ${imgs.length > 1 ? `
+          <div class="productGalleryDots">
+            ${imgs.map((_, i) => `<div class="productGalleryDot ${i === state.activeImageIndex ? "active" : ""}"></div>`).join("")}
+          </div>
+
+          <div class="productGalleryThumbs">
+            ${imgs.map((img, i) => `
+              <button class="productThumb ${i === state.activeImageIndex ? "active" : ""}" data-gallery-index="${i}">
+                <img src="${img}" alt="">
+              </button>
+            `).join("")}
+          </div>
+        ` : ""}
+      </div>
+
+      <div class="productModalPrice">
+        <div class="productModalPriceNow">${fmtPrice(p.price)}</div>
+        ${Number(p.old_price || 0) > 0 ? `<div class="productModalPriceOld">${fmtPrice(p.old_price)}</div>` : ""}
+        ${discount ? `<div class="productModalPriceSale">${discount}</div>` : ""}
+      </div>
+
+      <div class="productModalSub">${p.brand || "NutriLab"} · ${p.name || "Товар"} · ${buildProductSubline(p)}</div>
+
+      <div class="productModalBadges">
+        <div class="productModalBadge">${stockInfo.text}</div>
+        <div class="productModalBadge">★ ${getRating(p)}</div>
+        <div class="productModalBadge">${getReviews(p)} отзыв.</div>
+        ${features.map((item) => `<div class="productModalBadge">${item}</div>`).join("")}
       </div>
 
       <div class="productSheetTabs">
@@ -554,38 +575,64 @@ function renderProductModal() {
 
       ${state.activeProductTab === "specs" ? `
         <div class="productModalSection">
-          <h4 class="productModalSectionTitle">Основные</h4>
-
-          <div class="productInfoGrid">
-            ${specs.map(([key, val]) => `
-              <div class="productInfoRow">
-                <div class="productInfoKey">${key}</div>
-                <div class="productInfoVal">${val}</div>
-              </div>
-            `).join("")}
+          <h4 class="productModalSectionTitle">Основные характеристики</h4>
+          <div class="productInfoCard">
+            <div class="productInfoGrid">
+              ${specs.map(([key, val]) => `
+                <div class="productInfoRow">
+                  <div class="productInfoKey">${key}</div>
+                  <div class="productInfoVal">${val}</div>
+                </div>
+              `).join("")}
+            </div>
           </div>
         </div>
       ` : `
         <div class="productModalSection">
           <h4 class="productModalSectionTitle">Описание</h4>
-          <div class="productDescBox">
-            ${p.description || "Премиальный продукт NutriLab для ежедневной поддержки организма. Чистая формула, удобный формат и аккуратно подобранный состав. Подходит для регулярного приема и аккуратно вписывается в ежедневную wellness-рутину."}
-          </div>
+          <div class="productDescCard">
+            <div class="productDescLead">
+              ${p.description || "Премиальный продукт NutriLab для ежедневной поддержки организма. Чистая формула, удобный формат и аккуратно подобранный состав."}
+            </div>
+            <div class="productDescMuted">
+              Подходит для регулярного приема и аккуратно вписывается в ежедневную wellness-рутину. Формула создана для комфортного использования каждый день.
+            </div>
 
-          <div class="productModalBadges">
-            <div class="productModalBadge">Артикул: ${p.article || "—"}</div>
-            <div class="productModalBadge">${p.category || "БАД"}</div>
-            <div class="productModalBadge">${p.form || "Капсулы"}</div>
+            <div class="productModalBadges">
+              <div class="productModalBadge">Артикул: ${p.article || "—"}</div>
+              <div class="productModalBadge">${p.category || "БАД"}</div>
+              <div class="productModalBadge">${p.form || "Капсулы"}</div>
+            </div>
           </div>
         </div>
       `}
 
+      ${related.length ? `
+        <div class="alsoSection">
+          <div class="alsoHead">
+            <div class="alsoTitle">С этим покупают</div>
+            <div class="alsoSub">Рекомендуем вместе</div>
+          </div>
+
+          <div class="alsoGrid">
+            ${related.map((item) => `
+              <div class="alsoCard" data-related-open="${item.id}">
+                <div class="alsoCardImage">
+                  <img src="${getImage(item)}" alt="${item.name || "Товар"}">
+                </div>
+                <div class="alsoCardBody">
+                  <div class="alsoCardPrice">${fmtPrice(item.price)}</div>
+                  <div class="alsoCardTitle">${item.name || "Товар"}</div>
+                </div>
+              </div>
+            `).join("")}
+          </div>
+        </div>
+      ` : ""}
+
       <div class="productModalActions">
         <button class="productActionBtn secondary" data-modal-buy="${p.id}">Купить сейчас</button>
-        <button class="productActionBtn primary" data-modal-cart="${p.id}">
-          ${favActive ? "" : ""}
-          В корзину
-        </button>
+        <button class="productActionBtn primary" data-modal-cart="${p.id}">В корзину</button>
       </div>
     </div>
   `;
@@ -601,29 +648,36 @@ function renderProductModal() {
     });
   });
 
-  modalRoot.querySelectorAll("[data-modal-buy], [data-modal-cart]").forEach((btn) => {
+  modalRoot.querySelector("[data-gallery-prev]")?.addEventListener("click", () => {
+    setModalImage(state.activeImageIndex - 1);
+  });
+
+  modalRoot.querySelector("[data-gallery-next]")?.addEventListener("click", () => {
+    setModalImage(state.activeImageIndex + 1);
+  });
+
+  modalRoot.querySelectorAll("[data-gallery-index]").forEach((btn) => {
     btn.addEventListener("click", () => {
-      const id = btn.dataset.modalBuy || btn.dataset.modalCart;
-      const product = state.products.find((item) => String(item.id) === String(id));
-      if (!product) return;
+      setModalImage(Number(btn.dataset.galleryIndex));
+    });
+  });
 
-      if (Number(product.stock || 0) <= 0) {
-        showToast("Товара нет в наличии", "info");
-        return;
-      }
+  modalRoot.querySelectorAll("[data-modal-buy]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      quickAddToCart(btn.dataset.modalBuy, true);
+    });
+  });
 
-      const current = Number(getCart()[id] || 0);
-      if (current + 1 > Number(product.stock || 0)) {
-        showToast("Больше нет на складе", "info");
-        return;
-      }
+  modalRoot.querySelectorAll("[data-modal-cart]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      quickAddToCart(btn.dataset.modalCart, false);
+    });
+  });
 
-      addToCart(id, 1);
-      renderCart();
-      updateCartBadge();
-      renderProfile();
-      showToast(btn.dataset.modalBuy ? "Переходим к оформлению" : "Добавлено в корзину");
-      if (btn.dataset.modalBuy) switchTab("cart");
+  modalRoot.querySelectorAll("[data-related-open]").forEach((card) => {
+    card.addEventListener("click", () => {
+      const nextProduct = state.products.find((item) => String(item.id) === String(card.dataset.relatedOpen));
+      if (nextProduct) openProductModal(nextProduct);
     });
   });
 }
@@ -717,10 +771,7 @@ function renderCart() {
     });
   });
 
-  const clearBtn = document.getElementById("clearCartBtn");
-  const checkoutBtn = document.getElementById("checkoutBtn");
-
-  clearBtn?.addEventListener("click", () => {
+  document.getElementById("clearCartBtn")?.addEventListener("click", () => {
     clearCart();
     renderCart();
     updateCartBadge();
@@ -728,7 +779,7 @@ function renderCart() {
     showToast("Корзина очищена", "info");
   });
 
-  checkoutBtn?.addEventListener("click", () => {
+  document.getElementById("checkoutBtn")?.addEventListener("click", () => {
     showToast("Оформление заказа подключим следующим шагом", "info");
   });
 }
@@ -769,26 +820,34 @@ function renderProfile() {
 }
 
 async function loadProducts() {
-  const { data, error } = await sb
-    .from("products")
-    .select("*")
-    .order("id", { ascending: true });
+  try {
+    const { data, error } = await sb
+      .from("products")
+      .select("*")
+      .order("id", { ascending: true });
 
-  if (error) {
-    console.error("Supabase error:", error);
-    const html = `<div class="empty">Ошибка загрузки: ${error.message}</div>`;
-    homeGrid.innerHTML = html;
-    catalogGrid.innerHTML = html;
-    heroMount.innerHTML = "";
-    return;
+    if (error) {
+      console.error("Supabase error:", error);
+      const html = `<div class="empty">Ошибка загрузки: ${error.message}</div>`;
+      if (homeGrid) homeGrid.innerHTML = html;
+      if (catalogGrid) catalogGrid.innerHTML = html;
+      if (heroMount) heroMount.innerHTML = "";
+      return;
+    }
+
+    state.products = data || [];
+    renderChips();
+    renderProducts();
+    renderCart();
+    updateCartBadge();
+    renderProfile();
+  } catch (err) {
+    console.error("Load error:", err);
+    const html = `<div class="empty">Ошибка загрузки каталога.</div>`;
+    if (homeGrid) homeGrid.innerHTML = html;
+    if (catalogGrid) catalogGrid.innerHTML = html;
+    if (heroMount) heroMount.innerHTML = "";
   }
-
-  state.products = data || [];
-  renderChips();
-  renderProducts();
-  renderCart();
-  updateCartBadge();
-  renderProfile();
 }
 
 searchInput?.addEventListener("input", () => {
@@ -816,6 +875,9 @@ document.querySelectorAll('[data-action="focus-search"]').forEach((btn) => {
 
 document.addEventListener("keydown", (e) => {
   if (e.key === "Escape") closeProductModal();
+  if (!state.activeProduct || !modalRoot.classList.contains("open")) return;
+  if (e.key === "ArrowLeft") setModalImage(state.activeImageIndex - 1);
+  if (e.key === "ArrowRight") setModalImage(state.activeImageIndex + 1);
 });
 
 try {
